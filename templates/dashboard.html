@@ -1,392 +1,126 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+
+{% block content %}
   
-    <!-- Echarts -->
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <!-- Main Body begins ----------------------------------------------->
+  <main role="main" class="col-12 col-xl-10">
+    <div class="container-fluid my-2">
 
-    <!-- Echart Themes -->
-    <script src="{% static 'themes/macarons.js' %}"></script>
-
-    <link rel="stylesheet" href="{% static 'css/sidebar_style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/navbar_style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/main_style.css' %}">
-    <link rel="icon" href="{% static 'images/icon10.svg' %}" type="image/x-icon">
-
-    <title>Portfolio Track</title>
-</head>
-<body>
-  
-  <!-- Navbar begins----------------------------------->
-
-  <nav class="navbar navbar-expand-xl bg-body-tertiary shadow sticky-top px-2" aria-label="Offcanvas navbar large">
-    <div class="container-fluid">
-      
-      <!-- Buttons to control sidebar offcanvas -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <!-- Buttons to control sidebar offcanvas -->
-
-      <a class="navbar-brand" href="{% url 'dashboard' %}"> <img src="{% static 'images/logo10.svg' %}" class="image-fluid rounded" alt="Logo"> </a>
-
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      
-      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar2" aria-labelledby="offcanvasNavbar2Label">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Portfolio Track</h5>
-          <button type="button" class="btn-close btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <div class="row justify-content-center align-items-center my-2">
+        <div class="col-12 col-md-6 my-2">
+          <h4>Bem vindo, <span class="h4">Fulano!</span> </h4>
+          <p class="m-0">Acompanhe de perto sua carteira!</p>
         </div>
-        <div class="offcanvas-body align-items-center">
-          <ul class="navbar-nav align-items-center justify-content-center flex-grow-1 pe-3" >
+        <div class="col-12 col-md-6 my-2 d-flex align-items-center justify-content-md-end">
+          <h6>Terça-feira, 20 de agosto de 2023</h6>
+        </div>
+      </div>
+
+
+      <!-- Gráfico de evolução patrimonial + quatro cards - INÍCIO -->
+      <div class="row">
+
+        <div class="col-12 col-xl-7 mt-4">
+          
+          <div id="performance_chart" class="chart-container align-items-center pt-3 ms-0 border rounded hover-shadow" style="width: 100%; height: 45vh; min-height: 400px; background-color: white;">
             
-            <div class="col me-3"></div>
+            <script> 
+              var portfolioPerformanceChartURL = "{% url 'get_portfolio_performance_chart' %}";
+            </script>
 
-            <!-- TradingView Widget BEGIN -->
-            <div class="tradingview-widget-container">
-              <div class="tradingview-widget-container__widget"></div>
-              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-                {
-                  "symbols": [
-                    {
-                      "description": "IBOV:",
-                      "proName": "BMFBOVESPA:IBOV"
-                    },
-                    {
-                      "description": "Inflação % 12m:",
-                      "proName": "ECONOMICS:BRIRYY"
-                    },
-                    {
-                      "description": "IPCA % (últ.):",
-                      "proName": "ECONOMICS:BRIRMM"
-                    },
-                    {
-                      "description": "SELIC %:",
-                      "proName": "ECONOMICS:BRINTR"
-                    },
-                    {
-                      "description": "Dólar:",
-                      "proName": "FX_IDC:USDBRL"
-                    }
-                  ],
-                  "showSymbolLogo": false,
-                  "colorTheme": "light",
-                  "isTransparent": true,
-                  "displayMode": "regular",
-                  "locale": "br"
-                }
-              </script>
-            </div>
-            <!-- TradingView Widget END -->
-
-            <div class="col ms-3"></div>
-
-          </ul>
-
-          <div class="row align-self-end ms-auto my-0">
-            
-            <div class="btn-group d-flex align-items-center justify-content-start mt-3 mt-xl-0" style="cursor: pointer;">
-              <img class="avatar round-icon me-1" data-bs-toggle="dropdown"  width="48" height="48" src="{% static 'images/avatar.png' %}" alt="User Avatar">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                {% if user.id is not None %}
-                  {{ user.first_name }}
-                {% endif %}
-              </a>
-              <ul class="dropdown-menu ">
-                <li><a class="dropdown-item" href="#">Perfil</a></li>
-                <hr style="opacity: 10%;">
-                <li><a class="dropdown-item" href="{% url 'logout' %}">Sair</a></li>
-              </ul>
-            </div>
           </div>
 
         </div>
+
+        <div class="col-12 col-xl-5 mt-4">
+
+            <div class="d-flex flex-column h-100">
+                <div class="row flex-fill">
+                    <div class="col-md-6 mb-2">
+                        <div class="card h-100 ps-5 ps-xl-3 ps-xxl-5 py-2 justify-content-center card-first hover-shadow">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-piggy-bank" viewBox="0 0 16 16">
+                            <path d="M5 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm1.138-1.496A6.613 6.613 0 0 1 7.964 4.5c.666 0 1.303.097 1.893.273a.5.5 0 0 0 .286-.958A7.602 7.602 0 0 0 7.964 3.5c-.734 0-1.441.103-2.102.292a.5.5 0 1 0 .276.962z"/>
+                            <path fill-rule="evenodd" d="M7.964 1.527c-2.977 0-5.571 1.704-6.32 4.125h-.55A1 1 0 0 0 .11 6.824l.254 1.46a1.5 1.5 0 0 0 1.478 1.243h.263c.3.513.688.978 1.145 1.382l-.729 2.477a.5.5 0 0 0 .48.641h2a.5.5 0 0 0 .471-.332l.482-1.351c.635.173 1.31.267 2.011.267.707 0 1.388-.095 2.028-.272l.543 1.372a.5.5 0 0 0 .465.316h2a.5.5 0 0 0 .478-.645l-.761-2.506C13.81 9.895 14.5 8.559 14.5 7.069c0-.145-.007-.29-.02-.431.261-.11.508-.266.705-.444.315.306.815.306.815-.417 0 .223-.5.223-.461-.026a.95.95 0 0 0 .09-.255.7.7 0 0 0-.202-.645.58.58 0 0 0-.707-.098.735.735 0 0 0-.375.562c-.024.243.082.48.32.654a2.112 2.112 0 0 1-.259.153c-.534-2.664-3.284-4.595-6.442-4.595zM2.516 6.26c.455-2.066 2.667-3.733 5.448-3.733 3.146 0 5.536 2.114 5.536 4.542 0 1.254-.624 2.41-1.67 3.248a.5.5 0 0 0-.165.535l.66 2.175h-.985l-.59-1.487a.5.5 0 0 0-.629-.288c-.661.23-1.39.359-2.157.359a6.558 6.558 0 0 1-2.157-.359.5.5 0 0 0-.635.304l-.525 1.471h-.979l.633-2.15a.5.5 0 0 0-.17-.534 4.649 4.649 0 0 1-1.284-1.541.5.5 0 0 0-.446-.275h-.56a.5.5 0 0 1-.492-.414l-.254-1.46h.933a.5.5 0 0 0 .488-.393zm12.621-.857a.565.565 0 0 1-.098.21.704.704 0 0 1-.044-.025c-.146-.09-.157-.175-.152-.223a.236.236 0 0 1 .117-.173c.049-.027.08-.021.113.012a.202.202 0 0 1 .064.199z"/>
+                          </svg>
+                          <p class="mb-2 fw-semibold">Patrimônio</p>
+                          <p class="fs-5 fw-bold text-body-secondary mb-0">R$ 252.000,00</p>
+                          <p class="mb-0 text-body-secondary">22.00% (6 meses)</p> 
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-2 mt-md-0 mb-2">
+                        <div class="card h-100 ps-5 ps-xl-3 ps-xxl-5 py-2 justify-content-center card-second hover-shadow">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-currency-dollar" viewBox="0 0 16 16">
+                            <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"/>
+                          </svg>
+                          <p class="mb-2 fw-semibold">Aportes (Total) </p>
+                          <p class="fs-5 fw-bold text-body-secondary mb-0">R$ 203.000,00</p>
+                          <p class="mb-0 text-body-secondary">5.20% (6 meses)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row flex-fill mt-md-2">
+                    <div class="col-md-6 mt-2">
+                        <div class="card h-100 ps-5 ps-xl-3 ps-xxl-5 py-2 justify-content-center card-third hover-shadow">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0Zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5Z"/>
+                          </svg>
+                          <p class="mb-2 fw-semibold">Resultado</p>
+                          <p class="fs-5 fw-bold text-body-secondary mb-0">10.00 %</p>
+                          <p class="mb-0 text-body-secondary">6.00% (6 meses)</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-3 mt-md-2">
+                        <div class="card h-100 ps-5 ps-xl-3 ps-xxl-5 py-2 justify-content-center card-fourth hover-shadow">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-percent" viewBox="0 0 16 16">
+                            <path d="M13.442 2.558a.625.625 0 0 1 0 .884l-10 10a.625.625 0 1 1-.884-.884l10-10a.625.625 0 0 1 .884 0zM4.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
+                          </svg>
+                          <p class="mb-2 fw-semibold">YoC (%)</p>
+                          <p class="fs-5 fw-bold text-body-secondary mb-0">5.00 %</p>
+                          <p class="mb-0 text-body-secondary">2.00% (6 meses)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
       </div>
-    </div>
-  </nav>
-  <!-- Navbar ends----------------------------------->
+      <!-- Gráfico de evolução patrimonial + quatro cards - FIM -->
 
-   
-  
-  <div class="container-fluid mt-0 mb-0 bg-body-tertiary">
-    <div class="row">
 
-      <!-- Sidebar begins --------------------------------------------------------->
-      <div class="navbar navbar-expand-xl col-12 col-md-2 d-xl-block bg-body-tertiary border-end h6 m-0 p-0">
+      <!-- Gráficos de Exposição por Categorias e por Ativos - INÍCIO -->
+      <div class="row my-5">
+        <div class="col-12 col-xl-6 my-2">
+
+          <div id="category_chart" class="chart-container d-flex justify-content-center align-items-center border rounded hover-shadow px-2 pt-4" style="width: 100%; height: 50vh; min-height: 360px; background-color: white;">
+            
+            <script>
+              var categoryChartURL = "{% url 'get_category_chart' %}";
+            </script>
+
+          </div>
+          
+        </div>
         
-        <div class="offcanvas offcanvas-start m-0 p-0" data-bs-scroll="true" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-          <div class="offcanvas-header border-bottom">
-            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Portfolio Track</h5>
-            <button type="button" class="btn-close btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-          </div>
-          <div class="offcanvas-body-fluid px-xl-2 px-xxl-4 overflow-auto m-0 p-0">
+        <div class="col-12 col-xl-6 my-2">
 
-            <!-- Conteúdo do menu lateral - início -->
-            <ul class="list-unstyled mt-2">
-              
-              <!--adicionar a classe da li para li-active para deixar selecionado -->
-              <li class="pt-2" >
-                <a href="#" class="d-flex side-btn gap-2 align-items-center" data-bs-toggle="no-collapse" data-bs-target="" aria-expanded="false">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
-                    <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2zm1 12h2V2h-2v12zm-3 0V7H7v7h2zm-5 0v-3H2v3h2z"/>
-                  </svg>
-                  Dashboard
-                </a>  
-              </li>
-
-              <hr style="opacity: 10%;">
-
-              <li class="mb-1">
-                <a href="#" class="d-flex side-btn gap-2 align-items-center" data-bs-toggle="collapse" data-bs-target="#portfolio-collapse" aria-expanded="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
-                    <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499L12.136.326zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484L5.562 3zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-13z"/>
-                  </svg>
-                  Portfolio
-                </a>
-                <div class="collapse show" id="portfolio-collapse">
-                  <ul class="list-unstyled">
-                    <li class=""><a href="#" class="d-flex side-btn-list">Resumo</a></li> <!--adicionar a classe da li para li-active para deixar selecionado -->
-                    <li class=""><a href="#" class="d-flex side-btn-list">Balanceamento</a></li>
-                    <li class=""><a href="#" class="d-flex side-btn-list">Metas</a></li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="mb-1">
-                <a href="#" class="d-flex side-btn gap-2 align-items-center" data-bs-toggle="collapse" data-bs-target="#proventos-collapse" aria-expanded="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-coin" viewBox="0 0 16 16">
-                    <path d="M5.5 9.511c.076.954.83 1.697 2.182 1.785V12h.6v-.709c1.4-.098 2.218-.846 2.218-1.932 0-.987-.626-1.496-1.745-1.76l-.473-.112V5.57c.6.068.982.396 1.074.85h1.052c-.076-.919-.864-1.638-2.126-1.716V4h-.6v.719c-1.195.117-2.01.836-2.01 1.853 0 .9.606 1.472 1.613 1.707l.397.098v2.034c-.615-.093-1.022-.43-1.114-.9H5.5zm2.177-2.166c-.59-.137-.91-.416-.91-.836 0-.47.345-.822.915-.925v1.76h-.005zm.692 1.193c.717.166 1.048.435 1.048.91 0 .542-.412.914-1.135.982V8.518l.087.02z"/>
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                    <path d="M8 13.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11zm0 .5A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"/>
-                  </svg>
-                  Proventos
-                </a>
-                <div class="collapse show" id="proventos-collapse">
-                  <ul class="list-unstyled">
-                    <li class=""><a href="#" class="d-flex side-btn-list">Evolução</a></li>
-                    <li class=""><a href="#" class="d-flex side-btn-list">Histórico</a></li>
-                  </ul>
-                </div>
-              </li>
-
-              <li class="mb-1">
-                <a href="#" class="d-flex side-btn gap-2 align-items-center" data-bs-toggle="collapse" data-bs-target="#transactions-collapse" aria-expanded="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-left-right" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"/>
-                  </svg>
-                  Transações
-                </a>
-                <div class="collapse show" id="transactions-collapse">
-                  <ul class="list-unstyled">
-                    <li class=""><a href="#" class="d-flex side-btn-list">Visualizar</a></li>
-                    <li class=""><a href="#" class="d-flex side-btn-list">Adicionar</a></li>
-                    <li class=""><a href="#" data-bs-toggle="modal" data-bs-target="#load_file_modal" class="d-flex side-btn-list">Carregar de Arquivo</a></li>
-                  </ul>
-                </div>
-              </li>
-
-              <hr style="opacity: 10%;">
-
-              <li class="my-3"></li>
-              <li class="mb-1">
-                <a href="#" class="d-flex side-btn gap-2 align-items-center" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-gear" viewBox="0 0 16 16">
-                    <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm.256 7a4.474 4.474 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10c.26 0 .507.009.74.025.226-.341.496-.65.804-.918C9.077 9.038 8.564 9 8 9c-5 0-6 3-6 4s1 1 1 1h5.256Zm3.63-4.54c.18-.613 1.048-.613 1.229 0l.043.148a.64.64 0 0 0 .921.382l.136-.074c.561-.306 1.175.308.87.869l-.075.136a.64.64 0 0 0 .382.92l.149.045c.612.18.612 1.048 0 1.229l-.15.043a.64.64 0 0 0-.38.921l.074.136c.305.561-.309 1.175-.87.87l-.136-.075a.64.64 0 0 0-.92.382l-.045.149c-.18.612-1.048.612-1.229 0l-.043-.15a.64.64 0 0 0-.921-.38l-.136.074c-.561.305-1.175-.309-.87-.87l.075-.136a.64.64 0 0 0-.382-.92l-.148-.045c-.613-.18-.613-1.048 0-1.229l.148-.043a.64.64 0 0 0 .382-.921l-.074-.136c-.306-.561.308-1.175.869-.87l.136.075a.64.64 0 0 0 .92-.382l.045-.148ZM14 12.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"/>
-                  </svg>
-                  Conta
-                </a>
-                <div class="collapse show" id="account-collapse">
-                  <ul class="list-unstyled">
-                    <li class=""><a href="#" class="d-flex side-btn-list">Perfil</a></li>
-                    <li class=""><a href="{% url 'logout' %}" class="d-flex side-btn-list">Sair</a></li>
-                  </ul>
-                </div>
-              </li>
-            </ul>
-            <!-- Conteúdo do menu lateral - fim -->
-
-          </div>
-        </div>
-      </div>
-      <!-- Sidebar ends --------------------------------------------------->
-
-
-      <!-- Main Body begins ----------------------------------------------->
-      <main role="main" class="col-12 col-xl-10">
-        <div class="container-fluid my-2">
-
-          <div class="row justify-content-center align-items-center my-2">
-            <div class="col-12 col-md-6 my-2">
-              <h4>Bem vindo, <span class="h4">Fulano!</span> </h4>
-              <p class="m-0">Acompanhe de perto sua carteira!</p>
-            </div>
-            <div class="col-12 col-md-6 my-2 d-flex align-items-center justify-content-md-end">
-              <h6>Terça-feira, 20 de agosto de 2023</h6>
-            </div>
-          </div>
-
-
-          <!-- Gráfico de evolução patrimonial + quatro cards - INÍCIO -->
-          <div class="row">
-
-            <div class="col-12 col-xl-7 mt-4">
-              
-              <div id="performance_chart" class="chart-container align-items-center pt-3 ms-0 border rounded hover-shadow" style="width: 100%; height: 45vh; min-height: 400px; background-color: white;">
-                
-                <script> 
-                  var portfolioPerformanceChartURL = "{% url 'get_portfolio_performance_chart' %}";
-                </script>
-
-              </div>
-
-            </div>
-
-            <div class="col-12 col-xl-5 mt-4">
-
-                <div class="d-flex flex-column h-100">
-                    <div class="row flex-fill">
-                        <div class="col-md-6 mb-2">
-                            <div class="card h-100 ps-5 ps-xl-3 ps-xxl-5 py-2 justify-content-center card-first hover-shadow">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-piggy-bank" viewBox="0 0 16 16">
-                                <path d="M5 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm1.138-1.496A6.613 6.613 0 0 1 7.964 4.5c.666 0 1.303.097 1.893.273a.5.5 0 0 0 .286-.958A7.602 7.602 0 0 0 7.964 3.5c-.734 0-1.441.103-2.102.292a.5.5 0 1 0 .276.962z"/>
-                                <path fill-rule="evenodd" d="M7.964 1.527c-2.977 0-5.571 1.704-6.32 4.125h-.55A1 1 0 0 0 .11 6.824l.254 1.46a1.5 1.5 0 0 0 1.478 1.243h.263c.3.513.688.978 1.145 1.382l-.729 2.477a.5.5 0 0 0 .48.641h2a.5.5 0 0 0 .471-.332l.482-1.351c.635.173 1.31.267 2.011.267.707 0 1.388-.095 2.028-.272l.543 1.372a.5.5 0 0 0 .465.316h2a.5.5 0 0 0 .478-.645l-.761-2.506C13.81 9.895 14.5 8.559 14.5 7.069c0-.145-.007-.29-.02-.431.261-.11.508-.266.705-.444.315.306.815.306.815-.417 0 .223-.5.223-.461-.026a.95.95 0 0 0 .09-.255.7.7 0 0 0-.202-.645.58.58 0 0 0-.707-.098.735.735 0 0 0-.375.562c-.024.243.082.48.32.654a2.112 2.112 0 0 1-.259.153c-.534-2.664-3.284-4.595-6.442-4.595zM2.516 6.26c.455-2.066 2.667-3.733 5.448-3.733 3.146 0 5.536 2.114 5.536 4.542 0 1.254-.624 2.41-1.67 3.248a.5.5 0 0 0-.165.535l.66 2.175h-.985l-.59-1.487a.5.5 0 0 0-.629-.288c-.661.23-1.39.359-2.157.359a6.558 6.558 0 0 1-2.157-.359.5.5 0 0 0-.635.304l-.525 1.471h-.979l.633-2.15a.5.5 0 0 0-.17-.534 4.649 4.649 0 0 1-1.284-1.541.5.5 0 0 0-.446-.275h-.56a.5.5 0 0 1-.492-.414l-.254-1.46h.933a.5.5 0 0 0 .488-.393zm12.621-.857a.565.565 0 0 1-.098.21.704.704 0 0 1-.044-.025c-.146-.09-.157-.175-.152-.223a.236.236 0 0 1 .117-.173c.049-.027.08-.021.113.012a.202.202 0 0 1 .064.199z"/>
-                              </svg>
-                              <p class="mb-2 fw-semibold">Patrimônio</p>
-                              <p class="fs-5 fw-bold text-body-secondary mb-0">R$ 252.000,00</p>
-                              <p class="mb-0 text-body-secondary">22.00% (6 meses)</p> 
-                            </div>
-                        </div>
-                        <div class="col-md-6 mt-2 mt-md-0 mb-2">
-                            <div class="card h-100 ps-5 ps-xl-3 ps-xxl-5 py-2 justify-content-center card-second hover-shadow">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-currency-dollar" viewBox="0 0 16 16">
-                                <path d="M4 10.781c.148 1.667 1.513 2.85 3.591 3.003V15h1.043v-1.216c2.27-.179 3.678-1.438 3.678-3.3 0-1.59-.947-2.51-2.956-3.028l-.722-.187V3.467c1.122.11 1.879.714 2.07 1.616h1.47c-.166-1.6-1.54-2.748-3.54-2.875V1H7.591v1.233c-1.939.23-3.27 1.472-3.27 3.156 0 1.454.966 2.483 2.661 2.917l.61.162v4.031c-1.149-.17-1.94-.8-2.131-1.718H4zm3.391-3.836c-1.043-.263-1.6-.825-1.6-1.616 0-.944.704-1.641 1.8-1.828v3.495l-.2-.05zm1.591 1.872c1.287.323 1.852.859 1.852 1.769 0 1.097-.826 1.828-2.2 1.939V8.73l.348.086z"/>
-                              </svg>
-                              <p class="mb-2 fw-semibold">Aportes (Total) </p>
-                              <p class="fs-5 fw-bold text-body-secondary mb-0">R$ 203.000,00</p>
-                              <p class="mb-0 text-body-secondary">5.20% (6 meses)</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row flex-fill mt-md-2">
-                        <div class="col-md-6 mt-2">
-                            <div class="card h-100 ps-5 ps-xl-3 ps-xxl-5 py-2 justify-content-center card-third hover-shadow">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-graph-up-arrow" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M0 0h1v15h15v1H0V0Zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5Z"/>
-                              </svg>
-                              <p class="mb-2 fw-semibold">Resultado</p>
-                              <p class="fs-5 fw-bold text-body-secondary mb-0">10.00 %</p>
-                              <p class="mb-0 text-body-secondary">6.00% (6 meses)</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mt-3 mt-md-2">
-                            <div class="card h-100 ps-5 ps-xl-3 ps-xxl-5 py-2 justify-content-center card-fourth hover-shadow">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-percent" viewBox="0 0 16 16">
-                                <path d="M13.442 2.558a.625.625 0 0 1 0 .884l-10 10a.625.625 0 1 1-.884-.884l10-10a.625.625 0 0 1 .884 0zM4.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
-                              </svg>
-                              <p class="mb-2 fw-semibold">YoC (%)</p>
-                              <p class="fs-5 fw-bold text-body-secondary mb-0">5.00 %</p>
-                              <p class="mb-0 text-body-secondary">2.00% (6 meses)</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-          </div>
-          <!-- Gráfico de evolução patrimonial + quatro cards - FIM -->
-
-
-          <!-- Gráficos de Exposição por Categorias e por Ativos - INÍCIO -->
-          <div class="row my-5">
-            <div class="col-12 col-xl-6 my-2">
-
-              <div id="category_chart" class="chart-container d-flex justify-content-center align-items-center border rounded hover-shadow px-2 pt-4" style="width: 100%; height: 50vh; min-height: 360px; background-color: white;">
-                
-                <script>
-                  var categoryChartURL = "{% url 'get_category_chart' %}";
-                </script>
-
-              </div>
-              
-            </div>
+          <div id="asset_chart" class="chart-container d-flex justify-content-center align-items-center border rounded hover-shadow px-2 pt-4" style="width: 100%; height: 50vh; min-height: 360px; background-color: white;">
             
-            <div class="col-12 col-xl-6 my-2">
+            <script>
+              var assetChartURL = "{% url 'get_asset_chart' %}";
+            </script>
 
-              <div id="asset_chart" class="chart-container d-flex justify-content-center align-items-center border rounded hover-shadow px-2 pt-4" style="width: 100%; height: 50vh; min-height: 360px; background-color: white;">
-                
-                <script>
-                  var assetChartURL = "{% url 'get_asset_chart' %}";
-                </script>
-
-              </div>
-
-            </div>
           </div>
-          <!-- Gráficos de Exposição por Categorias e por Ativos - FIM -->
 
         </div>
-      </main>
-      <!-- Main Body ends --------------------------------------------->
-
-    </div>
-  </div>
-
-  
-  <!-- Footer Begins ------------------------------------------------ -->
-  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-0 border-top">
-    <div class="col-md-12 d-flex align-items-center justify-content-center">
-      <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
-        helio.card@yahoo.com.br
-      </a>
-      <span class="mb-3 mb-md-0 text-body-secondary">© 2023 Helio C Guimarães</span>
-    </div>
-  </footer>
-  <!-- Footer Ends --------------------------------------------------- -->
-
-  <!-- Modal begins--------------------------------------------------- -->
-  <div class="modal fade" id="load_file_modal" tabindex="-1" aria-labelledby="ModalLoadFile" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Carregar Transações de Arquivo Excel</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body">
-          <form method="post" action="{% url 'upload_file' %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="fileInput">Selecione um arquivo:</label>
-                <div class="custom-file">
-                    <!-- <input type="file" class="custom-file-input form-control" id="fileInput" accept=".xlsx" name="file" required> -->
-                    {{ upload_file_form }}
-                </div>
-                <div class="d-flex justify-content-end mt-3 gap-2">
-                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="submit" class="" style="border: none; color: white; background-color: #01b3b6; border-radius: 6px; padding: 6px 12px;">Carregar Arquivo</button>
-                </div>
-            </div>
-          </form>
-        </div>
-
-        <hr class="d-flex my-0" style="border-top: 1px solid #ccc; opacity: 0.5;">
-
-        <div class="modal-body d-flex justify-content-center align-items-center my-0">
-          <p class="small"> Baixe <a href="#">aqui</a> o modelo de arquivo Excel (.xlsx).</p>
-        </div>
-
       </div>
+      <!-- Gráficos de Exposição por Categorias e por Ativos - FIM -->
+
     </div>
-  </div>
-  <!-- Modal ends--------------------------------------------------- -->
+  </main>
+  <!-- Main Body ends --------------------------------------------->
+  
+
 
   {% include 'includes/message.html' %}
 
@@ -394,9 +128,9 @@
 
   <script src="{% static 'js/resizeAllCharts.js' %}" async></script>
 
-</body>
+  
 
-</html>
+{% endblock %}
 
 
 

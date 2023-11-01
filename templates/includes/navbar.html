@@ -1,0 +1,96 @@
+{% load static %}
+
+<!-- Navbar begins----------------------------------->
+
+<nav class="navbar navbar-expand-xl bg-body-tertiary shadow sticky-top px-2" aria-label="Offcanvas navbar large">
+    <div class="container-fluid">
+      
+      <!-- Buttons to control sidebar offcanvas -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <!-- Buttons to control sidebar offcanvas -->
+
+      <a class="navbar-brand" href="{% url 'dashboard' %}"> <img src="{% static 'images/logo10.svg' %}" class="image-fluid rounded" alt="Logo"> </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar2" aria-controls="offcanvasNavbar2" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar2" aria-labelledby="offcanvasNavbar2Label">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasNavbar2Label">Portfolio Track</h5>
+          <button type="button" class="btn-close btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body align-items-center">
+          <ul class="navbar-nav align-items-center justify-content-center flex-grow-1 pe-3" >
+            
+            <div class="col me-3"></div>
+
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                {
+                  "symbols": [
+                    {
+                      "description": "IBOV:",
+                      "proName": "BMFBOVESPA:IBOV"
+                    },
+                    {
+                      "description": "Inflação % 12m:",
+                      "proName": "ECONOMICS:BRIRYY"
+                    },
+                    {
+                      "description": "IPCA % (últ.):",
+                      "proName": "ECONOMICS:BRIRMM"
+                    },
+                    {
+                      "description": "SELIC %:",
+                      "proName": "ECONOMICS:BRINTR"
+                    },
+                    {
+                      "description": "Dólar:",
+                      "proName": "FX_IDC:USDBRL"
+                    }
+                  ],
+                  "showSymbolLogo": false,
+                  "colorTheme": "light",
+                  "isTransparent": true,
+                  "displayMode": "regular",
+                  "locale": "br"
+                }
+              </script>
+            </div>
+            <!-- TradingView Widget END -->
+
+            <div class="col ms-3"></div>
+
+          </ul>
+
+          <div class="row align-self-end ms-auto my-0">
+            
+            <div class="btn-group d-flex align-items-center justify-content-start mt-3 mt-xl-0" style="cursor: pointer;">
+              <img class="avatar round-icon me-1" data-bs-toggle="dropdown"  width="48" height="48" src="{% static 'images/avatar.png' %}" alt="User Avatar">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                {% if user.id is not None %}
+                  {{ user.first_name }}
+                {% endif %}
+              </a>
+              <ul class="dropdown-menu ">
+                <li><a class="dropdown-item" href="#">Perfil</a></li>
+                <hr style="opacity: 10%;">
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Sair</a></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- Navbar ends----------------------------------->
+
+ 
+
+      
