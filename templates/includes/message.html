@@ -1,0 +1,23 @@
+{% if messages %}
+    {% load static %}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        {% for message in messages %}
+        <div id="message" class="toast" data-bs-autohide="{% if message.tags == 'danger' %}false{% else %}true{% endif %}" data-bs-animation="true" data-bs-delay=10000 role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <img src="{% static 'images/icon-outlined-1.svg' %}" class="me-2" alt="Logo" style="width: 24px; height: 24px;">
+                <strong class="me-auto">Portfolio Track</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                    
+                    <div {% if message.tags %} class="m-0 alert alert-{{ message.tags }}"{% endif %} role="alert">
+                        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Erro: {% endif %}
+                        {{ message }}
+                    </div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <script src="{% static 'js/message.js' %}"></script>
+{% endif %}

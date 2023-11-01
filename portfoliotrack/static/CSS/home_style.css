@@ -1,0 +1,48 @@
+
+body{
+    background-image: url('/static/images/background-image.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+}
+
+.responsive-text {
+    font-size: 3vw;
+}
+
+.custom-btn-primary {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    color: whitesmoke;
+    text-decoration: none;
+    background-color: #00b6b9;
+    transition: all .6s ease;
+}
+
+.custom-btn-primary:hover {
+    color: whitesmoke;
+    background-color: rgba(10, 154, 156, 0.822);
+}
+
+.custom-btn-primary:active {
+    color: whitesmoke;
+    background-color: #00b6b9;
+}
+
+
+
+.custom-btn-outlined {
+    border: 1px solid #00b6b9;
+    padding: 10px 20px;
+    border-radius: 6px;
+    color: #00b6b9;
+    text-decoration: none;
+    background-color: transparent;
+    transition: all .6s ease;
+}
+
+.custom-btn-outlined:hover {
+    color: whitesmoke;
+    background-color: #00b6b9;
+}

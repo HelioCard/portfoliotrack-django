@@ -1,0 +1,15 @@
+{% autoescape off %}
+    
+Ola, {{user.first_name}},
+
+Você recebeu este email porque fez um registro no site {{domain}}.
+
+Clique no link abaixo para ativar sua conta:
+
+http://{{domain}}{% url 'activate' uidb64=uid token=token %}
+
+Se não for você, ignore este email!
+
+Obrigado.
+
+{% endautoescape %}

@@ -1,0 +1,21 @@
+.font-green {
+    color: rgb(83, 185, 83);
+    font-size: larger;
+}
+
+.font-red {
+    color: rgb(235, 70, 70);
+    font-size: larger;
+}
+
+.font-smaller {
+    font-size: smaller;
+}
+
+.round-icon {
+    border-radius: 50%;
+  }
+
+
+
+
