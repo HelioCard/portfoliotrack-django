@@ -69,6 +69,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'portfolio.context_processors.upload_file_form',
+                'portfoliotrack.context_processors.get_date',
             ],
         },
     },
