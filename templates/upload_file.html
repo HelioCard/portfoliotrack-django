@@ -18,12 +18,21 @@
         </div>
       </div>
 
+
+
       <h3> Processando transações ...</h3>
       <div class="d-flex align-items-center justify-content-center" style="min-height: 80vh;">
         <span class="spinner-grow text-info" style="width: 5rem; height: 5rem;" role="status">
           <span class="visually-hidden">Loading...</span>
         </span>
+        <script>
+          const checkProcessRawTransactionsStatusURL = "{% url 'check_process_raw_transactions_status' task_id %}"
+          const redirectDashboardURL = "{% url 'dashboard' %}"
+        </script>
+        <script src="{% static 'js/getProcessTransactionsStatus.js' %}"></script>
       </div>
+      
+
       
 
     </div>

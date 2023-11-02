@@ -167,7 +167,7 @@ class TransactionsFromFile(DataFromYFinance):
             print(f'Erro ao adicionar as transações de splits/agrupamentos: {e}')
             return e
 
-    def process_raw_trasactions(self, transactions) -> list:
+    def process_raw_transactions(self, transactions) -> list:
         print('Processing...')
         print()
 

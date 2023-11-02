@@ -1,3 +1,3 @@
 setInterval(function () {
     resizeAllCharts()
-  }, 500);
+  }, 1000);

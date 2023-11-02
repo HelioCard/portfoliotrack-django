@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import UploadFormFile
 from django.contrib import messages
-from tasks.tasks import process_trasactions
+from tasks.tasks import process_raw_transactions
 from helpers.TransactionsFromFile import TransactionsFromFile
 
 # Create your views here.
@@ -13,7 +13,7 @@ def upload_file(request):
             if file.name.endswith('.xlsx'):
                 
                 transactions_list = TransactionsFromFile().load_file(file)
-                task = process_trasactions.delay(transactions_list)
+                task = process_raw_transactions.delay(transactions_list)
                 
                 messages.success(request, f'Processando transações do arquivo "{file}". Aguarde ...')
                 context = {
