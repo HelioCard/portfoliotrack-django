@@ -6,12 +6,10 @@ from django.contrib.auth.decorators import login_required
 def login(request):
     if request.method == 'POST':
         email = request.POST['email']
-        print(email)
         password = request.POST['password']
-        print(password)
 
         user = auth.authenticate(email=email, password=password)
-        print(user)
+
         if user is not None:
             auth.login(request, user)
             messages.success(request, 'Login efetuado com sucesso!')

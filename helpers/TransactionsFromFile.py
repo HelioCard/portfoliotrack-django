@@ -34,7 +34,7 @@ class TransactionsFromFile(DataFromYFinance):
             
             # Valida a coluna "Data"
             try:
-                data['date'] = data['date'].to_pydatetime().date() # Converte timestamp em objeto datetime
+                data['date'] = data['date'].date() # Converte timestamp em objeto datetime
             except:
                 raise ValueError('Dados corrompidos na coluna "Data". Verifique se há valores inválidos de data.')
             
@@ -167,16 +167,13 @@ class TransactionsFromFile(DataFromYFinance):
             print(f'Erro ao adicionar as transações de splits/agrupamentos: {e}')
             return e
 
-    def load_transactions_from_excel(self, file) -> list:
+    def process_trasactions(self, transactions) -> list:
         print('Processing...')
         print()
 
         try:
-            print(f'Loading file "{file}"')
-            transactions_list = self.load_file(file)
-            
             print('Validating data...')
-            transactions_list = self._validate_trasactions_data(transactions_list)
+            transactions_list = self._validate_trasactions_data(transactions)
             print()
             
             print('Extracting tickers list...')
@@ -198,8 +195,7 @@ class TransactionsFromFile(DataFromYFinance):
             print('Done')
             return portifolio_data, transactions_list, asset_history_data
         except Exception as e:
-            return e, e, e
-    
+            return e
 
 
     ##############################
