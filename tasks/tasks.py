@@ -12,6 +12,6 @@ def process_raw_transactions(transactions_list):
         else:
             raise ValueError(result)
     except Exception as e:
-        return f'ERROR: {e}'
+        raise Exception(f'ERROR: {e}')
 
 

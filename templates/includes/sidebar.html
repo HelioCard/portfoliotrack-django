@@ -113,7 +113,7 @@
           <form method="post" action="{% url 'upload_file' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
-                <label for="fileInput">Selecione um arquivo:</label>
+                
                 <div class="custom-file">
                     <!-- <input type="file" class="custom-file-input form-control" id="fileInput" accept=".xlsx" name="file" required> -->
                     {{ upload_file_form }}

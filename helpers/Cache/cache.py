@@ -10,4 +10,8 @@ session = CachedLimiterSession(
     limiter=Limiter(RequestRate(2, Duration.SECOND*1)),  # max 2 requests per 1 second(S)
     bucket_class=MemoryQueueBucket,
     backend=SQLiteCache("yfinance.cache"),
+    expire_after=3600,
+
 )
+
+session.cache.delete(expired=True)
