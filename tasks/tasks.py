@@ -5,8 +5,7 @@ from helpers.TransactionsFromFile import TransactionsFromFile
 
 @shared_task
 def clean_expired_tasks():
-    time_to_expire = timezone.now() - timezone.timedelta(minutes=60)
-    print(time_to_expire)
+    time_to_expire = timezone.datetime.now() - timezone.timedelta(minutes=30)
     expired_tasks = TaskResult.objects.filter(date_done__lt=time_to_expire)
     count = expired_tasks.count()
     expired_tasks.delete()

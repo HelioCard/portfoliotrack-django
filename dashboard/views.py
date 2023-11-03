@@ -8,8 +8,8 @@ def dashboard(request):
     return render(request, 'dashboard.html')
 
 @login_required(login_url='login')
-def get_portfolio_performance_chart(_request):
-    chart_data = {
+def get_dashboard_data(request):
+    performance_data = {
         'title': {
             'text': 'Aportes x Patrimônio',
             'left': 'center',
@@ -58,11 +58,8 @@ def get_portfolio_performance_chart(_request):
             }
         ]
     }
-    return JsonResponse(chart_data)
 
-@login_required(login_url='login')
-def get_category_chart(_request):
-    chart_data = {
+    category_data = {
         'title': {
             'text': 'Exposição por Categorias',
             'left': 'center'
@@ -107,11 +104,8 @@ def get_category_chart(_request):
             }
         ]
     }
-    return JsonResponse(chart_data)
-
-@login_required(login_url='login')
-def get_asset_chart(_request):
-    data_chart = {
+    
+    asset_data = {
         'title': {
             'text': 'Exposição por Ativos',
             'left': 'center'
@@ -163,4 +157,11 @@ def get_asset_chart(_request):
             }
         ]
     }
-    return JsonResponse(data_chart)
+    context = {
+        'performance_data': performance_data,
+        'category_data': category_data,
+        'asset_data': asset_data,
+    }
+    return JsonResponse(context)
+
+    

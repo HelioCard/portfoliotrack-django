@@ -14,4 +14,4 @@ session = CachedLimiterSession(
 
 )
 
-session.cache.delete(expired=True)
+session.cache.delete(expired=True) # TODO: Implementar tarefa agendada para isso
