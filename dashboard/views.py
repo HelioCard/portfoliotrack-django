@@ -2,6 +2,9 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
+from portfolio.models import Transactions, Portfolio
+from helpers.TransactionsFromFile import TransactionsFromFile
+
 # Create your views here.
 @login_required(login_url='login')
 def dashboard(request):
@@ -9,6 +12,17 @@ def dashboard(request):
 
 @login_required(login_url='login')
 def get_dashboard_data(request):
+    portfolio = Portfolio(user_id=request.user.id)
+    transactions = Transactions.objects.filter(portfolio__user=portfolio.user, ticker='B3SA3')
+    # transactions = Transactions.objects.all()
+    print(transactions.count())
+    transactions_list = list(transactions.values())
+    tickers_list = TransactionsFromFile().extract_tickers_list(transactions_list)
+    print(tickers_list)
+    portfolio, asset_history = TransactionsFromFile().calculate_portfolio_balance(transactions_list, tickers_list)
+    print(portfolio)
+    print(asset_history)
+
     performance_data = {
         'title': {
             'text': 'Aportes x Patrimônio',

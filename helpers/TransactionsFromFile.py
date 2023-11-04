@@ -75,7 +75,7 @@ class TransactionsFromFile(DataFromYFinance):
                     raise ValueError(f'Dados corrompidos na coluna "Tipo", Linha {i+2}: {data["type"]}.')
             except Exception as e:
                 raise ValueError(e) from e
-            
+
         return data_list
 
     def extract_tickers_list(self, transactions_list):
@@ -188,12 +188,12 @@ class TransactionsFromFile(DataFromYFinance):
             transactions_list = self.list_of_dicts_order_by(list_of_dicts=transactions_list, sort_keys=['date', 'ticker', 'operation'], reversed_output=False)
             print()
 
-            print('Processing transactions...')
-            portifolio_data, asset_history_data = self.calculate_portfolio_balance(transactions_list, tickers_list)
-            print()
+            # print('Processing transactions...')
+            # portifolio_data, asset_history_data = self.calculate_portfolio_balance(transactions_list, tickers_list)
+            # print()
 
             print('Done')
-            return portifolio_data, transactions_list, asset_history_data
+            return transactions_list
         except Exception as e:
             return e
 

@@ -7,7 +7,7 @@ class Portfolio(models.Model):
     dividends_target = models.FloatField(default=0.0, blank=False)
 
     def __str__(self) -> str:
-        return self.user.first_name
+        return self.user.email
     
 sort_of_choices = [
         ('AÇÕES', 'AÇÕES'),
@@ -43,4 +43,4 @@ class PortfolioItems(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"{self.portfolio} - {self.ticker}"
+        return f"{self.portfolio} - {self.ticker} - {self.quantity}"
