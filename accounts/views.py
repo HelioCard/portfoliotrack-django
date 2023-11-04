@@ -29,6 +29,9 @@ def login(request):
         else:
             messages.error(request, 'Email e/ou Senha incorretos!')
             return redirect('login')
+    else:
+        if request.user.id:
+            return redirect('dashboard')
 
     return render(request, 'accounts/login.html')
 
@@ -72,8 +75,10 @@ def register(request):
             messages.success(request, f'Obrigado pelo cadastro em nosso site! Enviamos o link de ativação para {email}')
             return redirect('register')
     else:
-        form = RegistrationForm()
-
+        if request.user.id:
+            return redirect('dashboard')
+    
+    form = RegistrationForm()
     context = {
         'form': form,
     }

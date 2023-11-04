@@ -82,7 +82,45 @@ class TransactionsFromFile(DataFromYFinance):
         tickers_set = {transaction['ticker'] for transaction in transactions_list}
         return tickers_set
 
-    def calculate_portfolio_balance(self, transactions_list, tickers_list):
+    def _add_splits_transactions(self, transactions_list, tickers_list):
+        try:
+            transactions_list_added_splits_bonus = transactions_list
+            for ticker in tickers_list:
+                print(f'Analizing {ticker}')
+                
+                splits_bonus = self.load_splits_groupments(ticker)
+                
+                # Filtra os dados de transação do ticker:
+                transactions_of_ticker = [transaction for transaction in transactions_list if transaction['ticker'] == ticker]
+                
+                # Captura a operação mais antiga
+                first_transaction = min(transactions_of_ticker, key=lambda x: x['date'])
+
+                # Se houver dados de splits:
+                if splits_bonus:
+                    for split_bonus in splits_bonus:
+                        # Se a data da primeira transação no ativo for mais velha que a data do split:
+                        if split_bonus['date'] > first_transaction['date']:
+                            transactions_list_added_splits_bonus.append(
+                                {
+                                    'date': split_bonus['date'],
+                                    'ticker': ticker,
+                                    'operation': 'A',
+                                    'quantity': 0,
+                                    'unit_price': split_bonus['ratio'],
+                                    'type': 'Split/Agrup',
+                                }
+                            )
+                            print(f'{ticker} splits/groupments added')
+                
+                
+                        
+            return transactions_list_added_splits_bonus
+        except Exception as e:
+            print(f'Erro ao adicionar as transações de splits/agrupamentos: {e}')
+            return e
+    
+    def calculate_portfolio_balance_and_asset_history(self, transactions_list, tickers_list):
         
         # Inicialize o portfólio com todos os tickers e valores iniciais para serem rastreados
         portfolio = {
@@ -128,44 +166,6 @@ class TransactionsFromFile(DataFromYFinance):
             asset_history[ticker].append(temp_dict)
         
         return portfolio, asset_history
-
-    def _add_splits_transactions(self, transactions_list, tickers_list):
-        try:
-            transactions_list_added_splits_bonus = transactions_list
-            for ticker in tickers_list:
-                print(f'Analizing {ticker}')
-                
-                splits_bonus = self.load_splits_groupments(ticker)
-                
-                # Filtra os dados de transação do ticker:
-                transactions_of_ticker = [transaction for transaction in transactions_list if transaction['ticker'] == ticker]
-                
-                # Captura a operação mais antiga
-                first_transaction = min(transactions_of_ticker, key=lambda x: x['date'])
-
-                # Se houver dados de splits:
-                if splits_bonus:
-                    for split_bonus in splits_bonus:
-                        # Se a data da primeira transação no ativo for mais velha que a data do split:
-                        if split_bonus['date'] > first_transaction['date']:
-                            transactions_list_added_splits_bonus.append(
-                                {
-                                    'date': split_bonus['date'],
-                                    'ticker': ticker,
-                                    'operation': 'A',
-                                    'quantity': 0,
-                                    'unit_price': split_bonus['ratio'],
-                                    'type': 'Split/Agrup',
-                                }
-                            )
-                            print(f'{ticker} splits/groupments added')
-                
-                
-                        
-            return transactions_list_added_splits_bonus
-        except Exception as e:
-            print(f'Erro ao adicionar as transações de splits/agrupamentos: {e}')
-            return e
 
     def process_raw_transactions(self, transactions) -> list:
         print('Processing...')

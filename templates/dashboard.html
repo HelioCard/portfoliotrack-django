@@ -111,7 +111,7 @@
 
   {% include 'includes/message.html' %}
 
-  <script> const DashBoardDataURL = "{% url 'get_dashboard_data' %}" </script>
+  <script> var DashBoardDataURL = "{% url 'get_dashboard_data' %}" </script>
   <script src="{% static 'js/charts.js' %}" type="text/javascript"></script>
   <script src="{% static 'js/resizeAllCharts.js' %}" async></script>
   

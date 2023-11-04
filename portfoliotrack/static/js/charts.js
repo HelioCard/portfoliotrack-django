@@ -1,5 +1,3 @@
-
-let categoryChart, assetChart, portfolioPerformanceChart;
 const THEME = 'macarons'
 
 const getDashboardData = async (url) => {
@@ -11,7 +9,6 @@ const getDashboardData = async (url) => {
     return await response.json();
   } catch (ex) {
     alert(ex);
-    throw ex; // Rejoga o erro para que ele possa ser tratado posteriormente, se necessário
   }
 }
 
@@ -20,14 +17,13 @@ const getDashboardData = async (url) => {
     const data = await getDashboardData(DashBoardDataURL);
     const { asset_data, category_data, performance_data } = data;
 
-    window.addEventListener('load', async () => {
-      assetChart = echarts.init(document.getElementById('asset_chart'), THEME);
-      assetChart.setOption(asset_data)
-      categoryChart = echarts.init(document.getElementById('category_chart'), THEME);
-      categoryChart.setOption(category_data)
-      portfolioPerformanceChart = echarts.init(document.getElementById('performance_chart'), THEME);
-      portfolioPerformanceChart.setOption(performance_data)      
-    });
+    var assetChart = echarts.init(document.getElementById('asset_chart'), THEME);
+    assetChart.setOption(asset_data)
+    var categoryChart = echarts.init(document.getElementById('category_chart'), THEME);
+    categoryChart.setOption(category_data)
+    var portfolioPerformanceChart = echarts.init(document.getElementById('performance_chart'), THEME);
+    portfolioPerformanceChart.setOption(performance_data)      
+
     resizeAllCharts()
   } catch (error) {
     console.error("Ocorreu um erro:", error);

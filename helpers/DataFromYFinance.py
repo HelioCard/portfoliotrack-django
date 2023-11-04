@@ -255,7 +255,7 @@ class DataFromYFinance:
         except Exception as e:
             return e
 
-    def load_history_data_of_tickers_list(self, list_of_tickers: list, initial_date: date, ending_date: date=None):
+    def load_history_data_of_tickers_list(self, list_of_tickers, initial_date: date, ending_date: date=None):
         if ending_date is None: ending_date = date.today()
         list_of_tickers = [ticker.upper() + '.SA' for ticker in list_of_tickers]
         return self._get_history_data(list_of_tickers, initial_date, ending_date)
