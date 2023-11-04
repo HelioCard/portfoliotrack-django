@@ -1,4 +1,5 @@
-const THEME = 'macarons'
+const THEME = 'westeros'
+var assetChart, categoryChart, portfolioPerformanceChart
 
 const getDashboardData = async (url) => {
   try {
@@ -17,11 +18,11 @@ const getDashboardData = async (url) => {
     const data = await getDashboardData(DashBoardDataURL);
     const { asset_data, category_data, performance_data } = data;
 
-    var assetChart = echarts.init(document.getElementById('asset_chart'), THEME);
+    assetChart = echarts.init(document.getElementById('asset_chart'), THEME);
     assetChart.setOption(asset_data)
-    var categoryChart = echarts.init(document.getElementById('category_chart'), THEME);
+    categoryChart = echarts.init(document.getElementById('category_chart'), THEME);
     categoryChart.setOption(category_data)
-    var portfolioPerformanceChart = echarts.init(document.getElementById('performance_chart'), THEME);
+    portfolioPerformanceChart = echarts.init(document.getElementById('performance_chart'), THEME);
     portfolioPerformanceChart.setOption(performance_data)      
 
     resizeAllCharts()
@@ -29,6 +30,7 @@ const getDashboardData = async (url) => {
     console.error("Ocorreu um erro:", error);
   }
 })();
+
 
 function resizeAllCharts() {
   if (portfolioPerformanceChart && categoryChart && assetChart) {

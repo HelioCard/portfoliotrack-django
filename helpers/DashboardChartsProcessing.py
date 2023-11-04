@@ -1,6 +1,6 @@
 from portfolio.models import Transactions
 from .TransactionsFromFile import TransactionsFromFile
-from datetime import date
+from datetime import date as dt
 
 class DashboardChartsProcessing(TransactionsFromFile):
     def __init__(self):
@@ -38,23 +38,34 @@ class DashboardChartsProcessing(TransactionsFromFile):
         first_transaction = min(transactions_list, key=lambda x: x['date'])
         first_transaction_date = first_transaction['date']
 
-        history_data = TransactionsFromFile().load_history_data_of_tickers_list(list_of_tickers=tickers_list, initial_date=first_transaction_date)
+        history_data = TransactionsFromFile().load_history_data_of_tickers_list(list_of_tickers=tickers_list, initial_date=first_transaction_date, interval='1mo')
         
+
+        performance_data = {
+            'date': [],
+            'contribution': [],
+            'equity': [],
+        }
         for ticker, fulldata in history_data.items():
-            for i, data in enumerate(fulldata):
+            for data in fulldata:
+                
                 values = self.get_values_in_a_date(data['date'], asset_history[ticker])
-                print(f'Data: {data["date"]} - Quantidade: {values["quantity"]} - Preço Médio: {values["average_price"]}')
+                date = dt.strftime(data['date'], '%d/%m/%Y')
+                contribution = values['quantity'] * values['average_price']
+                equity = values['quantity'] * data['close']
 
+                performance_data['date'].append(date)
+                performance_data['contribution'].append(contribution)
+                performance_data['equity'].append(equity)
 
-        # performance_data = {
-        #     'date': [],
-        #     'contribution': [],
-        #     'equity': [],
-        # }
+                # Se houver splits ou grupamentos, atualiza o valor do patrimonio porque o preço de fechamento está ajustado 
+                # e não reflete o preço real da época:
+                if data['split_groupment'] > 0.0: 
+                    for i, equity_value in enumerate(performance_data['equity']):
+                        performance_data['equity'][i] *= data['split_groupment']
 
-        # for ticker, fulldata in history_data.items():
-        #     for data in fulldata:
-        #         performance_data['date'].append(date.strftime(data['date'], '%d/%m/%Y'))
+        print(performance_data)
+        return performance_data
 
         
         

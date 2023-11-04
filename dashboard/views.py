@@ -13,10 +13,10 @@ def dashboard(request):
 @login_required(login_url='login')
 def get_dashboard_data(request):
     
-    performance_data____ = DashboardChartsProcessing().get_performance_chart_data(request.user)
+    performance_data = DashboardChartsProcessing().get_performance_chart_data(request.user)
        
 
-    performance_data = {
+    performance_options = {
         'title': {
             'text': 'Aportes x Patrimônio',
             'left': 'center',
@@ -37,7 +37,7 @@ def get_dashboard_data(request):
     
         'xAxis': {
             'type': 'category',
-            'data': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            'data': performance_data['date'],
         },
         'yAxis': {
             'type': 'value'
@@ -46,22 +46,21 @@ def get_dashboard_data(request):
             
             {
                 'name': 'Aportes',
-                'type': 'bar',
-                'data': [200, 230, 230, 230, 240, 300, 410],
-                'itemStyle': {
-                    'barBorderRadius': [4,4,0,0],
+                'type': 'line',
+                'data': performance_data['contribution'],
+                'smooth': False,
+                # 'itemStyle': {
+                #     'barBorderRadius': [4,4,0,0],
                     
-                },
+                # },
             },
         
             {
                 'name': 'Patrimônio',
                 'type': 'line',
                 'yAxisIndex': 0,
-                'data': [250, 280, 230, 270, 290, 435, 475.75],
-                'smooth': True,
-                
-                
+                'data': performance_data['equity'],
+                'smooth': True,        
             }
         ]
     }
@@ -165,7 +164,7 @@ def get_dashboard_data(request):
         ]
     }
     context = {
-        'performance_data': performance_data,
+        'performance_data': performance_options,
         'category_data': category_data,
         'asset_data': asset_data,
     }

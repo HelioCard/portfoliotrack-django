@@ -211,9 +211,9 @@ class DataFromYFinance:
     ###### GET HISTORY DATA   ######
     ################################
 
-    def _get_history_data(self, list_of_tickers, initial_date, ending_date):
+    def _get_history_data(self, list_of_tickers, initial_date, ending_date, interval):
         try:
-            raw_data = yf.download(list_of_tickers, start=initial_date, end=ending_date, group_by='ticker', repair=True, actions=True, session=session)
+            raw_data = yf.download(list_of_tickers, start=initial_date, end=ending_date, group_by='ticker', interval=interval, repair=True, actions=True, session=session)
             
             final_dict: dict = {}
             for ticker in list_of_tickers: # Percorre a lista de tickers
@@ -243,8 +243,25 @@ class DataFromYFinance:
                         'date': data[0].date(),
                         'close': data[1],
                         'dividends': data[2],
-                        'split_groupment': 0.0 if ticker == 'B3SA3.SA' and data[0].date() == dt.date(2021, 5, 6) else data[3], # correção manual de um evento (dia 06/05/2021) inexistente de split adicionado para o ticker 'B3SA3.SA'
+                        'split_groupment': data[3],
                     }
+
+                    # correção manual de um evento
+                    # (dia 06/05/2021 no intervalo '1d' )
+                    # (dia 03/05/2021 no intervalo '1wk' )
+                    # (dia 01/05/2021 no intervalo '1mo' )
+                    # inexistente de split adicionado para o ticker 'B3SA3.SA':
+                    if ticker == 'B3SA3.SA':
+                        if interval=='1d':
+                            if data[0].date() == dt.date(2021, 5, 6):
+                                temp_dict['split_groupment'] = 0.0
+                        elif interval == '1wk':
+                            if data[0].date() == dt.date(2021, 5, 3):
+                                temp_dict['split_groupment'] = 0.0
+                        elif interval == '1mo':
+                            if data[0].date() == dt.date(2021, 5, 1):
+                                temp_dict['split_groupment'] = 3.0
+
 
                     if ticker[:-3] not in final_dict:
                         final_dict[ticker[:-3]] = []
@@ -255,10 +272,10 @@ class DataFromYFinance:
         except Exception as e:
             return e
 
-    def load_history_data_of_tickers_list(self, list_of_tickers, initial_date: date, ending_date: date=None):
+    def load_history_data_of_tickers_list(self, list_of_tickers: list, initial_date: date, ending_date: date=None, interval='1d'):
         if ending_date is None: ending_date = date.today()
         list_of_tickers = [ticker.upper() + '.SA' for ticker in list_of_tickers]
-        return self._get_history_data(list_of_tickers, initial_date, ending_date)
+        return self._get_history_data(list_of_tickers, initial_date, ending_date, interval)
 
 
 
