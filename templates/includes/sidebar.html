@@ -68,7 +68,7 @@
             <div class="collapse show" id="transactions-collapse">
               <ul class="list-unstyled">
                 <li class=""><a href="#" class="d-flex side-btn-list">Visualizar</a></li>
-                <li class=""><a href="#" class="d-flex side-btn-list">Adicionar</a></li>
+                <li class=""><a href="#" data-bs-toggle="modal" data-bs-target="#register_transaction_modal" class="d-flex side-btn-list">Adicionar</a></li>
                 <li class=""><a href="#" data-bs-toggle="modal" data-bs-target="#load_file_modal" class="d-flex side-btn-list">Carregar de Arquivo</a></li>
               </ul>
             </div>
@@ -100,7 +100,7 @@
   <!-- Sidebar ends --------------------------------------------------->
 
 
-  <!-- Modal begins--------------------------------------------------- -->
+  <!-- Modal (load file) begins--------------------------------------------------- -->
   <div class="modal fade" id="load_file_modal" tabindex="-1" aria-labelledby="ModalLoadFile" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -135,4 +135,68 @@
       </div>
     </div>
   </div>
-  <!-- Modal ends--------------------------------------------------- -->
+  <!-- Modal (load file) ends--------------------------------------------------- -->
+
+
+  <!-- Modal (register transaction) begins--------------------------------------------------- -->
+  <div class="modal fade" id="register_transaction_modal" tabindex="-1" aria-labelledby="ModalRegisterTransaction" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Cadastrar Transação</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body my-2">
+          <form method="POST" action="{% url 'register_transaction' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+    
+                <div class="form-row d-flex mb-3 justify-content-center">
+                  <div class="form-floating flex-grow-1 mx-2">
+                    {{register_transaction_form.date}}
+                    <label>Data</label>
+                  </div>
+
+                  <div class="form-floating flex-grow-1 mx-2">
+                    {{register_transaction_form.ticker}}
+                    <label>Ticker</label>
+                  </div>
+                </div>
+                
+                <div class="form-row d-flex mb-3 justify-content-center">
+                  <div class="form-floating flex-grow-1 mx-2">
+                    {{register_transaction_form.operation}}
+                    <label>Operação</label>
+                  </div>
+
+                  <div class="form-floating flex-grow-1 mx-2">
+                    {{register_transaction_form.sort_of}}
+                    <label>Tipo</label>
+                  </div>
+                </div>
+
+                <div class="form-row d-flex mb-3 justify-content-center">
+                  <div class="form-floating flex-grow-1 mx-2">
+                    {{register_transaction_form.quantity}}
+                    <label>Quantidade</label>
+                  </div>
+
+                  <div class="form-floating flex-grow-1 mx-2">
+                    {{register_transaction_form.unit_price}}
+                    <label>Preço Unitário</label>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-3 mx-2 gap-3">
+                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="" style="border: none; color: white; background-color: #01b3b6; border-radius: 6px; padding: 10px 20px;">Salvar Transação</button>
+                </div>
+          </form>  
+        </div>
+
+        
+
+      </div>
+    </div>
+  </div>
+  <!-- Modal (register transaction) ends--------------------------------------------------- -->

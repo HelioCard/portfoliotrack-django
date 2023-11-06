@@ -84,9 +84,9 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
                 # Atualiza o dicionário com o ticker e os dados obtidos acima:
                 performance_data[ticker]['date'].append(date)
-                performance_data[ticker]['contribution'].append(round(contribution, 2))
-                performance_data[ticker]['equity'].append(round(equity, 2))
-                performance_data[ticker]['dividends'].append(round(dividends, 2))
+                performance_data[ticker]['contribution'].append(contribution)
+                performance_data[ticker]['equity'].append(equity)
+                performance_data[ticker]['dividends'].append(dividends)
 
                 '''Se houver splits ou grupamentos, atualiza o valor da lista de patrimonios obtidos até o momento,
                 porque o preço de fechamento (que vem do yfinance) está ajustado e não reflete o preço real da época:'''
@@ -109,11 +109,9 @@ class DashboardChartsProcessing(TransactionsFromFile):
         
         for key, values in performance_data.items():
             for key2 in ['contribution', 'equity', 'dividends']:
-                final_performance_data[key2] = [x + y for x, y in zip(final_performance_data[key2], values[key2])]
+                final_performance_data[key2] = [round(x + y, 2) for x, y in zip(final_performance_data[key2], values[key2])]
                 
-
-        
-        print(final_performance_data)
+  
         return final_performance_data
 
         

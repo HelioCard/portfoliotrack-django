@@ -18,14 +18,14 @@ def get_dashboard_data(request):
 
     performance_options = {
         'title': {
-            'text': 'Aportes x Patrimônio',
+            'text': 'Aportes Acum. x Patrimônio x Dividendos Acum.',
             'left': 'center',
         },
         'tooltip': {
             'trigger': 'axis'
         },
         'legend': {
-            'data': ['Aportes', 'Patrimônio', 'Dividendos Acumulados'],
+            'data': ['Aportes Acumulados', 'Patrimônio', 'Dividendos Acumulados'],
             'top': 30,
         },
         'grid': {
@@ -45,7 +45,7 @@ def get_dashboard_data(request):
         'series': [
             
             {
-                'name': 'Aportes',
+                'name': 'Aportes Acumulados',
                 'type': 'line',
                 'data': performance_data['contribution'],
                 'smooth': False,

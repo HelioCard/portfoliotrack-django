@@ -16,7 +16,7 @@ sort_of_choices = [
 
 operation_choices = [
         ('C', 'COMPRA'),
-        ('V', 'VENDA')
+        ('V', 'VENDA'),
     ]
 
 class Transactions(models.Model):

@@ -96,6 +96,10 @@ class TransactionsFromFile(DataFromYFinance):
                 # Captura a operação mais antiga
                 first_transaction = min(transactions_of_ticker, key=lambda x: x['date'])
 
+                # Verifica erro no ticker:
+                if not isinstance(splits_bonus, list):
+                    raise Exception('Ticker inválido ou não listado!')
+
                 # Se houver dados de splits:
                 if splits_bonus:
                     for split_bonus in splits_bonus:
@@ -118,7 +122,7 @@ class TransactionsFromFile(DataFromYFinance):
             return transactions_list_added_splits_bonus
         except Exception as e:
             print(f'Erro ao adicionar as transações de splits/agrupamentos: {e}')
-            return e
+            raise Exception(e)
     
     def calculate_portfolio_balance_and_asset_history(self, transactions_list, tickers_list):
         

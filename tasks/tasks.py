@@ -19,8 +19,7 @@ def process_raw_transactions(transactions_list, user_id):
     try:
         result = TransactionsFromFile().process_raw_transactions(transactions_list)
         if isinstance(result, list):
-            
-            # Processar os dados aqui...
+
             portfolio = Portfolio.objects.get(user_id=user_id)
             fulldataset = []
             for data in result:
