@@ -25,7 +25,7 @@ def get_dashboard_data(request):
             'trigger': 'axis'
         },
         'legend': {
-            'data': ['Aportes', 'Patrimônio'],
+            'data': ['Aportes', 'Patrimônio', 'Dividendos Acumulados'],
             'top': 30,
         },
         'grid': {
@@ -49,6 +49,7 @@ def get_dashboard_data(request):
                 'type': 'line',
                 'data': performance_data['contribution'],
                 'smooth': False,
+                'step': 'end',
                 # 'itemStyle': {
                 #     'barBorderRadius': [4,4,0,0],
                     
@@ -60,7 +61,15 @@ def get_dashboard_data(request):
                 'type': 'line',
                 'yAxisIndex': 0,
                 'data': performance_data['equity'],
-                'smooth': True,        
+                'smooth': True,  
+            },
+            {
+                'name': 'Dividendos Acumulados',
+                'type': 'line',
+                'step': 'end',
+                'yAxisIndex': 0,
+                'data': performance_data['dividends'],
+                'smooth': False,  
             }
         ]
     }

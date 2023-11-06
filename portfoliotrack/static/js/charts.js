@@ -1,4 +1,4 @@
-const THEME = 'westeros'
+const THEME = 'infographic'
 var assetChart, categoryChart, portfolioPerformanceChart
 
 const getDashboardData = async (url) => {
