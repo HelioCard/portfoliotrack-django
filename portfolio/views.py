@@ -50,8 +50,8 @@ def register_transaction(request):
             transaction = [
                 {
                     'date': datetime.datetime.strptime(request.POST['date'], '%Y-%m-%d'),
-                    'ticker': request.POST['ticker'],
-                    'operation': request.POST['operation'],
+                    'ticker': request.POST['ticker'].upper(),
+                    'operation': request.POST['operation'].upper(),
                     'quantity': int(request.POST['quantity']),
                     'unit_price': float(request.POST['unit_price']),
                     'sort_of': request.POST['sort_of'],
@@ -62,7 +62,7 @@ def register_transaction(request):
                         
             task = process_raw_transactions.delay(transaction, user_id)
             
-            messages.success(request, f'Processando transações. Aguarde ...')
+            messages.success(request, f"Processando transação de {transaction[0]['operation']} de {transaction[0]['ticker']}. Aguarde ...")
             context = {
                 'task_id': task.task_id,
             }

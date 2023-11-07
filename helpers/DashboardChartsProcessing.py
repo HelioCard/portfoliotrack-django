@@ -77,7 +77,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                   '''
                 if np.isnan(data['close']):
                     date = dt.strftime(data['date'], '%d/%m/%Y')
-                    contribution = 0.
+                    contribution = 0.0
                     equity = 0.0
                     dividends = 0.0
                 else:

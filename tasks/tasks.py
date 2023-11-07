@@ -20,7 +20,6 @@ def process_raw_transactions(raw_transactions_list, user_id):
         existing_events = Transactions.objects.filter(portfolio__user_id=user_id, operation="A")
         existing_events_list = list(existing_events.values())
         
-
         result = TransactionsFromFile().process_raw_transactions(raw_transactions_list, existing_events_list)
         
         if isinstance(result, list):
