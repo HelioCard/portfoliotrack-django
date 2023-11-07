@@ -1,8 +1,7 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from portfolio.models import Transactions, Portfolio
 from helpers.DashboardChartsProcessing import DashboardChartsProcessing
 
 # Create your views here.
@@ -12,9 +11,9 @@ def dashboard(request):
 
 @login_required(login_url='login')
 def get_dashboard_data(request):
-    
-    performance_data = DashboardChartsProcessing().get_performance_chart_data(request.user)
-       
+    charts = DashboardChartsProcessing(user=request.user, ticker=None, interval='1mo')
+
+    performance_data = charts.get_performance_chart_data()
 
     performance_options = {
         'title': {

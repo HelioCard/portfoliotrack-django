@@ -4,9 +4,34 @@ from datetime import date as dt
 import numpy as np
 
 class DashboardChartsProcessing(TransactionsFromFile):
-    def __init__(self):
+    def __init__(self, user, ticker=None, interval='1mo'):
         super().__init__()
+        self.user = user
+        self.ticker = ticker
+        self.interval = interval
+
+        self.transactions_list = self._get_transactions_list()
+        self.tickers_list = self.extract_tickers_list(self.transactions_list)
+        self.portfolio_balance = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list) # -> portfolio e asset_history
+        self.portfolio = self.portfolio_balance[0] # Index 0 -> somente portfolio
+        self.asset_history = self.portfolio_balance[1] # Index 1 -> somente asset_history
+        self.first_transaction_date = self._get_first_transaction_date()
+        self.history_data = self.load_history_data_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=self.first_transaction_date, interval=self.interval)
     
+    def _get_transactions_list(self):
+        if self.ticker is None:
+            result = Transactions.objects.filter(portfolio__user=self.user)
+            list_result = list(result.values())
+            return self.list_of_dicts_order_by(list_result, ['date', 'ticker', 'operation'])
+        else:
+            result = Transactions.objects.filter(portfolio__user=self.user, ticker=self.ticker)
+            list_result = list(result.values())
+            return self.list_of_dicts_order_by(list_result, ['date', 'ticker', 'operation'])
+    
+    def _get_first_transaction_date(self):
+        result = min(self.transactions_list, key=lambda x: x['date'])
+        return result['date']
+
     def get_values_in_a_date(self, date, asset_history):
         
         # Classifica a lista de dicionários com base na data
@@ -25,28 +50,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
         return values
 
-    def get_performance_chart_data(self, user, ticker=None):
-        # Extrai as transações do usuário. Pode ser um ticker específico ou todas elas:
-        if ticker is None:
-            transactions = Transactions.objects.filter(portfolio__user=user)
-        else:
-            transactions = Transactions.objects.filter(portfolio__user=user, ticker=ticker)
-        
-        # Processa as transações convertendo-as em listas e ordenando-as por data, ticker e operação
-        transactions_list = list(transactions.values())
-        transactions_list = TransactionsFromFile().list_of_dicts_order_by(transactions_list, ['date', 'ticker', 'operation'])
+    def get_performance_chart_data(self):
 
-        # Extrai a lista de tickers das transações e extrai o histórico de quantidade e preço médio ao longo do tempo:
-        tickers_list = TransactionsFromFile().extract_tickers_list(transactions_list)
-        portfolio_balance, asset_history = TransactionsFromFile().calculate_portfolio_balance_and_asset_history(transactions_list, tickers_list)
-        
-        # Extrai a data da transação mais antiga:
-        first_transaction = min(transactions_list, key=lambda x: x['date'])
-        first_transaction_date = first_transaction['date']
-
-        # Extrai o histórico de cotações no intervalo mensal de cada ativo:
-        history_data = TransactionsFromFile().load_history_data_of_tickers_list(list_of_tickers=tickers_list, initial_date=first_transaction_date, interval='1mo')
-        
         # Cria um dicionário que conterá o histórico de data, aportes acumulados, patrimônio e dividendos acumulados ao longo do tempo. Tudo isso de cada ativo:
         performance_data = {
             ticker: {
@@ -54,14 +59,14 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 'contribution': [],
                 'equity': [],
                 'dividends': [],    
-            } for ticker in history_data.keys()
+            } for ticker in self.history_data.keys()
         }
         
         # Percorre a lista de tickers
-        for ticker in tickers_list:
+        for ticker in self.tickers_list:
             dividends = 0
             # Percorre os dados históricos de cada ticker:
-            for data in history_data[ticker]:
+            for data in self.history_data[ticker]:
 
                 # Se não houver dados na data especificada, preencha os dados com a data e valores = 0.0
                 '''Se houver dados:
@@ -76,7 +81,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     equity = 0.0
                     dividends = 0.0
                 else:
-                    values = self.get_values_in_a_date(data['date'], asset_history[ticker])
+                    values = self.get_values_in_a_date(data['date'], self.asset_history[ticker])
                     date = dt.strftime(data['date'], '%d/%m/%Y')
                     contribution = values['quantity'] * values['average_price']
                     equity = values['quantity'] * data['close']
@@ -101,19 +106,19 @@ class DashboardChartsProcessing(TransactionsFromFile):
             'equity': [],
             'dividends': [],    
         }
+
+        # Inicializa o dicionário com todas as datas do histórico e com os valores zerados:
         for key, values in performance_data.items():
             final_performance_data['date'] = values['date']
             final_performance_data['contribution'] = [0.0] * len(values['contribution'])
             final_performance_data['equity'] = [0.0] * len(values['equity'])
             final_performance_data['dividends'] = [0.0] * len(values['dividends'])
         
+        # Consolida os valores da lista somando por data
         for key, values in performance_data.items():
             for key2 in ['contribution', 'equity', 'dividends']:
                 final_performance_data[key2] = [round(x + y, 2) for x, y in zip(final_performance_data[key2], values[key2])]
                 
-  
         return final_performance_data
 
         
-        
-    
