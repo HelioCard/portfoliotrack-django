@@ -54,7 +54,7 @@ def register_transaction(request):
                     'operation': request.POST['operation'],
                     'quantity': int(request.POST['quantity']),
                     'unit_price': float(request.POST['unit_price']),
-                    'type': request.POST['sort_of'],
+                    'sort_of': request.POST['sort_of'],
                 }
             ]
             

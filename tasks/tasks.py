@@ -17,11 +17,11 @@ def clean_expired_tasks():
 def process_raw_transactions(raw_transactions_list, user_id):
     clean_expired_tasks.delay() # ==>TODO: Criar uma tarefa agendada para executar uma vez por hora.
     try:
-        splits_groupments = Transactions.objects.filter(portfolio__user_id=user_id, operation="A")
-        print(list(splits_groupments.values()))
+        existing_events = Transactions.objects.filter(portfolio__user_id=user_id, operation="A")
+        existing_events_list = list(existing_events.values())
         
 
-        result = TransactionsFromFile().process_raw_transactions(raw_transactions_list)
+        result = TransactionsFromFile().process_raw_transactions(raw_transactions_list, existing_events_list)
         
         if isinstance(result, list):
 

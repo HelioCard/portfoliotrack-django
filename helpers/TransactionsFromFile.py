@@ -82,7 +82,7 @@ class TransactionsFromFile(DataFromYFinance):
         tickers_set = {transaction['ticker'] for transaction in transactions_list}
         return tickers_set
 
-    def _add_splits_transactions(self, transactions_list, tickers_list):
+    def _add_splits_transactions(self, transactions_list, tickers_list, existing_events_list):
         try:
             transactions_list_added_splits_bonus = transactions_list
             for ticker in tickers_list:
@@ -103,6 +103,23 @@ class TransactionsFromFile(DataFromYFinance):
                 # Se houver dados de splits:
                 if splits_bonus:
                     for split_bonus in splits_bonus:
+                        
+                        # Verifica se a transação já existe:
+                        event_exists = False
+                        for event in existing_events_list:
+                            if (event['date'] == split_bonus['date'] and
+                                event['ticker'] == split_bonus['ticker'] and
+                                event['unit_price'] == split_bonus['ratio'] and
+                                event['operation'] == 'A'
+                            ):
+                                event_exists = True
+                                break
+                        
+                        # Se a transação já existe, não cadastra e pula para o próximo evento:
+                        if event_exists:
+                            print(f'Evento já cadastrado: {split_bonus}')
+                            continue
+
                         # Se a data da primeira transação no ativo for mais velha que a data do split:
                         if split_bonus['date'] > first_transaction['date']:
                             transactions_list_added_splits_bonus.append(
@@ -171,13 +188,13 @@ class TransactionsFromFile(DataFromYFinance):
         
         return portfolio, asset_history
 
-    def process_raw_transactions(self, transactions) -> list:
+    def process_raw_transactions(self, raw_transactions, existing_events_list=[]) -> list:
         print('Processing...')
         print()
 
         try:
             print('Validating data...')
-            transactions_list = self._validate_trasactions_data(transactions)
+            transactions_list = self._validate_trasactions_data(raw_transactions)
             print()
             
             print('Extracting tickers list...')
@@ -185,7 +202,7 @@ class TransactionsFromFile(DataFromYFinance):
             print()
 
             print('Adding splits/groupments transactions...')
-            transactions_list = self._add_splits_transactions(transactions_list, tickers_list)
+            transactions_list = self._add_splits_transactions(transactions_list, tickers_list, existing_events_list)
             print()
             
             print('Sorting by date, ticker and operation...')
