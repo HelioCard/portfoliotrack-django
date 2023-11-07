@@ -25,9 +25,9 @@ def upload_file(request):
             if file.name.endswith('.xlsx'):
                 
                 user_id = request.user.id
-                transactions_list = TransactionsFromFile().load_file(file)
+                raw_transactions_list = TransactionsFromFile().load_file(file)
 
-                task = process_raw_transactions.delay(transactions_list, user_id)
+                task = process_raw_transactions.delay(raw_transactions_list, user_id)
                 
                 messages.success(request, f'Processando transações do arquivo "{file}". Aguarde ...')
                 context = {

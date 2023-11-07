@@ -14,16 +14,21 @@ def clean_expired_tasks():
     return f'SUCCESS: {count} tasks deleted!'
 
 @shared_task
-def process_raw_transactions(transactions_list, user_id):
+def process_raw_transactions(raw_transactions_list, user_id):
     clean_expired_tasks.delay() # ==>TODO: Criar uma tarefa agendada para executar uma vez por hora.
     try:
-        result = TransactionsFromFile().process_raw_transactions(transactions_list)
+        splits_groupments = Transactions.objects.filter(portfolio__user_id=user_id, operation="A")
+        print(list(splits_groupments.values()))
+        
+
+        result = TransactionsFromFile().process_raw_transactions(raw_transactions_list)
+        
         if isinstance(result, list):
 
             portfolio = Portfolio.objects.get(user_id=user_id)
             fulldataset = []
             for data in result:
-                tempdata = Transactions(portfolio=portfolio, date=data['date'], ticker=data['ticker'], operation=data['operation'], quantity=data['quantity'], unit_price=data['unit_price'], sort_of=data['type'])
+                tempdata = Transactions(portfolio=portfolio, date=data['date'], ticker=data['ticker'], operation=data['operation'], quantity=data['quantity'], unit_price=data['unit_price'], sort_of=data['sort_of'])
                 fulldataset.append(tempdata)
 
             Transactions.objects.bulk_create(fulldataset)

@@ -70,9 +70,9 @@ class TransactionsFromFile(DataFromYFinance):
             
             # Valida a coluna "Tipo"
             try:
-                data['type'] = data['type'].upper()
-                if data['type'] not in ['AÇÕES', 'FIIS']:
-                    raise ValueError(f'Dados corrompidos na coluna "Tipo", Linha {i+2}: {data["type"]}.')
+                data['sort_of'] = data['sort_of'].upper()
+                if data['sort_of'] not in ['AÇÕES', 'FIIS']:
+                    raise ValueError(f'Dados corrompidos na coluna "Tipo", Linha {i+2}: {data["sort_of"]}.')
             except Exception as e:
                 raise ValueError(e) from e
 
@@ -112,7 +112,7 @@ class TransactionsFromFile(DataFromYFinance):
                                     'operation': 'A',
                                     'quantity': 0,
                                     'unit_price': split_bonus['ratio'],
-                                    'type': 'Split/Agrup',
+                                    'sort_of': 'Split/Agrup',
                                 }
                             )
                             print(f'{ticker} splits/groupments added')
@@ -181,7 +181,7 @@ class TransactionsFromFile(DataFromYFinance):
             print()
             
             print('Extracting tickers list...')
-            tickers_list = self.extract_tickers_list(transactions_list) # extracts the tickers_list from transactions
+            tickers_list = self.extract_tickers_list(transactions_list)
             print()
 
             print('Adding splits/groupments transactions...')
@@ -191,10 +191,6 @@ class TransactionsFromFile(DataFromYFinance):
             print('Sorting by date, ticker and operation...')
             transactions_list = self.list_of_dicts_order_by(list_of_dicts=transactions_list, sort_keys=['date', 'ticker', 'operation'], reversed_output=False)
             print()
-
-            # print('Processing transactions...')
-            # portifolio_data, asset_history_data = self.calculate_portfolio_balance(transactions_list, tickers_list)
-            # print()
 
             print('Done')
             return transactions_list
