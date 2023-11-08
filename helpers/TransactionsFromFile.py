@@ -145,7 +145,7 @@ class TransactionsFromFile(DataFromYFinance):
         
         # Inicialize o portfólio com todos os tickers e valores iniciais para serem rastreados
         portfolio = {
-            ticker: {'ticker': ticker, 'quantity': 0, 'average_price': 0.0} for ticker in tickers_list
+            ticker: {'ticker': ticker, 'quantity': 0, 'average_price': 0.0, 'sort_of': ''} for ticker in tickers_list
         }
 
         asset_history = {
@@ -154,6 +154,7 @@ class TransactionsFromFile(DataFromYFinance):
 
         for transaction in transactions_list:
             ticker = transaction['ticker']
+            portfolio[ticker]['sort_of'] = transaction['sort_of']
             operation = transaction['operation']
             quantity = transaction['quantity']
             unit_price = transaction['unit_price']

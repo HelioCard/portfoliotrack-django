@@ -17,6 +17,7 @@ const getDashboardData = async (url) => {
   try {
     const data = await getDashboardData(DashBoardDataURL);
     const { asset_data, category_data, performance_data } = data;
+    performance_data.tooltip.formatter = formatTooltip(performance_data.tooltip.formatter)
 
     assetChart = echarts.init(document.getElementById('asset_chart'), THEME);
     assetChart.setOption(asset_data)
@@ -25,14 +26,14 @@ const getDashboardData = async (url) => {
     portfolioPerformanceChart = echarts.init(document.getElementById('performance_chart'), THEME);
     portfolioPerformanceChart.setOption(performance_data)      
 
-    resizeAllCharts()
+    resizeDashboardCharts()
   } catch (error) {
     console.error("Ocorreu um erro:", error);
   }
 })();
 
 
-function resizeAllCharts() {
+function resizeDashboardCharts() {
   if (portfolioPerformanceChart && categoryChart && assetChart) {
     portfolioPerformanceChart.resize();
     categoryChart.resize();

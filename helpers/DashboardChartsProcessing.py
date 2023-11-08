@@ -21,12 +21,10 @@ class DashboardChartsProcessing(TransactionsFromFile):
     def _get_transactions_list(self):
         if self.ticker is None:
             result = Transactions.objects.filter(portfolio__user=self.user)
-            list_result = list(result.values())
-            return self.list_of_dicts_order_by(list_result, ['date', 'ticker', 'operation'])
         else:
             result = Transactions.objects.filter(portfolio__user=self.user, ticker=self.ticker)
-            list_result = list(result.values())
-            return self.list_of_dicts_order_by(list_result, ['date', 'ticker', 'operation'])
+        list_result = list(result.values())
+        return self.list_of_dicts_order_by(list_result, ['date', 'ticker', 'operation'])
     
     def _get_first_transaction_date(self):
         result = min(self.transactions_list, key=lambda x: x['date'])
@@ -115,10 +113,42 @@ class DashboardChartsProcessing(TransactionsFromFile):
             final_performance_data['dividends'] = [0.0] * len(values['dividends'])
         
         # Consolida os valores da lista somando por data
-        for key, values in performance_data.items():
-            for key2 in ['contribution', 'equity', 'dividends']:
-                final_performance_data[key2] = [round(x + y, 2) for x, y in zip(final_performance_data[key2], values[key2])]
+        for _, values in performance_data.items():
+            for key in ['contribution', 'equity', 'dividends']:
+                final_performance_data[key] = [round(x + y, 2) for x, y in zip(final_performance_data[key], values[key])]
                 
         return final_performance_data
 
-        
+    def get_category_data(self):
+        categories_set = {asset['sort_of'] for asset in self.portfolio.values() if asset['sort_of'] != 'Split/Agrup'}
+        category_data = []
+
+        # Percorre a lista de categorias
+        for category in categories_set:
+            value = 0
+            # Percorre todos os itens do portfolio:
+            for ticker, asset in self.portfolio.items():
+                
+                # Se a categoria do item do portfolio for a mesma categoria do loop inicial
+                # inclui o valor do patrimonio atual daquele ativo
+                if asset['sort_of'] == category:
+                    value += asset['quantity'] * self.history_data[ticker][-1]['close'] # Obtem o último fechamento do histórico de preços
+            
+            category_data.append(
+                {
+                    'value': round(value, 2),
+                    'name': category,
+                }
+            )
+        return self.list_of_dicts_order_by(category_data, ['values',], reversed_output=True)
+
+    def get_asset_data(self):
+        asset_data = []
+        for ticker, asset in self.portfolio.items():
+            asset_data.append(
+                {
+                    'name': ticker,
+                    'value': round(asset['quantity'] * self.history_data[ticker][-1]['close'], 2)
+                }
+            )
+        return self.list_of_dicts_order_by(asset_data, ['value',], reversed_output=True)

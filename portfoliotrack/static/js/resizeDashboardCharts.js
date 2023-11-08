@@ -1,3 +1,3 @@
 setInterval(function () {
-    resizeAllCharts()
+    resizeDashboardCharts()
   }, 1000);

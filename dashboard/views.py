@@ -14,6 +14,8 @@ def get_dashboard_data(request):
     charts = DashboardChartsProcessing(user=request.user, ticker=None, interval='1mo')
 
     performance_data = charts.get_performance_chart_data()
+    category_data = charts.get_category_data()
+    asset_data = charts.get_asset_data()
 
     performance_options = {
         'title': {
@@ -73,7 +75,7 @@ def get_dashboard_data(request):
         ]
     }
 
-    category_data = {
+    category_options = {
         'title': {
             'text': 'Exposição por Categorias',
             'left': 'center'
@@ -110,16 +112,12 @@ def get_dashboard_data(request):
                 'labelLine': {
                     'show': True,
                 },
-                'data': [
-                    {'value': 335, 'name': 'Tes. Direto'},
-                    {'value': 310, 'name': 'Ações'},
-                    {'value': 234, 'name': 'Fundos Imobil.'},
-                ]
+                'data': category_data,
             }
         ]
     }
     
-    asset_data = {
+    asset_options = {
         'title': {
             'text': 'Exposição por Ativos',
             'left': 'center'
@@ -135,7 +133,7 @@ def get_dashboard_data(request):
                 'name': 'Portifolio por Ativos',
                 'type': 'pie',
                 'radius': ['40%', '60%'],
-                'avoidLabelOverlap': False,
+                'avoidLabelOverlap': True,
                 'itemStyle': {
                     'borderJoin': 'round',
                     'borderRadius': '5%',
@@ -157,24 +155,14 @@ def get_dashboard_data(request):
                 'labelLine': {
                     'show': True,
                 },
-                'data': [
-                    {'value': 335, 'name': 'TRPL4'},
-                    {'value': 310, 'name': 'KLBN11'},
-                    {'value': 234, 'name': 'JALL3'},
-                    {'value': 135, 'name': 'NINJ3'},
-                    {'value': 438, 'name': 'TAEE11'},
-                    {'value': 256, 'name': 'SORT6'},
-                    {'value': 512, 'name': 'BUND9'},
-                    {'value': 700, 'name': 'CUCU2'},
-                    {'value': 1548, 'name': 'CHAN5'}
-                ]
+                'data': asset_data,
             }
         ]
     }
     context = {
         'performance_data': performance_options,
-        'category_data': category_data,
-        'asset_data': asset_data,
+        'category_data': category_options,
+        'asset_data': asset_options,
     }
     return JsonResponse(context)
 
