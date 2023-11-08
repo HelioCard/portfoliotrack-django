@@ -1,4 +1,4 @@
-const THEME = 'walden'
+const THEME = 'infographic'
 var assetChart, categoryChart, portfolioPerformanceChart
 
 const getDashboardData = async (url) => {

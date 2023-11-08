@@ -11,11 +11,13 @@ def dashboard(request):
 
 @login_required(login_url='login')
 def get_dashboard_data(request):
-    charts = DashboardChartsProcessing(user=request.user, ticker=None, interval='1mo')
+    charts = DashboardChartsProcessing(user=request.user, ticker=None)
 
     performance_data = charts.get_performance_chart_data()
     category_data = charts.get_category_data()
     asset_data = charts.get_asset_data()
+
+    cards_data = charts.get_cards_data()
 
     context = {
         'performance_data': performance_data,

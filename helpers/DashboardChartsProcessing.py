@@ -4,11 +4,10 @@ from datetime import date as dt
 import numpy as np
 
 class DashboardChartsProcessing(TransactionsFromFile):
-    def __init__(self, user, ticker=None, interval='1mo'):
+    def __init__(self, user, ticker=None):
         super().__init__()
         self.user = user
         self.ticker = ticker
-        self.interval = interval
 
         self.transactions_list = self._get_transactions_list()
         self.tickers_list = self.extract_tickers_list(self.transactions_list)
@@ -16,8 +15,18 @@ class DashboardChartsProcessing(TransactionsFromFile):
         self.portfolio = self.portfolio_balance[0] # Index 0 -> somente portfolio
         self.asset_history = self.portfolio_balance[1] # Index 1 -> somente asset_history
         self.first_transaction_date = self._get_first_transaction_date()
+        self.interval = self._get_interval()
         self.history_data = self.load_history_data_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=self.first_transaction_date, interval=self.interval)
+
+        self.performance_data = None
     
+    def _get_interval(self):
+        time_elapsed = dt.today() - self.first_transaction_date
+        if time_elapsed.days < 60:
+            return '1d'
+        else:
+            return '1mo'
+
     def _get_transactions_list(self):
         if self.ticker is None:
             result = Transactions.objects.filter(portfolio__user=self.user)
@@ -62,7 +71,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
         
         # Percorre a lista de tickers
         for ticker in self.tickers_list:
-            dividends = 0
+            acum_dividends = 0
             # Percorre os dados históricos de cada ticker:
             for data in self.history_data[ticker]:
 
@@ -77,23 +86,26 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     date = dt.strftime(data['date'], '%d/%m/%Y')
                     contribution = 0.0
                     equity = 0.0
-                    dividends = 0.0
+                    acum_dividends = 0.0
                 else:
                     values = self._get_values_in_a_date(data['date'], self.asset_history[ticker])
                     date = dt.strftime(data['date'], '%d/%m/%Y')
                     contribution = values['quantity'] * values['average_price']
                     equity = values['quantity'] * data['close']
-                    dividends = dividends + values['quantity'] * data['dividends']
+                    acum_dividends = acum_dividends + values['quantity'] * data['dividends']
+                    
+                    # Subtrai os dividendos recebidos do valor dos aportes:
+                    contribution = contribution - acum_dividends
 
                 # Atualiza o dicionário com o ticker e os dados obtidos acima:
                 performance_data[ticker]['date'].append(date)
                 performance_data[ticker]['contribution'].append(contribution)
                 performance_data[ticker]['equity'].append(equity)
-                performance_data[ticker]['dividends'].append(dividends)
+                performance_data[ticker]['dividends'].append(acum_dividends)
 
                 '''Se houver splits ou grupamentos, atualiza o valor da lista de patrimonios obtidos até o momento,
                 porque o preço de fechamento (que vem do yfinance) está ajustado e não reflete o preço real da época:'''
-                if data['split_groupment'] > 0.0: 
+                if data['split_groupment'] > 0.0:
                     for i, equity_value in enumerate(performance_data[ticker]['equity']):
                         performance_data[ticker]['equity'][i] *= data['split_groupment']
 
@@ -116,7 +128,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
         for _, values in performance_data.items():
             for key in ['contribution', 'equity', 'dividends']:
                 final_performance_data[key] = [round(x + y, 2) for x, y in zip(final_performance_data[key], values[key])]
-                
+
+        self.performance_data = final_performance_data
         return final_performance_data
 
     def get_category_data(self):
@@ -152,3 +165,42 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 }
             )
         return self.list_of_dicts_order_by(asset_data, ['value',], reversed_output=True)
+
+    def get_cards_data(self):
+        equity_list = []
+        contribution_list = []
+        dividends_list = []
+
+        if self.interval == '1mo':
+            last_periods = ['0m', '1m', '2m', '3m', '4m', '5m', '6m']
+        else:
+            last_periods = ['0d', '1d', '2d', '3d', '4d', '5d', '6d']
+
+        while True:
+            if len(self.performance_data['date']) >= len(last_periods):
+                for i, month in enumerate(last_periods):
+                    equity_list.append(
+                        {
+                            month: self.performance_data['equity'][-(i+1)],
+                        }
+                    )
+                    contribution_list.append(
+                        {
+                            month: self.performance_data['contribution'][-(i+1)],
+                        }
+                    )
+                    dividends_list.append(
+                        {
+                            month: self.performance_data['dividends'][-(i+1)],
+                        }
+                    )
+                break
+            else:
+                last_periods.pop()
+        
+        print(equity_list)
+        # equity = equity_list['0m']
+        # equity_change = ((equity_list['0m'] - equity_list['6m']) / equity_list['0m']) * 100
+        # print(equity_change)
+
+        return 'cards_data'
