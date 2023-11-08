@@ -111,12 +111,11 @@
   {% include 'includes/message.html' %}
 
   <script> var DashBoardDataURL = "{% url 'get_dashboard_data' %}" </script>
+  <script src="{% static 'themes/walden.js' %}"></script>
+  <script src="{% static 'js/dashboardOptions.js' %}"></script>
   <script src="{% static 'js/dashboardCharts.js' %}" type="text/javascript"></script>
   <script src="{% static 'js/resizeDashboardCharts.js' %}" async></script>
-  <script src="{% static 'themes/infographic.js' %}"></script>
-  <script src="{% static 'js/brFormatter.js' %}"></script>
   
-
 {% endblock %}
 
 

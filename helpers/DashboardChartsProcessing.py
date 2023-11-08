@@ -30,7 +30,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
         result = min(self.transactions_list, key=lambda x: x['date'])
         return result['date']
 
-    def get_values_in_a_date(self, date, asset_history):
+    def _get_values_in_a_date(self, date, asset_history):
         
         # Classifica a lista de dicionários com base na data
         asset_history.sort(key=lambda x: x["date"])
@@ -79,7 +79,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     equity = 0.0
                     dividends = 0.0
                 else:
-                    values = self.get_values_in_a_date(data['date'], self.asset_history[ticker])
+                    values = self._get_values_in_a_date(data['date'], self.asset_history[ticker])
                     date = dt.strftime(data['date'], '%d/%m/%Y')
                     contribution = values['quantity'] * values['average_price']
                     equity = values['quantity'] * data['close']
