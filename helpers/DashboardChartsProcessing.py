@@ -2,6 +2,7 @@ from portfolio.models import Transactions
 from .TransactionsFromFile import TransactionsFromFile
 from datetime import date as dt
 import numpy as np
+import operator
 
 class DashboardChartsProcessing(TransactionsFromFile):
     def __init__(self, user, ticker=None):
@@ -24,6 +25,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
         time_elapsed = dt.today() - self.first_transaction_date
         if time_elapsed.days < 60:
             return '1d'
+        elif time_elapsed.days < 180:
+            return '1wk'
         else:
             return '1mo'
 
@@ -95,7 +98,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     acum_dividends = acum_dividends + values['quantity'] * data['dividends']
                     
                     # Subtrai os dividendos recebidos do valor dos aportes:
-                    contribution = contribution - acum_dividends
+                    # contribution = contribution - acum_dividends
 
                 # Atualiza o dicionário com o ticker e os dados obtidos acima:
                 performance_data[ticker]['date'].append(date)
@@ -167,40 +170,85 @@ class DashboardChartsProcessing(TransactionsFromFile):
         return self.list_of_dicts_order_by(asset_data, ['value',], reversed_output=True)
 
     def get_cards_data(self):
-        equity_list = []
-        contribution_list = []
-        dividends_list = []
+        equity_dict: dict = {}
+        contribution_dict : dict = {}
+        dividends_dict: dict = {}
 
-        if self.interval == '1mo':
-            last_periods = ['0m', '1m', '2m', '3m', '4m', '5m', '6m']
+        if self.interval == '1d':
+            periods = ['0d', '1d', '2d', '3d', '4d', '5d', '6d']
+        elif self.interval == '1wk':
+            periods = ['0sem', '1sem', '2sem', '3sem', '4sem', '5sem', '6sem']
         else:
-            last_periods = ['0d', '1d', '2d', '3d', '4d', '5d', '6d']
+            periods = ['0m', '1m', '2m', '3m', '4m', '5m', '6m']
 
         while True:
-            if len(self.performance_data['date']) >= len(last_periods):
-                for i, month in enumerate(last_periods):
-                    equity_list.append(
-                        {
-                            month: self.performance_data['equity'][-(i+1)],
-                        }
-                    )
-                    contribution_list.append(
-                        {
-                            month: self.performance_data['contribution'][-(i+1)],
-                        }
-                    )
-                    dividends_list.append(
-                        {
-                            month: self.performance_data['dividends'][-(i+1)],
-                        }
-                    )
+            if len(self.performance_data['date']) >= len(periods):
+                for i, period in enumerate(periods):
+                    equity_dict[period] = self.performance_data['equity'][-(i+1)]
+                    contribution_dict[period] = self.performance_data['contribution'][-(i+1)]
+                    dividends_dict[period] = self.performance_data['dividends'][-(i+1)]
                 break
             else:
-                last_periods.pop()
+                periods.pop()
         
-        print(equity_list)
-        # equity = equity_list['0m']
-        # equity_change = ((equity_list['0m'] - equity_list['6m']) / equity_list['0m']) * 100
-        # print(equity_change)
+        last_contribution = contribution_dict[periods[0]]
+        first_contribution = contribution_dict[periods[-1]]
+        if first_contribution == 0:
+            contribution_change = operator.sign(last_contribution - first_contribution) * 100
+        else:
+            contribution_change = ((last_contribution - first_contribution) / first_contribution) * 100
+        contribution = {'value': last_contribution, 'period': periods[-1], 'change': round(contribution_change, 2)}
 
-        return 'cards_data'
+
+
+        last_equity = equity_dict[periods[0]]
+        first_equity = equity_dict[periods[-1]]
+        if first_equity == 0:
+            equity_change = operator.sign(last_equity - first_equity) * 100
+        else:
+            equity_change = ((last_equity - first_equity) / first_equity) * 100
+        equity = {'value': last_equity, 'period': periods[-1], 'change': round(equity_change, 2)}
+
+
+
+        if last_contribution == 0:
+            last_result = operator.sign(last_equity - last_contribution) * 100
+        else:
+            last_result = (last_equity - last_contribution) / last_contribution * 100
+
+        if first_contribution == 0:
+            first_result = operator.sign(first_equity - first_contribution) * 100
+        else:
+            first_result = (first_equity - first_contribution) / first_contribution * 100
+        result_change = last_result - first_result
+        result = {'value': round(last_result, 2), 'period': periods[-1], 'change': round(result_change, 2)}
+
+
+
+        # Cálculo do Yield on Cost:
+        last_dividends = dividends_dict[periods[0]]
+        first_dividends = dividends_dict[periods[-1]]
+        
+        if last_contribution == 0:
+            last_yield_on_cost = operator.sign(last_dividends) * 100
+        else:
+            last_yield_on_cost = last_dividends / last_contribution * 100
+
+        if first_contribution == 0:
+            first_yield_on_cost = operator.sign(first_dividends) * 100
+        else:
+            first_yield_on_cost = first_dividends / first_contribution * 100
+
+        yield_on_cost_change = last_yield_on_cost - first_yield_on_cost
+        yield_on_coast = {'value': round(last_yield_on_cost, 2), 'period': periods[-1], 'change': round(yield_on_cost_change, 2)}
+
+
+
+        cards_data = {
+            'contribution': contribution,
+            'equity': equity,
+            'result': result,
+            'yield_on_cost': yield_on_coast,
+        }
+        print(cards_data)
+        return cards_data

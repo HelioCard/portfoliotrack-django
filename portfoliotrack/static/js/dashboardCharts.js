@@ -22,7 +22,11 @@ const getDashboardData = async (url) => {
     const data = await getDashboardData(DashBoardDataURL);
     
     if (data) {
-      const { asset_data, category_data, performance_data } = data;
+      const { asset_data, category_data, performance_data, cards_data } = data;
+      console.log(cards_data)
+      const equityElement = document.querySelector("#equity");
+      equityElement.innerHTML = 'R$ ' + cards_data.equity.value;
+
       performance_options.xAxis.data = performance_data.date;
       performance_options.series[0].data = performance_data.contribution;
       performance_options.series[1].data = performance_data.equity;

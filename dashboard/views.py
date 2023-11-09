@@ -23,6 +23,7 @@ def get_dashboard_data(request):
         'performance_data': performance_data,
         'category_data': category_data,
         'asset_data': asset_data,
+        'cards_data': cards_data,
     }
     return JsonResponse(context)
 
