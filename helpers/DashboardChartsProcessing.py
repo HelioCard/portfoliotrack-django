@@ -5,10 +5,11 @@ import numpy as np
 import operator
 
 class DashboardChartsProcessing(TransactionsFromFile):
-    def __init__(self, user, ticker=None):
+    def __init__(self, user, ticker=None, subtract_dividends_from_contribution=False):
         super().__init__()
         self.user = user
-        self.ticker = ticker
+        self.ticker = ticker.upper() if ticker else None
+        self.subtract_dividends_from_contribution = subtract_dividends_from_contribution
 
         self.transactions_list = self._get_transactions_list()
         self.tickers_list = self.extract_tickers_list(self.transactions_list)
@@ -18,6 +19,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
         self.first_transaction_date = self._get_first_transaction_date()
         self.interval = self._get_interval()
         self.history_data = self.load_history_data_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=self.first_transaction_date, interval=self.interval)
+        print(self.history_data)
 
         self.performance_data = None
     
@@ -98,7 +100,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     acum_dividends = acum_dividends + values['quantity'] * data['dividends']
                     
                     # Subtrai os dividendos recebidos do valor dos aportes:
-                    # contribution = contribution - acum_dividends
+                    if self.subtract_dividends_from_contribution:
+                        contribution = contribution - acum_dividends
 
                 # Atualiza o dicionário com o ticker e os dados obtidos acima:
                 performance_data[ticker]['date'].append(date)
@@ -191,57 +194,58 @@ class DashboardChartsProcessing(TransactionsFromFile):
             else:
                 periods.pop()
         
+
+        # Cálculos relacionados aos Aportes:
         last_contribution = contribution_dict[periods[0]]
         first_contribution = contribution_dict[periods[-1]]
         if first_contribution == 0:
-            contribution_change = operator.sign(last_contribution - first_contribution) * 100
+            contribution_change = operator.sign(last_contribution - first_contribution)
         else:
-            contribution_change = ((last_contribution - first_contribution) / first_contribution) * 100
-        contribution = {'value': last_contribution, 'period': periods[-1], 'change': round(contribution_change, 2)}
+            contribution_change = ((last_contribution - first_contribution) / first_contribution)
+        contribution = {'value': last_contribution, 'period': periods[-1], 'change': contribution_change}
 
 
-
+        # Cálculo relacionado ao Patrimônio
         last_equity = equity_dict[periods[0]]
         first_equity = equity_dict[periods[-1]]
         if first_equity == 0:
-            equity_change = operator.sign(last_equity - first_equity) * 100
+            equity_change = operator.sign(last_equity - first_equity)
         else:
-            equity_change = ((last_equity - first_equity) / first_equity) * 100
-        equity = {'value': last_equity, 'period': periods[-1], 'change': round(equity_change, 2)}
+            equity_change = ((last_equity - first_equity) / first_equity)
+        equity = {'value': last_equity, 'period': periods[-1], 'change': equity_change}
 
 
-
+        # Cálculos relacionados aos Resultados:
         if last_contribution == 0:
-            last_result = operator.sign(last_equity - last_contribution) * 100
+            last_result = operator.sign(last_equity - last_contribution)
         else:
-            last_result = (last_equity - last_contribution) / last_contribution * 100
+            last_result = (last_equity - last_contribution) / last_contribution
 
         if first_contribution == 0:
-            first_result = operator.sign(first_equity - first_contribution) * 100
+            first_result = operator.sign(first_equity - first_contribution)
         else:
-            first_result = (first_equity - first_contribution) / first_contribution * 100
+            first_result = (first_equity - first_contribution) / first_contribution
         result_change = last_result - first_result
-        result = {'value': round(last_result, 2), 'period': periods[-1], 'change': round(result_change, 2)}
+        result = {'value': last_result, 'period': periods[-1], 'change': result_change}
 
 
 
-        # Cálculo do Yield on Cost:
+        # Cálculo relacionados ao Yield on Cost:
         last_dividends = dividends_dict[periods[0]]
         first_dividends = dividends_dict[periods[-1]]
         
         if last_contribution == 0:
-            last_yield_on_cost = operator.sign(last_dividends) * 100
+            last_yield_on_cost = operator.sign(last_dividends)
         else:
-            last_yield_on_cost = last_dividends / last_contribution * 100
+            last_yield_on_cost = last_dividends / last_contribution
 
         if first_contribution == 0:
-            first_yield_on_cost = operator.sign(first_dividends) * 100
+            first_yield_on_cost = operator.sign(first_dividends)
         else:
-            first_yield_on_cost = first_dividends / first_contribution * 100
+            first_yield_on_cost = first_dividends / first_contribution
 
         yield_on_cost_change = last_yield_on_cost - first_yield_on_cost
-        yield_on_coast = {'value': round(last_yield_on_cost, 2), 'period': periods[-1], 'change': round(yield_on_cost_change, 2)}
-
+        yield_on_coast = {'value': last_yield_on_cost, 'period': periods[-1], 'change': yield_on_cost_change}
 
 
         cards_data = {
@@ -250,5 +254,5 @@ class DashboardChartsProcessing(TransactionsFromFile):
             'result': result,
             'yield_on_cost': yield_on_coast,
         }
-        print(cards_data)
+        
         return cards_data
