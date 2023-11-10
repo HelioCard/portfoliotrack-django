@@ -17,17 +17,23 @@ const getDashboardData = async (url) => {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error('Erro ao buscar dados do painel');
+      if (response.status === 404) {
+        throw new Error('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
+      } else {
+        const errorData = await response.json();
+        throw new Error(`Erro: ${errorData.Erro}`);
+      }
     }
     return await response.json();
   } catch (ex) {
-    alert(ex);
+    alert(ex.message);
   }
 }
 
 function alternateColor(element, value) {
   if (value > 0) {
     element.style.color = 'green';
+    element.innerHTML = '+' + element.innerHTML;
   } else if (value < 0) {
     element.style.color = 'red';
   } else {
@@ -57,12 +63,12 @@ function alternateColor(element, value) {
       alternateColor(contribution_change, cards_data.contribution.change)
 
       result.innerHTML = (cards_data.result.value * 100).toFixed(2).replace('.', ',') + '%';
-      result_change.innerHTML = (cards_data.result.change * 100).toFixed(2).replace('.', ',') + '%';
+      result_change.innerHTML = (cards_data.result.change * 100).toFixed(2).replace('.', ',');
       result_period.innerHTML = '(' + cards_data.result.period + ')';
       alternateColor(result_change, cards_data.result.change)
 
       yield_on_cost.innerHTML = (cards_data.yield_on_cost.value * 100).toFixed(2).replace('.', ',') + '%';
-      yield_on_cost_change.innerHTML = (cards_data.yield_on_cost.change * 100).toFixed(2).replace('.', ',') + '%';
+      yield_on_cost_change.innerHTML = (cards_data.yield_on_cost.change * 100).toFixed(2).replace('.', ',');
       yield_on_cost_period.innerHTML = '(' + cards_data.yield_on_cost.period + ')';
       alternateColor(yield_on_cost_change, cards_data.yield_on_cost.change)
 
