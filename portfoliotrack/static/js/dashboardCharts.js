@@ -13,15 +13,24 @@ var yield_on_cost = document.querySelector("#yield_on_cost");
 var yield_on_cost_change = document.querySelector('#yield_on_cost_change');
 var yield_on_cost_period = document.querySelector('#yield_on_cost_period');
 
+function showNoData() {
+  performanceChartStatus = document.querySelector('#performanceChartStatus').innerHTML = '<h6 class="display-5">Não há dados</h6>'
+  var categoryChartStatus = document.querySelector('#categoryChartStatus')
+  categoryChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
+  var assetChartStatus = document.querySelector('#assetChartStatus')
+  assetChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
+}
+
 const getDashboardData = async (url) => {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
+      const errorData = await response.json();
+      if (errorData.Erro === 'No data') {
+        alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
+        showNoData()
       } else {
-        const errorData = await response.json();
-        throw new Error(`Erro: ${errorData.Erro}`);
+        throw new Error(`Erro: ${errorData}`);
       }
     }
     return await response.json();
@@ -43,12 +52,8 @@ function alternateColor(element, value) {
 
 (async () => {
   try {
-    portfolioPerformanceChart = echarts.init(document.getElementById('performance_chart'), THEME);
-    assetChart = echarts.init(document.getElementById('asset_chart'), THEME);
-    categoryChart = echarts.init(document.getElementById('category_chart'), THEME);
-
     const data = await getDashboardData(DashBoardDataURL);
-    
+
     if (data) {
       const { asset_data, category_data, performance_data, cards_data } = data;
 
@@ -72,21 +77,23 @@ function alternateColor(element, value) {
       yield_on_cost_period.innerHTML = '(' + cards_data.yield_on_cost.period + ')';
       alternateColor(yield_on_cost_change, cards_data.yield_on_cost.change)
 
+      portfolioPerformanceChart = echarts.init(document.getElementById('performance_chart'), THEME);
+      assetChart = echarts.init(document.getElementById('asset_chart'), THEME);
+      categoryChart = echarts.init(document.getElementById('category_chart'), THEME);
+
       performance_options.xAxis.data = performance_data.date;
       performance_options.series[0].data = performance_data.contribution;
       performance_options.series[1].data = performance_data.equity;
       performance_options.series[2].data = performance_data.dividends;
-
       category_options.series[0].data = category_data
-
       asset_options.series[0].data = asset_data
 
-    }
-    portfolioPerformanceChart.setOption(performance_options)
-    assetChart.setOption(asset_options)
-    categoryChart.setOption(category_options)
+      portfolioPerformanceChart.setOption(performance_options)
+      assetChart.setOption(asset_options)
+      categoryChart.setOption(category_options)
 
-    resizeDashboardCharts()
+      resizeDashboardCharts()
+    }
   } catch (error) {
     console.error("Ocorreu um erro:", error);
   }

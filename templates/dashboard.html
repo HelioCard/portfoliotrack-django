@@ -23,9 +23,12 @@
       <div class="row">
 
         <div class="col-12 col-xl-7 mt-4">
-          
           <div id="performance_chart" class="chart-container align-items-center pt-3 ms-0 border rounded hover-shadow" style="width: 100%; height: 45vh; min-height: 380px; background-color: white;">
-
+            <div id="performanceChartStatus"  style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+              <span class="spinner-grow text-info" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </span>
+            </div>
           </div>
 
         </div>
@@ -89,6 +92,11 @@
         <div class="col-12 col-xl-6 my-2">
 
           <div id="category_chart" class="chart-container d-flex justify-content-center align-items-center border rounded hover-shadow px-2 pt-4" style="width: 100%; height: 50vh; min-height: 320px; background-color: white;">
+            <div id="categoryChartStatus" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+              <span class="spinner-grow text-info" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </span>
+            </div>
           </div>
           
         </div>
@@ -96,6 +104,11 @@
         <div class="col-12 col-xl-6 my-2">
 
           <div id="asset_chart" class="chart-container d-flex justify-content-center align-items-center border rounded hover-shadow px-2 pt-4" style="width: 100%; height: 50vh; min-height: 320px; background-color: white;">
+            <div id="assetChartStatus" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+              <span class="spinner-grow text-info" style="width: 3rem; height: 3rem;" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </span>
+            </div>
           </div>
 
         </div>
