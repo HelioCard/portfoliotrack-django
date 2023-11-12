@@ -23,7 +23,7 @@
       <div class="row">
 
         <div class="col-12 col-xl-7 mt-4">
-          <div id="performance_chart" class="chart-container align-items-center pt-3 ms-0 border rounded hover-shadow" style="width: 100%; height: 45vh; min-height: 380px; background-color: white;">
+          <div id="performanceChart" class="chart-container align-items-center pt-3 ms-0 border rounded hover-shadow" style="width: 100%; height: 45vh; min-height: 380px; background-color: white;">
             <div id="performanceChartStatus"  style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
               <span class="spinner-grow text-info" style="width: 3rem; height: 3rem;" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -45,7 +45,7 @@
                           </svg>
                           <p class="mb-2 fw-semibold">Patrimônio</p>
                           <p id="equity" class="fs-5 fw-bold text-body-secondary mb-0">R$ 0,00</p>
-                          <p><span id="equity_change" class="mb-0 fw-semibold">0%</span> <span id="equity_period" class="text-body-secondary">()</span></p>
+                          <p><span id="equityChange" class="mb-0 fw-semibold">0%</span> <span id="equityPeriod" class="text-body-secondary">()</span></p>
                         </div>
                     </div>
                     <div class="col-md-6 mt-2 mt-md-0 mb-2">
@@ -55,7 +55,7 @@
                           </svg>
                           <p class="mb-2 fw-semibold">Aportes (Total) </p>
                           <p id="contribution" class="fs-5 fw-bold text-body-secondary mb-0">R$ 0,00</p>
-                          <p><span id="contribution_change" class="mb-0 fw-semibold">0%</span> <span id="contribution_period" class="text-body-secondary">()</span></p>
+                          <p><span id="contributionChange" class="mb-0 fw-semibold">0%</span> <span id="contributionPeriod" class="text-body-secondary">()</span></p>
                         </div>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                           </svg>
                           <p class="mb-2 fw-semibold">Rendimento <small>(excl. divid)</small> </p>
                           <p id="result" class="fs-5 fw-bold text-body-secondary mb-0">0%</p>
-                          <p><span id="result_change" class="mb-0 fw-semibold">0</span> <span id="result_period" class="text-body-secondary">()</span></p>
+                          <p><span id="resultChange" class="mb-0 fw-semibold">0</span> <span id="resultPeriod" class="text-body-secondary">()</span></p>
                         </div>
                     </div>
                     <div class="col-md-6 mt-3 mt-md-2">
@@ -76,8 +76,8 @@
                             <path d="M13.442 2.558a.625.625 0 0 1 0 .884l-10 10a.625.625 0 1 1-.884-.884l10-10a.625.625 0 0 1 .884 0zM4.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zm7 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/>
                           </svg>
                           <p class="mb-2 fw-semibold">YoC (%)</p>
-                          <p id="yield_on_cost" class="fs-5 fw-bold text-body-secondary mb-0">0 %</p>
-                          <p><span id="yield_on_cost_change" class="mb-0 fw-semibold">0</span> <span id="yield_on_cost_period" class="text-body-secondary">()</span></p>
+                          <p id="yieldOnCost" class="fs-5 fw-bold text-body-secondary mb-0">0 %</p>
+                          <p><span id="yieldOnCostChange" class="mb-0 fw-semibold">0</span> <span id="yieldOnCostPeriod" class="text-body-secondary">()</span></p>
                         </div>
                     </div>
                 </div>
@@ -91,7 +91,7 @@
       <div class="row my-5">
         <div class="col-12 col-xl-6 my-2">
 
-          <div id="category_chart" class="chart-container d-flex justify-content-center align-items-center border rounded hover-shadow px-2 pt-4" style="width: 100%; height: 50vh; min-height: 320px; background-color: white;">
+          <div id="categoryChart" class="chart-container d-flex justify-content-center align-items-center border rounded hover-shadow px-2 pt-4" style="width: 100%; height: 50vh; min-height: 320px; background-color: white;">
             <div id="categoryChartStatus" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
               <span class="spinner-grow text-info" style="width: 3rem; height: 3rem;" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -103,7 +103,7 @@
         
         <div class="col-12 col-xl-6 my-2">
 
-          <div id="asset_chart" class="chart-container d-flex justify-content-center align-items-center border rounded hover-shadow px-2 pt-4" style="width: 100%; height: 50vh; min-height: 320px; background-color: white;">
+          <div id="assetChart" class="chart-container d-flex justify-content-center align-items-center border rounded hover-shadow px-2 pt-4" style="width: 100%; height: 50vh; min-height: 320px; background-color: white;">
             <div id="assetChartStatus" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
               <span class="spinner-grow text-info" style="width: 3rem; height: 3rem;" role="status">
                 <span class="visually-hidden">Loading...</span>

@@ -24,4 +24,5 @@ def get_dashboard_data(request):
     except ValueError as e:
         return JsonResponse({'Erro': str(e)}, status=404)
     except Exception as e:
+        print(e)
         return JsonResponse({'Erro': str(e)}, status=500)

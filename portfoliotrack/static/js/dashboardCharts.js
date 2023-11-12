@@ -1,24 +1,22 @@
 const THEME = 'infographic'
-var assetChart, categoryChart, portfolioPerformanceChart
-var equity = document.querySelector("#equity");
-var equity_change = document.querySelector('#equity_change');
-var equity_period = document.querySelector('#equity_period');
-var contribution = document.querySelector("#contribution");
-var contribution_change = document.querySelector('#contribution_change');
-var contribution_period = document.querySelector('#contribution_period');
-var result = document.querySelector("#result");
-var result_change = document.querySelector('#result_change');
-var result_period = document.querySelector('#result_period');
-var yield_on_cost = document.querySelector("#yield_on_cost");
-var yield_on_cost_change = document.querySelector('#yield_on_cost_change');
-var yield_on_cost_period = document.querySelector('#yield_on_cost_period');
+let assetChart, categoryChart, portfolioPerformanceChart
+const equity = document.querySelector("#equity");
+const equityChange = document.querySelector('#equityChange');
+const equityPeriod = document.querySelector('#equityPeriod');
+const contribution = document.querySelector("#contribution");
+const contributionChange = document.querySelector('#contributionChange');
+const contributionPeriod = document.querySelector('#contributionPeriod');
+const result = document.querySelector("#result");
+const resultChange = document.querySelector('#resultChange');
+const resultPeriod = document.querySelector('#resultPeriod');
+const yieldOnCost = document.querySelector("#yieldOnCost");
+const yieldOnCostChange = document.querySelector('#yieldOnCostChange');
+const yieldOnCostPeriod = document.querySelector('#yieldOnCostPeriod');
 
 function showNoData() {
-  performanceChartStatus = document.querySelector('#performanceChartStatus').innerHTML = '<h6 class="display-5">Não há dados</h6>'
-  var categoryChartStatus = document.querySelector('#categoryChartStatus')
-  categoryChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
-  var assetChartStatus = document.querySelector('#assetChartStatus')
-  assetChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
+  document.querySelector('#performanceChartStatus').innerHTML = '<h6 class="display-5">Não há dados</h6>'
+  document.querySelector('#categoryChartStatus').innerHTML = '<h6 class="display-6">Não há dados</h6>'
+  document.querySelector('#assetChartStatus').innerHTML = '<h6 class="display-6">Não há dados</h6>'
 }
 
 const getDashboardData = async (url) => {
@@ -30,7 +28,7 @@ const getDashboardData = async (url) => {
         alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
         showNoData()
       } else {
-        throw new Error(`Erro: ${errorData}`);
+        throw new Error(`Erro: ${errorData.Erro}`);
       }
     }
     return await response.json();
@@ -58,28 +56,28 @@ function alternateColor(element, value) {
       const { asset_data, category_data, performance_data, cards_data } = data;
 
       equity.innerHTML = cards_data.equity.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-      equity_change.innerHTML = (cards_data.equity.change * 100).toFixed(2).replace('.', ',') + '%';
-      equity_period.innerHTML = '(' + cards_data.equity.period + ')';
-      alternateColor(equity_change, cards_data.equity.change)
+      equityChange.innerHTML = (cards_data.equity.change * 100).toFixed(2).replace('.', ',') + '%';
+      equityPeriod.innerHTML = '(' + cards_data.equity.period + ')';
+      alternateColor(equityChange, cards_data.equity.change)
       
       contribution.innerHTML = cards_data.contribution.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-      contribution_change.innerHTML = (cards_data.contribution.change * 100).toFixed(2).replace('.', ',') + '%';
-      contribution_period.innerHTML = '(' + cards_data.contribution.period + ')';
-      alternateColor(contribution_change, cards_data.contribution.change)
+      contributionChange.innerHTML = (cards_data.contribution.change * 100).toFixed(2).replace('.', ',') + '%';
+      contributionPeriod.innerHTML = '(' + cards_data.contribution.period + ')';
+      alternateColor(contributionChange, cards_data.contribution.change)
 
       result.innerHTML = (cards_data.result.value * 100).toFixed(2).replace('.', ',') + '%';
-      result_change.innerHTML = (cards_data.result.change * 100).toFixed(2).replace('.', ',');
-      result_period.innerHTML = '(' + cards_data.result.period + ')';
-      alternateColor(result_change, cards_data.result.change)
+      resultChange.innerHTML = (cards_data.result.change * 100).toFixed(2).replace('.', ',');
+      resultPeriod.innerHTML = '(' + cards_data.result.period + ')';
+      alternateColor(resultChange, cards_data.result.change)
 
-      yield_on_cost.innerHTML = (cards_data.yield_on_cost.value * 100).toFixed(2).replace('.', ',') + '%';
-      yield_on_cost_change.innerHTML = (cards_data.yield_on_cost.change * 100).toFixed(2).replace('.', ',');
-      yield_on_cost_period.innerHTML = '(' + cards_data.yield_on_cost.period + ')';
-      alternateColor(yield_on_cost_change, cards_data.yield_on_cost.change)
+      yieldOnCost.innerHTML = (cards_data.yield_on_cost.value * 100).toFixed(2).replace('.', ',') + '%';
+      yieldOnCostChange.innerHTML = (cards_data.yield_on_cost.change * 100).toFixed(2).replace('.', ',');
+      yieldOnCostPeriod.innerHTML = '(' + cards_data.yield_on_cost.period + ')';
+      alternateColor(yieldOnCostChange, cards_data.yield_on_cost.change)
 
-      portfolioPerformanceChart = echarts.init(document.getElementById('performance_chart'), THEME);
-      assetChart = echarts.init(document.getElementById('asset_chart'), THEME);
-      categoryChart = echarts.init(document.getElementById('category_chart'), THEME);
+      portfolioPerformanceChart = echarts.init(document.getElementById('performanceChart'), THEME);
+      assetChart = echarts.init(document.getElementById('assetChart'), THEME);
+      categoryChart = echarts.init(document.getElementById('categoryChart'), THEME);
 
       performance_options.xAxis.data = performance_data.date;
       performance_options.series[0].data = performance_data.contribution;

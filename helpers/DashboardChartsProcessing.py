@@ -19,6 +19,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
         self.tickers_list = self.extract_tickers_list(self.transactions_list)
         self.portfolio_balance = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list) # -> portfolio e asset_history
         self.portfolio = self.portfolio_balance[0] # Index 0 -> somente portfolio
+        print(self.portfolio.items())
         self.asset_history = self.portfolio_balance[1] # Index 1 -> somente asset_history
         self.first_transaction_date = self._get_first_transaction_date()
         self.interval = self._get_interval()
