@@ -1,0 +1,13 @@
+
+$primary: #20c997;
+
+@import '../bootstrap-5.3.2/scss/_functions';
+@import '../bootstrap-5.3.2/scss/_variables';
+
+$custom-theme-colors: (
+    custom-brown: #c96420
+);
+
+$theme-colors: map-merge($custom-theme-colors, $theme-colors);
+
+@import '../bootstrap-5.3.2/scss/bootstrap';

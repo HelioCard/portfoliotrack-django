@@ -1,0 +1,15 @@
+
+@import '../bootstrap-5.3.2/scss/bootstrap';
+
+$custom-colors: (
+    "royalpurple": $purple
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+@import '../bootstrap-5.3.2/scss/functions';
+@import '../bootstrap-5.3.2/scss/variables';
+@import "../bootstrap-5.3.2/scss/variables-dark";
+@import "../bootstrap-5.3.2/scss/maps";
+@import "../bootstrap-5.3.2/scss/mixins";
+@import "../bootstrap-5.3.2/scss/root";

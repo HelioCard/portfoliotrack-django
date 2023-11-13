@@ -5,7 +5,7 @@ import numpy as np
 import operator
 
 class DashboardChartsProcessing(TransactionsFromFile):
-    def __init__(self, user, ticker=None, subtract_dividends_from_contribution=False):
+    def __init__(self, user, ticker=None, subtract_dividends_from_contribution='N'):
         super().__init__()
         self.user = user
         self.ticker = ticker.upper() if ticker else None
@@ -19,7 +19,6 @@ class DashboardChartsProcessing(TransactionsFromFile):
         self.tickers_list = self.extract_tickers_list(self.transactions_list)
         self.portfolio_balance = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list) # -> portfolio e asset_history
         self.portfolio = self.portfolio_balance[0] # Index 0 -> somente portfolio
-        print(self.portfolio.items())
         self.asset_history = self.portfolio_balance[1] # Index 1 -> somente asset_history
         self.first_transaction_date = self._get_first_transaction_date()
         self.interval = self._get_interval()
@@ -105,7 +104,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     acum_dividends = acum_dividends + values['quantity'] * data['dividends']
                     
                     # Subtrai os dividendos recebidos do valor dos aportes:
-                    if self.subtract_dividends_from_contribution:
+                    if self.subtract_dividends_from_contribution == 'Y':
                         contribution = contribution - acum_dividends
 
                 # Atualiza o dicionário com o ticker e os dados obtidos acima:
