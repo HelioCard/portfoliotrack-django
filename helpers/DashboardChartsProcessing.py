@@ -1,15 +1,16 @@
 from portfolio.models import Transactions
 from .TransactionsFromFile import TransactionsFromFile
 from datetime import date as dt
+from datetime import datetime
 import numpy as np
 import operator
 
 class DashboardChartsProcessing(TransactionsFromFile):
-    def __init__(self, user, ticker=None, subtract_dividends_from_contribution='N'):
+    def __init__(self, user, ticker=None, subtract_dividends_from_contribution: str='N'):
         super().__init__()
         self.user = user
         self.ticker = ticker.upper() if ticker else None
-        self.subtract_dividends_from_contribution = subtract_dividends_from_contribution
+        self.subtract_dividends_from_contribution = subtract_dividends_from_contribution.upper()
 
         self.transactions_list = self._get_transactions_list()
 
@@ -66,7 +67,10 @@ class DashboardChartsProcessing(TransactionsFromFile):
         return values
 
     def _format_date(self, date):
-        return dt.strftime(date, '%d/%m/%Y')
+        if isinstance(date, dt):
+            return dt.strftime(date, '%d/%m/%Y')
+        if isinstance(date, str):
+            return datetime.strptime(date, '%d/%m/%Y').date()
 
     def _calculate_contribution_equity_dividends(self):
         # Cria um dicionário que conterá o histórico de data, aportes acumulados, patrimônio e dividendos acumulados ao longo do tempo. Tudo isso de cada ativo:
@@ -94,22 +98,22 @@ class DashboardChartsProcessing(TransactionsFromFile):
                   '''
                 date = self._format_date(data['date'])
                 if np.isnan(data['close']):
-                    contribution = 0.0
+                    acum_contribution = 0.0
                     equity = 0.0
                     acum_dividends = 0.0
                 else:
                     values = self._get_values_in_a_date(data['date'], self.asset_history[ticker])
-                    contribution = values['quantity'] * values['average_price']
+                    acum_contribution = values['quantity'] * values['average_price']
                     equity = values['quantity'] * data['close']
                     acum_dividends = acum_dividends + values['quantity'] * data['dividends']
                     
                     # Subtrai os dividendos recebidos do valor dos aportes:
                     if self.subtract_dividends_from_contribution == 'Y':
-                        contribution = contribution - acum_dividends
+                        acum_contribution = acum_contribution - acum_dividends
 
                 # Atualiza o dicionário com o ticker e os dados obtidos acima:
                 performance_data[ticker]['date'].append(date)
-                performance_data[ticker]['contribution'].append(contribution)
+                performance_data[ticker]['contribution'].append(acum_contribution)
                 performance_data[ticker]['equity'].append(equity)
                 performance_data[ticker]['dividends'].append(acum_dividends)
 
@@ -253,12 +257,67 @@ class DashboardChartsProcessing(TransactionsFromFile):
         yield_on_cost_change = current_yield_on_cost - initial_yield_on_cost
         yield_on_coast = {'value': current_yield_on_cost, 'period': periods[-1], 'change': yield_on_cost_change}
 
+        yield_ = round(current_equity - current_contribution, 2)
+
         cards_data = {
             'contribution': contribution,
             'equity': equity,
             'result': result,
             'yield_on_cost': yield_on_coast,
+            'yield': yield_,
         }
         
         return cards_data
+
+    def get_contributions_over_time(self, show_months_without_contribution=False):
+        contribution_over_time:dict = {}
+        
+        # Percorre a lista de transações. 
+        for transaction in self.transactions_list:
+            # Se a operação não for de compra, pula para a próxima
+            if transaction['operation'] != 'C':
+                continue
+            # Obtêm o mes/ano da operação. Se o mes/ano já se encontrar na variável 'contribution_over_time' adiciona o valor total da transação
+            # Se o mes/ano não for encontrado na referida variável, cria um novo par key/value
+            month_year = f"{transaction['date'].month}/{transaction['date'].year}"
+            if contribution_over_time.get(month_year):
+                contribution_over_time[month_year] += transaction['quantity'] * transaction['unit_price']
+            else:
+                contribution_over_time[month_year] = transaction['quantity'] * transaction['unit_price']
+
+        # Se verdadeiro, prossegue para adicionar os meses com zero contribuição.
+        # Se falso, retorna o resultado
+        if not show_months_without_contribution:
+            return contribution_over_time
+
+        # Caso ainda não tenha sido calculada a performance, calcula
+        if self.performance_data is None:
+            self.get_performance_chart_data()
+
+        # Percorre as datas dos dados de performance
+        for date_ in self.performance_data['date']:
+            # Obtêm o mes/ano destas datas
+            formatted_date = self._format_date(date_)
+            month_year = f"{formatted_date.month}/{formatted_date.year}"
+            # Se o mes/ano obtido não for encontrado nos dados de aportes calculados acima, significa que não houve aportes no referido mes/ano
+            # Então adiciona a data com o valor de aporte = 0.0 à variável 'contribution_over_time'
+            if not contribution_over_time.get(month_year):
+                contribution_over_time[month_year] = 0.0
+
+        # Extrai a lista de mes/ano ordenada do mais velho para a mais novo
+        def extract_month_year(key):
+            return datetime.strptime(key, '%m/%Y')
+        list_of_months_years = sorted(contribution_over_time.keys(), key=extract_month_year)
+        
+        final_contribution_over_time = {
+            'date': [],
+            'contribution': [],
+        }
+
+        # Percorre a lista de mes/ano e adiciona um por um, na chave 'date' e na chave 'contribution'
+        for month_year in list_of_months_years:
+            final_contribution_over_time['date'].append(month_year)
+            final_contribution_over_time['contribution'].append(contribution_over_time.get(month_year))
+        
+        return final_contribution_over_time
 

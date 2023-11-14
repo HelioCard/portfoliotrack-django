@@ -33,10 +33,8 @@ class RegisterTransactionForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(RegisterTransactionForm, self).clean()
         date = cleaned_data.get('date')
-        ticker = cleaned_data.get('ticker')
         if date > dt.today():
             raise forms.ValidationError('A data da operação é inválida!')
-        
-        print(ticker)
+
         
             
