@@ -3,7 +3,6 @@ from .TransactionsFromFile import TransactionsFromFile
 from datetime import date as dt
 from datetime import datetime
 import numpy as np
-import operator
 
 class DashboardChartsProcessing(TransactionsFromFile):
     def __init__(self, user, ticker=None, subtract_dividends_from_contribution: str='N'):
@@ -25,7 +24,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
         self.interval = self._get_interval()
         self.history_data = self.load_history_data_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=self.first_transaction_date, interval=self.interval)
 
-        self.performance_data = None
+        self.individual_performance_data = None # Dados de performance de cada ativo individualmente
+        self.performance_data = None # Dados de performance consolidados (todos os ativos do portfolio)
     
     def _get_interval(self):
         time_elapsed = dt.today() - self.first_transaction_date
@@ -74,7 +74,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
     def _calculate_contribution_equity_dividends(self):
         # Cria um dicionário que conterá o histórico de data, aportes acumulados, patrimônio e dividendos acumulados ao longo do tempo. Tudo isso de cada ativo:
-        performance_data = {
+        individual_performance_data = {
             ticker: {
                 'date': [],
                 'contribution': [],
@@ -112,19 +112,19 @@ class DashboardChartsProcessing(TransactionsFromFile):
                         acum_contribution = acum_contribution - acum_dividends
 
                 # Atualiza o dicionário com o ticker e os dados obtidos acima:
-                performance_data[ticker]['date'].append(date)
-                performance_data[ticker]['contribution'].append(acum_contribution)
-                performance_data[ticker]['equity'].append(equity)
-                performance_data[ticker]['dividends'].append(acum_dividends)
+                individual_performance_data[ticker]['date'].append(date)
+                individual_performance_data[ticker]['contribution'].append(acum_contribution)
+                individual_performance_data[ticker]['equity'].append(equity)
+                individual_performance_data[ticker]['dividends'].append(acum_dividends)
 
                 '''Se houver splits ou grupamentos, atualiza o valor da lista de patrimonios obtidos até o momento,
                 porque o preço de fechamento (que vem do yfinance) está ajustado e não reflete o preço real da época:'''
                 if data['split_groupment'] > 0.0:
-                    for i, equity_value in enumerate(performance_data[ticker]['equity']):
-                        performance_data[ticker]['equity'][i] *= data['split_groupment']
-        return performance_data
+                    for i, equity_value in enumerate(individual_performance_data[ticker]['equity']):
+                        individual_performance_data[ticker]['equity'][i] *= data['split_groupment']
+        return individual_performance_data
 
-    def _consolidate_performance_data(self, performance_data):
+    def _consolidate_performance_data(self, individual_performance_data):
         # Cria um dicionário que conterá os dados consolidados de todos os ativos:
         final_performance_data = {
             'date': [],
@@ -134,14 +134,14 @@ class DashboardChartsProcessing(TransactionsFromFile):
         }
 
         # Inicializa o dicionário com todas as datas do histórico e com os valores correspondentes zerados:
-        for key, values in performance_data.items():
+        for key, values in individual_performance_data.items():
             final_performance_data['date'] = values['date']
             final_performance_data['contribution'] = [0.0] * len(values['contribution'])
             final_performance_data['equity'] = [0.0] * len(values['equity'])
             final_performance_data['dividends'] = [0.0] * len(values['dividends'])
         
         # Consolida os valores da lista somando por data
-        for _, values in performance_data.items():
+        for _, values in individual_performance_data.items():
             for key in ['contribution', 'equity', 'dividends']:
                 final_performance_data[key] = list(np.round(np.add(final_performance_data[key], values[key]), 2))
                 # final_performance_data[key] = [round(x + y, 2) for x, y in zip(final_performance_data[key], values[key])]
@@ -149,9 +149,10 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
     def get_performance_chart_data(self):
 
-        performance_data = self._calculate_contribution_equity_dividends()
+        individual_performance_data = self._calculate_contribution_equity_dividends()
+        self.individual_performance_data = individual_performance_data
 
-        final_performance_data = self._consolidate_performance_data(performance_data)
+        final_performance_data = self._consolidate_performance_data(individual_performance_data)
 
         self.performance_data = final_performance_data
         return final_performance_data
@@ -191,12 +192,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
     def _calculate_change(self, value_in_period, initial_value):
         if initial_value == 0:
-            # Se o valor inicial for 0, não é possível calcular a porcentagel de mudança.
-            # Se o valor no período for:
-            # 0: função retorna 0
-            # valor positivo: função retorna 1 (100% de mudança em relação ao valor inicial 0)
-            # valor negativo: função retorna -1 (-100% de mudança em relação ao valor inicial 0)
-            return operator.sign(value_in_period)
+            return 0.0
         else:
             return value_in_period / initial_value
 
@@ -320,4 +316,22 @@ class DashboardChartsProcessing(TransactionsFromFile):
             final_contribution_over_time['contribution'].append(contribution_over_time.get(month_year))
         
         return final_contribution_over_time
+
+    def get_asset_variation_chart_data(self):
+        # Cria um dicionário contendo todos os tickers com valores de variação = 0.0:
+        asset_variation_data = {
+            'ticker': [],
+            'variation': [],
+        }
+        
+        #Percorre os dados de performance individual de cada ativo:
+        for ticker, data in self.individual_performance_data.items():
+            equity = data['equity'][-1] # Obtêm o valor do patrimônio atual do ativo (último item da lista)
+            contribution = data['contribution'][-1] # Obtêm o valor acumulado de aportes do ativo (último item da lista)
+            income = equity - contribution # Calcula o lucro ou prejuízo do período
+            variation = self._calculate_change(income, contribution) # Calcula a porcentagem do lucro ou prejuízo
+            asset_variation_data['ticker'].append(ticker)
+            asset_variation_data['variation'].append(round(variation * 100, 2))
+        
+        return asset_variation_data
 

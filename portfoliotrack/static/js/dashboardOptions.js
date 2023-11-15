@@ -63,7 +63,9 @@ var performance_options = {
             smooth: false,  
         }
     ]
-}
+};
+
+
 
 
 
@@ -113,7 +115,8 @@ var category_options = {
             },
         }
     ]
-}
+};
+
 
 
 
@@ -165,7 +168,7 @@ var asset_options = {
             },
         }
     ]
-}
+};
 
 
 
@@ -210,40 +213,45 @@ var contribution_options = {
         },
       },
     ],
-  };
+};
 
-  var asset_variation_options = {
+
+
+
+
+var asset_variation_options = {
     tooltip: {
-        trigger: 'axis'
+        trigger: 'item',
+        formatter: function (params) {
+            var value = params.value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return 'Ativo: ' + params.name + '<br/>' + 'Variação: ' + value + ' %';
+        },
     },
     title: {
-        text: 'Variação dos Ativos',
+        text: 'Variação dos Ativos (%)',
+        subtext: 'Lucro ou prejuízo de cada ativo',
         left: 'center',
     },
     xAxis: {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        type: 'category',
+        data: ['', ]
     },
-    yAxis: {
-      type: 'value'
+        yAxis: {
+        type: 'value'
     },
     series: [
-      {
-        data: [100, 200, 150, 180, 70, 110, 195],
-        type: 'bar',
-        colorBy: 'data',
-        itemStyle: {
-          opacity: 0.7,
-          
-        },
-        emphasis: {
+        {
+            data: [0,],
+            type: 'bar',
+            colorBy: 'data',
             itemStyle: {
-                opacity: 1,
+                opacity: 0.7,
+            },
+            emphasis: {
+                itemStyle: {
+                    opacity: 1,
+                },
             },
         },
-        markLine: {
-            data: [{ type: 'average', name: 'Avg' }]
-        },
-      },
     ],
-  };
+};

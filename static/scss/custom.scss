@@ -1,15 +1,13 @@
 
-@import '../bootstrap-5.3.2/scss/bootstrap';
+$primary: #20c997;
 
-$custom-colors: (
-    "royalpurple": $purple
+@import '../bootstrap-5.3.2/scss/_functions';
+@import '../bootstrap-5.3.2/scss/_variables';
+
+$custom-theme-colors: (
+    custom-brown: #c96420
 );
 
-$theme-colors: map-merge($theme-colors, $custom-colors);
+$theme-colors: map-merge($custom-theme-colors, $theme-colors);
 
-@import '../bootstrap-5.3.2/scss/functions';
-@import '../bootstrap-5.3.2/scss/variables';
-@import "../bootstrap-5.3.2/scss/variables-dark";
-@import "../bootstrap-5.3.2/scss/maps";
-@import "../bootstrap-5.3.2/scss/mixins";
-@import "../bootstrap-5.3.2/scss/root";
+@import '../bootstrap-5.3.2/scss/bootstrap';

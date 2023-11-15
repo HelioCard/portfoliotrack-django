@@ -63,7 +63,9 @@ var performance_options = {
             smooth: false,  
         }
     ]
-}
+};
+
+
 
 
 
@@ -113,7 +115,8 @@ var category_options = {
             },
         }
     ]
-}
+};
+
 
 
 
@@ -165,4 +168,90 @@ var asset_options = {
             },
         }
     ]
-}
+};
+
+
+
+
+
+var contribution_options = {
+    tooltip: {
+        trigger: 'item',
+        formatter: function (params) {
+            var value = params.value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return 'Mês ' + params.name + '<br/>' + 'Aporte: R$' + value;
+        },
+    },
+    title: {
+        text: 'Aportes Mensais',
+        subtext: 'Valor dos aportes mensais ao longo do tempo',
+        left: 'center',
+    },
+    xAxis: {
+      type: 'category',
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        data: [120, 200, 150, -100, 70, 110, 130],
+        type: 'bar',
+        colorBy: 'series',
+        itemStyle: {
+          opacity: 0.7,
+          
+        },
+        emphasis: {
+            itemStyle: {
+                opacity: 1,
+            },
+        },
+        markLine: {
+            data: [{ type: 'average', name: 'Avg' }]
+        },
+      },
+    ],
+};
+
+
+
+
+
+var asset_variation_options = {
+    tooltip: {
+        trigger: 'item',
+        formatter: function (params) {
+            var value = params.value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return 'Ativo: ' + params.name + '<br/>' + 'Variação: ' + value + ' %';
+        },
+    },
+    title: {
+        text: 'Variação dos Ativos (%)',
+        subtext: 'Lucro ou prejuízo de cada ativo',
+        left: 'center',
+    },
+    xAxis: {
+        type: 'category',
+        data: ['', ]
+    },
+        yAxis: {
+        type: 'value'
+    },
+    series: [
+        {
+            data: [0,],
+            type: 'bar',
+            colorBy: 'data',
+            itemStyle: {
+                opacity: 0.7,
+            },
+            emphasis: {
+                itemStyle: {
+                    opacity: 1,
+                },
+            },
+        },
+    ],
+};

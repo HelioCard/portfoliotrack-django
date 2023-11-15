@@ -69,7 +69,7 @@ async function updateDashboardData(dashboardDataURL) {
   try {
     const data = await getDashboardData(dashboardDataURL);
     if (data) {
-      const { asset_data, category_data, performance_data, cards_data, contribution_data } = data;
+      const { asset_data, category_data, performance_data, cards_data, contribution_data, asset_variation_data } = data;
 
       elements.equity.innerHTML = cards_data.equity.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
       elements.equityChange.innerHTML = (cards_data.equity.change * 100).toFixed(2).replace('.', ',') + '%';
@@ -107,6 +107,8 @@ async function updateDashboardData(dashboardDataURL) {
       asset_options.series[0].data = asset_data;
       contribution_options.xAxis.data = contribution_data.date;
       contribution_options.series[0].data = contribution_data.contribution;
+      asset_variation_options.xAxis.data = asset_variation_data.ticker;
+      asset_variation_options.series[0].data = asset_variation_data.variation
 
       portfolioPerformanceChart.setOption(performance_options);
       assetChart.setOption(asset_options);
@@ -131,6 +133,10 @@ function resizeDashboardCharts() {
     assetVariationChart.resize();
   }
 }
+
+setInterval(function () {
+  resizeDashboardCharts()
+}, 1000);
 
 updateDashboardData(DashBoardDataURL)
 
