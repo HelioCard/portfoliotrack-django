@@ -2,6 +2,7 @@ from celery import shared_task
 from django_celery_results.models import TaskResult
 from django.utils import timezone
 from helpers.TransactionsFromFile import TransactionsFromFile
+from helpers.Cache.cache import session
 
 from portfolio.models import Portfolio, Transactions
 
@@ -11,6 +12,7 @@ def clean_expired_tasks():
     expired_tasks = TaskResult.objects.filter(date_done__lt=time_to_expire)
     count = expired_tasks.count()
     expired_tasks.delete()
+    session.cache.delete(expired=True)
     return f'SUCCESS: {count} tasks deleted!'
 
 @shared_task

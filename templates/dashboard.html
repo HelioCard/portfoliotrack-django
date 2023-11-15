@@ -25,26 +25,15 @@
           <div class="col-auto pt-3 ">
             <p><span>Performance: </span><span id="yield" class="fw-semibold">R$0,00</span></p>
           </div>
-          <div class="col-12 d-flex align-items-center col-lg-6">
+          <div class="col-12 d-flex align-items-center col-lg-6 gap-2">
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" role="switch" id="dividendsSwitch">
               <label class="form-check-label" for="dividendsSwitch">Considerar reinvestimentos dos dividendos</label>
-              <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                  const dividendsSwitch = document.getElementById('dividendsSwitch');
-                  dividendsSwitch.addEventListener('change', function () {
-                    if (this.checked) {
-                      var DashBoardDataURL = "{% url 'get_dashboard_data' subtract_dividends='Y' %}"
-                      updateDashboardData(DashBoardDataURL)
-                    } else {
-                      var DashBoardDataURL = "{% url 'get_dashboard_data' subtract_dividends='N' %}"
-                      updateDashboardData(DashBoardDataURL)
-                    }
-                  });
-                });
-              </script>
             </div>
-          </div> 
+            <div id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" hidden>
+              <span class="visually-hidden">Loading...</span>
+            </div> 
+          </div>
         </div>
 
         <!-- Gráfico de evolução patrimonial INÍCIO -->
@@ -185,6 +174,24 @@
   <script src="{% static 'themes/shine.js' %}"></script>
   <script src="{% static 'js/dashboardOptions.js' %}"></script>
   <script src="{% static 'js/dashboardCharts.js' %}" type="text/javascript"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const dividendsSwitch = document.getElementById('dividendsSwitch');
+      dividendsSwitch.addEventListener('change', async function () {
+        if (this.checked) {
+          document.querySelector('#spinner').hidden = false;
+          var DashBoardDataURL = "{% url 'get_dashboard_data' subtract_dividends='Y' %}"
+          await updateDashboardData(DashBoardDataURL)
+          document.querySelector('#spinner').hidden = true;
+        } else {
+          document.querySelector('#spinner').hidden = false;
+          var DashBoardDataURL = "{% url 'get_dashboard_data' subtract_dividends='N' %}"
+          await updateDashboardData(DashBoardDataURL)
+          document.querySelector('#spinner').hidden = true;
+        }
+      });
+    });
+  </script>
   
 {% endblock %}
 

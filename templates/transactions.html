@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+  
+  <!-- Main Body begins ----------------------------------------------->
+  <main role="main" class="col-12 col-xl-10">
+    <div class="container-fluid my-2">
+
+      <div class="row justify-content-center align-items-center my-2">
+        <div class="col-12 col-md-6 my-2">
+          <h4>Bem vindo, <span class="h4">{{ user.first_name }}!</span> </h4>
+          <p class="m-0">Acompanhe de perto sua carteira!</p>
+        </div>
+        <div class="col-12 col-md-6 my-2 d-flex align-items-center justify-content-md-end">
+          <h6>{{weekday}}, {{today}}</h6>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center mt-4 mb-3 gap-3">
+        <div class="fs-5 me-auto">Transações:</div>
+        <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#register_transaction_modal">Adicionar Transação</div>
+        <div class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#load_file_modal">Carregar de Arquivo</div>
+      </div>
+      <div class="container-fluid border rounded hover-shadow py-4 px-4" style="background-color: white;">
+        <table class="table table-hover rounded">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Data</th>
+              <th scope="col">Ticker</th>
+              <th scope="col">Operação</th>
+              <th scope="col">Quantidade</th>
+              <th scope="col">Preço Unitário</th>
+              <th scope="col">Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="align-middle">
+              <th scope="row">1</th>
+              <td>01/06/2021</td>
+              <td>TRPL4</td>
+              <td>'C'</td>
+              <td>100</td>
+              <td>R$32,20</td>
+              <td>
+                <button class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></button>
+                <button class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3"></i></button>
+              </td>
+            </tr>
+            <tr class="align-middle">
+              <th scope="row">2</th>
+              <td>02/10/2021</td>
+              <td>TAEE11</td>
+              <td>'C'</td>
+              <td>200</td>
+              <td>R$20,10</td>
+              <td>
+                <button class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></button>
+                <button class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3"></i></button>
+              </td>
+            </tr>
+        </table>
+      </div>
+      
+
+    </div>
+  </main>
+  <!-- Main Body ends --------------------------------------------->
+  
+
+
+  {% include 'includes/message.html' %}
+
+  <!-- <script> var DashBoardDataURL = "{% url 'get_dashboard_data' subtract_dividends='N' %}" </script> -->
+  <script src="{% static 'themes/shine.js' %}"></script>
+  
+  
+{% endblock %}
+
+
+
+
+

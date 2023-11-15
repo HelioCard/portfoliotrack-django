@@ -43,6 +43,7 @@ def upload_file(request):
             
     return redirect('dashboard')
 
+@login_required(login_url='login')
 def register_transaction(request):
     if request.method == 'POST':
         form = RegisterTransactionForm(request.POST)
@@ -72,3 +73,7 @@ def register_transaction(request):
             messages.error(request, form.errors['__all__'])
 
     return redirect('dashboard')
+
+@login_required(login_url='login')
+def transactions(request):
+    return render(request, 'transactions.html')
