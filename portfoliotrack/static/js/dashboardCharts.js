@@ -1,4 +1,4 @@
-const THEME = 'westeros'
+const THEME = 'shine'
 let assetChart, categoryChart, portfolioPerformanceChart, contributionChart, assetVariationChart
 
 // Elementos do DOM
@@ -69,7 +69,7 @@ async function updateDashboardData(dashboardDataURL) {
   try {
     const data = await getDashboardData(dashboardDataURL);
     if (data) {
-      const { asset_data, category_data, performance_data, cards_data } = data;
+      const { asset_data, category_data, performance_data, cards_data, contribution_data } = data;
 
       elements.equity.innerHTML = cards_data.equity.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
       elements.equityChange.innerHTML = (cards_data.equity.change * 100).toFixed(2).replace('.', ',') + '%';
@@ -105,6 +105,8 @@ async function updateDashboardData(dashboardDataURL) {
       performance_options.series[2].data = performance_data.dividends;
       category_options.series[0].data = category_data;
       asset_options.series[0].data = asset_data;
+      contribution_options.xAxis.data = contribution_data.date;
+      contribution_options.series[0].data = contribution_data.contribution;
 
       portfolioPerformanceChart.setOption(performance_options);
       assetChart.setOption(asset_options);
@@ -121,7 +123,7 @@ async function updateDashboardData(dashboardDataURL) {
 
 // Redimensionar os gráficos
 function resizeDashboardCharts() {
-  if (portfolioPerformanceChart && categoryChart && assetChart) {
+  if (portfolioPerformanceChart && categoryChart && assetChart && contributionChart && assetVariationChart) {
     portfolioPerformanceChart.resize();
     categoryChart.resize();
     assetChart.resize();

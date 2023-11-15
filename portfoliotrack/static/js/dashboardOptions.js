@@ -167,12 +167,21 @@ var asset_options = {
     ]
 }
 
+
+
+
+
 var contribution_options = {
     tooltip: {
-        trigger: 'axis'
+        trigger: 'item',
+        formatter: function (params) {
+            var value = params.value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            return 'Mês ' + params.name + '<br/>' + 'Aporte: R$' + value;
+        },
     },
     title: {
-        text: 'Variação dos Ativos',
+        text: 'Aportes Mensais',
+        subtext: 'Valor dos aportes mensais ao longo do tempo',
         left: 'center',
     },
     xAxis: {
@@ -186,7 +195,7 @@ var contribution_options = {
       {
         data: [120, 200, 150, -100, 70, 110, 130],
         type: 'bar',
-        colorBy: 'data',
+        colorBy: 'series',
         itemStyle: {
           opacity: 0.7,
           
@@ -208,8 +217,7 @@ var contribution_options = {
         trigger: 'axis'
     },
     title: {
-        text: 'Aportes Mensais',
-        subtext: 'Valor dos aportes mensais ao longo do tempo',
+        text: 'Variação dos Ativos',
         left: 'center',
     },
     xAxis: {
@@ -223,7 +231,7 @@ var contribution_options = {
       {
         data: [100, 200, 150, 180, 70, 110, 195],
         type: 'bar',
-        colorBy: 'series',
+        colorBy: 'data',
         itemStyle: {
           opacity: 0.7,
           

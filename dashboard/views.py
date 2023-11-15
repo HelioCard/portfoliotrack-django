@@ -18,8 +18,8 @@ def get_dashboard_data(request, subtract_dividends):
             'category_data': charts.get_category_data(),
             'asset_data': charts.get_asset_data(),
             'cards_data': charts.get_cards_data(),
+            'contribution_data': charts.get_contributions_over_time(show_months_without_contribution=True)
         }
-        contrib = charts.get_contributions_over_time(show_months_without_contribution=True) #TODO: Terminar
         return JsonResponse(context)
 
     except ValueError as e:
