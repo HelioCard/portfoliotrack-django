@@ -36,35 +36,23 @@
             </tr>
           </thead>
           <tbody>
-            <tr onclick="window.location.href='#-';" class="align-middle" style="cursor: pointer;">
-              <th scope="row">1</th>
-              <td>01/06/2021</td>
-              <td>TRPL4</td>
-              <td>'C'</td>
-              <td>100</td>
-              <td>R$32,20</td>
-              <td>
-                <a href="#" class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></a>
-                <a href="#" class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3"></i></a>
-              </td>
-            </tr>
-            <tr class="align-middle">
-              <th scope="row">2</th>
-              <td>02/10/2021</td>
-              <td>TAEE11</td>
-              <td>'C'</td>
-              <td>200</td>
-              <td>R$20,10</td>
-              <td>
-                <a href="#" class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></a>
-                <a href="#" class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3"></i></a>
-              </td>
-            </tr>
-            
+            {% for transaction in transactions %}
+              <tr onclick="window.location.href='#-';" class="align-middle" style="cursor: pointer;">
+                <th scope="row">1</th>
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.ticker }}</td>
+                <td>{{ transaction.operation }}</td>
+                <td>{{ transaction.quantity }}</td>
+                <td>R${{ transaction.unit_price }}</td>
+                <td>
+                  <a href="#" class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></a>
+                  <a href="#" class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3"></i></a>
+                </td>
+              </tr>
+            {% endfor %}
         </table>
       </div>
       
-
     </div>
   </main>
   <!-- Main Body ends --------------------------------------------->

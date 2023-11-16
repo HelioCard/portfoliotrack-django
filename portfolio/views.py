@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from tasks.tasks import process_raw_transactions
 from helpers.TransactionsFromFile import TransactionsFromFile
+from .models import Transactions
 
 from django.http import FileResponse
 from django.conf import settings
@@ -76,4 +77,8 @@ def register_transaction(request):
 
 @login_required(login_url='login')
 def transactions(request):
-    return render(request, 'transactions.html')
+    transactions = Transactions.objects.filter(portfolio__user=request.user, operation__in=['C', 'V'])
+    context = {
+        'transactions': transactions,
+    }
+    return render(request, 'transactions.html', context)
