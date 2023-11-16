@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
 {% block content %}
   
   <!-- Main Body begins ----------------------------------------------->
@@ -24,7 +23,7 @@
         <div class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#load_file_modal">Carregar de Arquivo</div>
       </div>
       <div class="container-fluid border rounded hover-shadow py-4 px-4" style="background-color: white;">
-        <table class="table table-hover rounded">
+        <table id="transactionsTable" class="table table-hover">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -37,7 +36,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="align-middle">
+            <tr onclick="window.location.href='#-';" class="align-middle" style="cursor: pointer;">
               <th scope="row">1</th>
               <td>01/06/2021</td>
               <td>TRPL4</td>
@@ -45,8 +44,8 @@
               <td>100</td>
               <td>R$32,20</td>
               <td>
-                <button class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></button>
-                <button class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3"></i></button>
+                <a href="#" class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></a>
+                <a href="#" class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3"></i></a>
               </td>
             </tr>
             <tr class="align-middle">
@@ -57,10 +56,11 @@
               <td>200</td>
               <td>R$20,10</td>
               <td>
-                <button class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></button>
-                <button class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3"></i></button>
+                <a href="#" class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></a>
+                <a href="#" class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3"></i></a>
               </td>
             </tr>
+            
         </table>
       </div>
       
@@ -73,9 +73,14 @@
 
   {% include 'includes/message.html' %}
 
-  <!-- <script> var DashBoardDataURL = "{% url 'get_dashboard_data' subtract_dividends='N' %}" </script> -->
-  <script src="{% static 'themes/shine.js' %}"></script>
   
+  
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+  
+
+  <script src="{% static 'js/transactionsTable.js' %}"></script>
   
 {% endblock %}
 
