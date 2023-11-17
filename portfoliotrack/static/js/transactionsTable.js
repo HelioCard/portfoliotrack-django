@@ -16,3 +16,8 @@ let table = new DataTable('#transactionsTable', {
     },
     
 });
+
+function sendURLToDelete(button) {
+    const urlToDelete = button.getAttribute('data-id');
+    document.getElementById('deleteTransactionForm').action = urlToDelete
+}

@@ -18,7 +18,7 @@
       </div>
 
       <div class="d-flex align-items-center mt-4 mb-3 gap-3">
-        <div class="fs-5 me-auto">Transações:</div>
+        <div class="fs-5 me-auto">Transações - {{ transactions.count }} registro(s)</div>
         <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#register_transaction_modal">Adicionar Transação</div>
         <div class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#load_file_modal">Carregar de Arquivo</div>
       </div>
@@ -37,37 +37,34 @@
           </thead>
           <tbody>
             {% for transaction in transactions %}
-              <tr onclick="window.location.href='#-';" class="align-middle" style="cursor: pointer;">
-                <th scope="row">1</th>
-                <td>{{ transaction.date }}</td>
+              <tr class="align-middle">
+                <th scope="row">{{ forloop.counter }}</th>
+                <td>{{ transaction.date|date:"d/m/Y" }}</td>
                 <td>{{ transaction.ticker }}</td>
                 <td>{{ transaction.operation }}</td>
                 <td>{{ transaction.quantity }}</td>
                 <td>R${{ transaction.unit_price }}</td>
                 <td>
                   <a href="#" class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></a>
-                  <a href="#" class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3"></i></a>
+                  <button class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3" data-bs-toggle="modal" data-bs-target="#delete_transaction_modal" data-id="{% url 'delete_transaction' transaction.id %}" onclick="sendURLToDelete(this)"></i></button>
                 </td>
               </tr>
             {% endfor %}
         </table>
       </div>
-      
+
     </div>
   </main>
   <!-- Main Body ends --------------------------------------------->
   
 
-
   {% include 'includes/message.html' %}
-
   
   
   <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
   
-
   <script src="{% static 'js/transactionsTable.js' %}"></script>
   
 {% endblock %}

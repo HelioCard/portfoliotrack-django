@@ -76,8 +76,12 @@ def register_transaction(request):
     return redirect('dashboard')
 
 @login_required(login_url='login')
+def delete_transaction(request, id):
+    print('Deleting ... ', id)
+
+@login_required(login_url='login')
 def transactions(request):
-    transactions = Transactions.objects.filter(portfolio__user=request.user, operation__in=['C', 'V'])
+    transactions = Transactions.objects.filter(portfolio__user=request.user, operation__in=['C', 'V']).order_by('-date')
     context = {
         'transactions': transactions,
     }
