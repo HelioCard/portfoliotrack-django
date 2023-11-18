@@ -107,12 +107,14 @@
         </div>
 
         <div class="modal-body my-2">
-            <form method="" id="deleteTransactionForm" action="#" enctype="multipart/form-data">
+            <form method="POST" id="deleteTransactionForm" action="{% url 'delete_transaction' %}" enctype="multipart/form-data">
             {% csrf_token %}
 
                 <div class="form-row mb-3">
                     <p>Tem certeza que deseja apagar a transação?</p>
                 </div>
+
+                <input type="hidden" name="ids" id="idsInput" value="">
 
                 <div class="d-flex justify-content-end mt-3 mx-2 gap-3">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>

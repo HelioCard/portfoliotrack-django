@@ -76,8 +76,18 @@ def register_transaction(request):
     return redirect('dashboard')
 
 @login_required(login_url='login')
-def delete_transaction(request, id):
-    print('Deleting ... ', id)
+def delete_transaction(request):
+    if request.method == 'POST':
+        strings_of_ids = request.POST.get('ids')
+        if not strings_of_ids:
+            messages.error(request, 'Nenhuma transação selecionada!')
+            return redirect('transactions')
+        list_of_ids = strings_of_ids.split(',')
+        list_of_ids = [int(value) for value in list_of_ids]
+        print(list_of_ids)
+        print(type(list_of_ids))
+        
+    return redirect('transactions')
 
 @login_required(login_url='login')
 def transactions(request):

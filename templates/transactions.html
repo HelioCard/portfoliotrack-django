@@ -17,36 +17,38 @@
         </div>
       </div>
 
-      <div class="d-flex align-items-center mt-4 mb-3 gap-3">
+      <div class="d-flex flex-wrap align-items-center mt-4 mb-3 gap-3">
         <div class="fs-5 me-auto">Transações - {{ transactions.count }} registro(s)</div>
-        <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#register_transaction_modal">Adicionar Transação</div>
+        <div class="btn btn-danger" >Apagar Todas</div>
+        <div class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#delete_transaction_modal" onclick="sendListToDelete()">Apagar Selecionadas</div>
+        <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#register_transaction_modal">Adicionar</div>
         <div class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#load_file_modal">Carregar de Arquivo</div>
       </div>
       <div class="container-fluid border rounded hover-shadow py-4 px-4" style="background-color: white;">
-        <table id="transactionsTable" class="table table-hover">
+        <table id="transactionsTable" class="table-responsive table-hover">
           <thead>
             <tr>
-              <th scope="col">#</th>
+              <th scope="col">ID</th>
               <th scope="col">Data</th>
               <th scope="col">Ticker</th>
-              <th scope="col">Operação</th>
-              <th scope="col">Quantidade</th>
-              <th scope="col">Preço Unitário</th>
+              <th scope="col">Oper.</th>
+              <th scope="col">Qtde</th>
+              <th scope="col">Preço Unit.</th>
               <th scope="col">Ação</th>
             </tr>
           </thead>
           <tbody>
             {% for transaction in transactions %}
               <tr class="align-middle">
-                <th scope="row">{{ forloop.counter }}</th>
+                <th>{{ transaction.id }}</th>
                 <td>{{ transaction.date|date:"d/m/Y" }}</td>
                 <td>{{ transaction.ticker }}</td>
                 <td>{{ transaction.operation }}</td>
                 <td>{{ transaction.quantity }}</td>
                 <td>R${{ transaction.unit_price }}</td>
                 <td>
-                  <a href="#" class="btn btn-outline-primary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></a>
-                  <button class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3" data-bs-toggle="modal" data-bs-target="#delete_transaction_modal" data-id="{% url 'delete_transaction' transaction.id %}" onclick="sendURLToDelete(this)"></i></button>
+                  <a href="#" class="btn btn-outline-secondary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></a>
+                  <button class="btn btn-outline-danger my-1" style="padding: 4px 8px;"><i class="bi bi-trash3" data-bs-toggle="modal" data-bs-target="#delete_transaction_modal" data-id="{{ transaction.id }}" onclick="sendSingleIDToDelete(this)"></i></button>
                 </td>
               </tr>
             {% endfor %}
@@ -63,8 +65,12 @@
   
   <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+  <link rel="stylesheet" href="{% static 'CSS/custom-datatables.css' %}" />
   
+ 
+  <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
+
   <script src="{% static 'js/transactionsTable.js' %}"></script>
   
 {% endblock %}
