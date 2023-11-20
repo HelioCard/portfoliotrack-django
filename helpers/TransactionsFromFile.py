@@ -48,15 +48,15 @@ class TransactionsFromFile(DataFromYFinance):
             # Valida a coluna "Operações"
             try:
                 data['operation'] = data['operation'].upper()
-                if data['operation'] not in ['C', 'V']:
-                    raise ValueError(f'Dados corrompidos na coluna "Operações", Linha {i+2}: {data["operation"]} não é uma operação aceita. (Use "C" ou "V")')
+                if data['operation'] not in ['C', 'V', 'A']:
+                    raise ValueError(f'Dados corrompidos na coluna "Operações", Linha {i+2}: {data["operation"]} não é uma operação aceita. (Use "C", "V" ou "A")')
             except Exception as e:
                 raise ValueError(e) from e
             
             # Valida a coluna "Quantidade"
             try:
-                if not isinstance(data['quantity'], int) or int(data['quantity']) <= 0:
-                    raise ValueError(f'Dados corrompidos na coluna "Quantidade", Linha {i+2}: {data["quantity"]}. Os valores de quantidade devem ser do tipo inteiro e maiores que 0.')
+                if not isinstance(data['quantity'], int) or int(data['quantity']) < 0:
+                    raise ValueError(f'Dados corrompidos na coluna "Quantidade", Linha {i+2}: {data["quantity"]}. Os valores de quantidade devem ser do tipo inteiro e maiores ou iguais a 0.')
             except Exception as e:
                 raise ValueError(e) from e
             
@@ -71,7 +71,7 @@ class TransactionsFromFile(DataFromYFinance):
             # Valida a coluna "Tipo"
             try:
                 data['sort_of'] = data['sort_of'].upper()
-                if data['sort_of'] not in ['AÇÕES', 'FIIS']:
+                if data['sort_of'] not in ['AÇÕES', 'FIIS', 'SPLIT/AGRUP']:
                     raise ValueError(f'Dados corrompidos na coluna "Tipo", Linha {i+2}: {data["sort_of"]}.')
             except Exception as e:
                 raise ValueError(e) from e
@@ -129,7 +129,7 @@ class TransactionsFromFile(DataFromYFinance):
                                     'operation': 'A',
                                     'quantity': 0,
                                     'unit_price': split_bonus['ratio'],
-                                    'sort_of': 'Split/Agrup',
+                                    'sort_of': 'SPLIT/AGRUP',
                                 }
                             )
                             print(f'{ticker} splits/groupments added')
