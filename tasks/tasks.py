@@ -22,13 +22,13 @@ def process_raw_transactions(raw_transactions_list, user_id):
         existing_events = Transactions.objects.filter(portfolio__user_id=user_id, operation="A")
         existing_events_list = list(existing_events.values())
         
-        result = TransactionsFromFile().process_raw_transactions(raw_transactions_list, existing_events_list)
+        transactions = TransactionsFromFile().process_raw_transactions(raw_transactions_list, existing_events_list)
         
-        if isinstance(result, list):
+        if isinstance(transactions, list):
 
             portfolio = Portfolio.objects.get(user_id=user_id)
             fulldataset = []
-            for data in result:
+            for data in transactions:
                 tempdata = Transactions(portfolio=portfolio, date=data['date'], ticker=data['ticker'], operation=data['operation'], quantity=data['quantity'], unit_price=data['unit_price'], sort_of=data['sort_of'])
                 fulldataset.append(tempdata)
 
@@ -36,7 +36,26 @@ def process_raw_transactions(raw_transactions_list, user_id):
 
             return 'SUCCESS'
         else:
-            raise ValueError(result)
+            raise ValueError(transactions)
     except Exception as e:
         raise Exception(f'ERROR: {e}')
 
+@shared_task
+def update_events_of_transactions(list_of_tickers, user):
+    # Percorre a lista de tickers verificando se há eventos de Split/Agrup salvos com datas anterior à operação mais velha do ticker
+    # Se houver, apaga o evento. Se não houver mais operações do ticker, apaga todos os eventos
+    for ticker in list_of_tickers:
+        transactions_of_ticker = Transactions.objects.filter(portfolio__user=user, ticker=ticker, operation='C')
+        events_of_ticker = Transactions.objects.filter(portfolio__user=user, ticker=ticker, operation='A')
+        if not events_of_ticker:
+            continue
+        if not transactions_of_ticker:
+            if events_of_ticker:
+                events_of_ticker.delete()
+            continue
+
+        first_transaction = min(list(transactions_of_ticker.values()), key=lambda x: x['date'])
+        for event in events_of_ticker:
+            if event.date <= first_transaction['date']:
+                print(event)
+                event.delete()
