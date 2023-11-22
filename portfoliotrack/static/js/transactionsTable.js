@@ -18,7 +18,7 @@ let table = new DataTable('#transactionsTable', {
         select: {
             rows: {
                 _: '%d linhas selecionadas',
-                0: 'Clique para selecionar',
+                0: 'Clique para selecionar. Segure Ctrl ou Shift para selecionar várias.',
                 1: '%d linha selecionada',
             },
         },
@@ -38,7 +38,7 @@ function sendListToDelete() {
         arrayOfIDs.push(parseInt(ID))
     }
     document.getElementById('idsInput').value = arrayOfIDs
-    document.getElementById('questionMessage').innerHTML = `Tem certeza que deseja apagar as transações?`
+    document.getElementById('questionMessage').innerHTML = `Tem certeza que deseja apagar as transações selecionadas?`
 }
 
 function sendSingleIDToDelete(button) {

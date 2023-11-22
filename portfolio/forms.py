@@ -6,7 +6,22 @@ import yfinance as yt
 from helpers.Cache.cache import session
 
 class UploadFormFile(forms.Form):
-    file = forms.FileField()
+    file = forms.FileField(
+        widget=forms.FileInput(
+            attrs={
+                'accept': '.xls, .xlsx',
+                'class': 'form-control',
+            }
+        ),
+        label='Selecione um arquivo Excel',
+    )
+
+    def clean_file(self):
+        uploaded_file = self.cleaned_data.get('file')
+        if uploaded_file:
+            if not uploaded_file.name.endswith(('.xls', '.xlsx')):
+                raise forms.ValidationError(f'Arquivo inválido: {uploaded_file}! Baixe o modelo correto no menu à esquerda, botão "Carregar de Arquivo"')
+        return uploaded_file
 
 
 class RegisterTransactionForm(forms.ModelForm):
@@ -36,6 +51,10 @@ class RegisterTransactionForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(RegisterTransactionForm, self).clean()
         date = cleaned_data.get('date')
+        operation = cleaned_data.get('operation')
+        quantity =  cleaned_data.get('quantity')
+        if operation == 'A' and quantity != 0:
+            raise forms.ValidationError('Para operações de split/agrupamento use quantidade = 0')
         if date > dt.today():
             raise forms.ValidationError('A data da operação é inválida!')
         

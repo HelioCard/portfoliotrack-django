@@ -30,27 +30,18 @@ def upload_file(request):
     if request.method == 'POST':
         form = UploadFormFile(request.POST, request.FILES)
         if form.is_valid():
-            file = request.FILES['file']
-            if file.name.endswith('.xlsx'):
-                
-                user_id = request.user.id
-                raw_transactions_list = TransactionsFromFile().load_file(file)
-
-                task = register_transactions.delay(raw_transactions_list, user_id)
-                
-                messages.success(request, f'Processando transações do arquivo "{file}". Aguarde ...')
-                context = {
-                    'task_id': task.task_id,
-                    'redirect_url': 'dashboard',
-                }
-                
-                return render(request, 'processTransactions.html', context)
-
-            else:
-                messages.error(request, f"Arquivo inválido: {file}. Baixe o modelo de arquivo apropriado no menu à esquerda, botão 'Carregar de Arquivo'.")
+            file = request.FILES['file']   
+            user_id = request.user.id
+            raw_transactions_list = TransactionsFromFile().load_file(file)
+            task = register_transactions.delay(raw_transactions_list, user_id)
+            messages.success(request, f'Processando transações do arquivo "{file}". Aguarde ...')
+            context = {
+                'task_id': task.task_id,
+                'redirect_url': 'dashboard',
+            }
+            return render(request, 'processTransactions.html', context)
         else:
-            messages.error(request, f"Arquivo inválido: {file}. Baixe o modelo de arquivo apropriado no menu à esquerda, botão 'Carregar de Arquivo'.")
-            
+            messages.error(request, form.errors)        
     return redirect('dashboard')
 
 @login_required(login_url='login')
@@ -68,21 +59,16 @@ def register_transaction(request):
                     'sort_of': request.POST['sort_of'],
                 }
             ]
-            
-            user_id = request.user.id
-                        
+            user_id = request.user.id             
             task = register_transactions.delay(transaction, user_id)
-            
             messages.success(request, f"Processando transação de {transaction[0]['operation']} de {transaction[0]['ticker']}. Aguarde ...")
             context = {
                 'task_id': task.task_id,
                 'redirect_url': 'dashboard',
             }
-            
             return render(request, 'processTransactions.html', context)
         else:
             messages.error(request, form.errors['__all__'])
-
     return redirect('dashboard')
 
 @login_required(login_url='login')
@@ -104,7 +90,7 @@ def delete_transaction(request):
             transactions = Transactions.objects.filter(pk__in=list_of_ids)
             list_of_tickers = TransactionsFromFile().extract_tickers_list(list(transactions.values())) # Obtem a lista de tickers das transações apagadas
             transactions.delete()
-            update_events_of_transactions(list_of_tickers=list_of_tickers, user=user) # Atualiza os eventos de splits/agrupamentos
+            update_events_of_transactions(list_of_tickers=list_of_tickers, user_id=user.id) # Atualiza os eventos de splits/agrupamentos
             messages.success(request, f'{len(list_of_ids)} transações apagadas com sucesso!')
             return redirect('transactions')
         except Exception as e:
@@ -128,10 +114,8 @@ def edit_transaction(request, pk):
                     'sort_of': request.POST['sort_of'],
                 }
             ]
-            
             user_id = request.user.id
             task = update_transaction.delay(edited_transaction, user_id, pk)
-            update_events_of_transactions(list_of_tickers=[edited_transaction[0]['ticker'],], user=request.user)
             messages.success(request, f"Processando alteração da transação: {edited_transaction[0]['operation']} de {edited_transaction[0]['ticker']}. Aguarde ...")
 
             context = {
