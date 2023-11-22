@@ -47,8 +47,20 @@
                 <td>{{ transaction.quantity }}</td>
                 <td>{% if transaction.operation == 'A' %} {% else %}R${% endif %}{{ transaction.unit_price|floatformat:2 }}</td>
                 <td>
-                  <a href="#" class="btn btn-outline-secondary my-1" style="padding: 4px 8px;"><i class="bi bi-pen"></i></a>
-                  <button class="btn btn-outline-danger my-1" style="padding: 4px 8px;" data-bs-toggle="modal" data-bs-target="#delete_transaction_modal" data-id="{{ transaction.id }}" onclick="sendSingleIDToDelete(this)"><i class="bi bi-trash3"></i></button>
+                  <a href="{% url 'edit_transaction' transaction.id %}"
+                    class="btn btn-outline-secondary my-1" 
+                    style="padding: 4px 8px;">
+                      <i class="bi bi-pen"></i>
+                  </a>
+                  <button
+                    class="btn btn-outline-danger my-1"
+                    style="padding: 4px 8px;"
+                    data-bs-toggle="modal"
+                    data-bs-target="#delete_transaction_modal"
+                    data-id="{{ transaction.id }}"
+                    onclick="sendSingleIDToDelete(this)">
+                      <i class="bi bi-trash3"></i>
+                  </button>
                 </td>
               </tr>
             {% endfor %}

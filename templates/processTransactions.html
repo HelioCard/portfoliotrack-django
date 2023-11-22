@@ -14,7 +14,7 @@
           <p class="m-0">Acompanhe de perto sua carteira!</p>
         </div>
         <div class="col-12 col-md-6 my-2 d-flex align-items-center justify-content-md-end">
-          <h6>Terça-feira, 20 de agosto de 2023</h6>
+          <h6>{{ weekday }}, {{ today }}</h6>
         </div>
       </div>
 
@@ -26,13 +26,11 @@
           <span class="visually-hidden">Loading...</span>
         </span>
         <script>
-          const checkProcessRawTransactionsStatusURL = "{% url 'check_process_raw_transactions_status' task_id %}"
-          const redirectDashboardURL = "{% url 'dashboard' %}"
+          const checkTasksStatusURL = "{% url 'check_tasks_status' task_id %}" 
+          const redirectURL = "{% url redirect_url %}" // redirect_url é uma variável passada através do context. Contém o nome da url para qual a página será redirecionada após a conclusão da tarefa
         </script>
-        <script src="{% static 'js/getProcessTransactionsStatus.js' %}"></script>
+        <script src="{% static 'js/getTasksStatus.js' %}"></script>
       </div>
-      
-
       
 
     </div>

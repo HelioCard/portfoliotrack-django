@@ -16,7 +16,7 @@ def clean_expired_tasks():
     return f'SUCCESS: {count} tasks deleted!'
 
 @shared_task
-def process_raw_transactions(raw_transactions_list, user_id):
+def register_transactions(raw_transactions_list, user_id):
     clean_expired_tasks.delay() # ==>TODO: Criar uma tarefa agendada para executar uma vez por hora.
     try:
         existing_events = Transactions.objects.filter(portfolio__user_id=user_id, operation="A")
@@ -41,6 +41,30 @@ def process_raw_transactions(raw_transactions_list, user_id):
         raise Exception(f'ERROR: {e}')
 
 @shared_task
+def update_transaction(edited_transaction, user_id, pk):
+    try:
+        existing_events = Transactions.objects.filter(portfolio__user_id=user_id, operation="A")
+        existing_events_list = list(existing_events.values())
+        
+        processed_transactions = TransactionsFromFile().process_raw_transactions(edited_transaction, existing_events_list)
+        print(processed_transactions)
+        
+        if isinstance(processed_transactions, list):
+            transaction = Transactions.objects.get(id=pk)
+            transaction.date = processed_transactions[0]['date']
+            transaction.ticker = processed_transactions[0]['ticker']
+            transaction.operation = processed_transactions[0]['operation']
+            transaction.quantity = processed_transactions[0]['quantity']
+            transaction.unit_price = processed_transactions[0]['unit_price']
+            transaction.sort_of = processed_transactions[0]['sort_of']
+            transaction.save()
+            return 'SUCCESS'
+        else:
+            raise ValueError(processed_transactions)
+    except Exception as e:
+        raise Exception(f'ERROR: {e}')
+
+@shared_task
 def update_events_of_transactions(list_of_tickers, user):
     # Percorre a lista de tickers verificando se há eventos de Split/Agrup salvos com datas anterior à operação mais velha do ticker
     # Se houver, apaga o evento. Se não houver mais operações do ticker, apaga todos os eventos
@@ -55,7 +79,7 @@ def update_events_of_transactions(list_of_tickers, user):
             continue
 
         first_transaction = min(list(transactions_of_ticker.values()), key=lambda x: x['date'])
+        
         for event in events_of_ticker:
             if event.date <= first_transaction['date']:
-                print(event)
                 event.delete()

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import UploadFormFile, RegisterTransactionForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from tasks.tasks import process_raw_transactions, update_events_of_transactions
+from tasks.tasks import register_transactions, update_transaction, update_events_of_transactions
 from helpers.TransactionsFromFile import TransactionsFromFile
 from .models import Transactions
 
@@ -12,6 +12,14 @@ import os
 import datetime
 
 # Create your views here.
+@login_required(login_url='login')
+def transactions(request):
+    transactions = Transactions.objects.filter(portfolio__user=request.user).order_by('-date')
+    context = {
+        'transactions': transactions,
+    }
+    return render(request, 'transactions.html', context)
+
 @login_required(login_url='login')
 def download_model_file(request):
     file_path = os.path.join(settings.STATIC_ROOT, 'media/modelo.xlsx')
@@ -28,14 +36,15 @@ def upload_file(request):
                 user_id = request.user.id
                 raw_transactions_list = TransactionsFromFile().load_file(file)
 
-                task = process_raw_transactions.delay(raw_transactions_list, user_id)
+                task = register_transactions.delay(raw_transactions_list, user_id)
                 
                 messages.success(request, f'Processando transações do arquivo "{file}". Aguarde ...')
                 context = {
                     'task_id': task.task_id,
+                    'redirect_url': 'dashboard',
                 }
                 
-                return render(request, 'upload_file.html', context)
+                return render(request, 'processTransactions.html', context)
 
             else:
                 messages.error(request, f"Arquivo inválido: {file}. Baixe o modelo de arquivo apropriado no menu à esquerda, botão 'Carregar de Arquivo'.")
@@ -62,14 +71,15 @@ def register_transaction(request):
             
             user_id = request.user.id
                         
-            task = process_raw_transactions.delay(transaction, user_id)
+            task = register_transactions.delay(transaction, user_id)
             
             messages.success(request, f"Processando transação de {transaction[0]['operation']} de {transaction[0]['ticker']}. Aguarde ...")
             context = {
                 'task_id': task.task_id,
+                'redirect_url': 'dashboard',
             }
             
-            return render(request, 'upload_file.html', context)
+            return render(request, 'processTransactions.html', context)
         else:
             messages.error(request, form.errors['__all__'])
 
@@ -103,9 +113,37 @@ def delete_transaction(request):
     return redirect('transactions')
 
 @login_required(login_url='login')
-def transactions(request):
-    transactions = Transactions.objects.filter(portfolio__user=request.user).order_by('-date')
+def edit_transaction(request, pk):
+    transaction = Transactions.objects.get(id=pk)
+    if request.method == 'POST':
+        form = RegisterTransactionForm(request.POST, instance=transaction)
+        if form.is_valid():
+            edited_transaction = [
+                {
+                    'date': datetime.datetime.strptime(request.POST['date'], '%Y-%m-%d'),
+                    'ticker': request.POST['ticker'].upper(),
+                    'operation': request.POST['operation'].upper(),
+                    'quantity': int(request.POST['quantity']),
+                    'unit_price': float(request.POST['unit_price']),
+                    'sort_of': request.POST['sort_of'],
+                }
+            ]
+            
+            user_id = request.user.id
+            task = update_transaction.delay(edited_transaction, user_id, pk)
+            update_events_of_transactions(list_of_tickers=[edited_transaction[0]['ticker'],], user=request.user)
+            messages.success(request, f"Processando alteração da transação: {edited_transaction[0]['operation']} de {edited_transaction[0]['ticker']}. Aguarde ...")
+
+            context = {
+                'task_id': task.task_id,
+                'redirect_url': 'transactions',
+            }
+            return render(request, 'processTransactions.html', context)
+    else:
+        form = RegisterTransactionForm(instance=transaction)
+
     context = {
-        'transactions': transactions,
+        'edit_transaction_form': form,
+        'transaction_id': transaction.id,
     }
-    return render(request, 'transactions.html', context)
+    return render(request, 'editTransaction.html', context)

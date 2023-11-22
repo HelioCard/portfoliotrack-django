@@ -1,6 +1,7 @@
 from django import forms
 from portfolio.models import Transactions
 from datetime import date as dt
+from datetime import datetime
 import yfinance as yt
 from helpers.Cache.cache import session
 
@@ -9,10 +10,12 @@ class UploadFormFile(forms.Form):
 
 
 class RegisterTransactionForm(forms.ModelForm):
-    date = forms.DateField(widget=forms.DateInput(attrs={
+    date = forms.DateField(widget=forms.TextInput(attrs={
         'placeholder': 'Data',
         'class': 'form-control',
-        'type': 'date',
+        'type': 'text',
+        'id': 'id_date',
+        'autocomplete': 'off',
     }))
 
     class Meta:
@@ -35,6 +38,9 @@ class RegisterTransactionForm(forms.ModelForm):
         date = cleaned_data.get('date')
         if date > dt.today():
             raise forms.ValidationError('A data da operação é inválida!')
+        
+        
+        
 
         
             
