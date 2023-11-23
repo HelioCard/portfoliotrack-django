@@ -18,7 +18,7 @@
                 </div>
                 <div class="d-flex justify-content-end mt-3 gap-2">
                   <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="submit" class="btn btn-primary" >Carregar Arquivo</button>
+                  <button type="submit" class="btn btn-primary" >Processar Transações</button>
                 </div>
             </div>
           </form>
@@ -92,6 +92,7 @@
             </form>  
         </div>
         <script>
+            // O elemento id_date foi nomeado no formulário Django:
             flatpickr("#id_date", {
                 altInput: true,
                 altFormat: 'j \\de F \\de Y',
