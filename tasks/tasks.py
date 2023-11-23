@@ -31,20 +31,11 @@ def register_transactions(raw_transactions_list, user_id):
 
 @shared_task
 def update_transaction(edited_transaction, user_id, pk):
-    try:       
+    try:
+        # Valida os dados de entrada e insere eventos de split/agrup se houver:        
         processed_transactions = process_transactions(transactions_list=edited_transaction, user_id=user_id)
         if isinstance(processed_transactions, list):
             processed_transactions = register_split_group_events(processed_transactions=processed_transactions, user_id=user_id)
-            # # Se houver mais de um item na lista é porque há eventos de split/agrupamento a ser processado
-            # # devido a mudança de data na transação:
-            # if len(processed_transactions) > 1:
-            #     events_to_add = []
-            #     # Obtem os dados de eventos de split/agrupamentos e os envia para inclusão:
-            #     for i, data in enumerate(processed_transactions):
-            #         if data['operation'] == 'A':
-            #             events_to_add.append(processed_transactions.pop(i))
-            #     bulk_create_of_transactions(transactions=events_to_add, user_id=user_id)
-
             # Atualiza os dados da transação:
             transaction = Transactions.objects.get(id=pk)
             transaction.date = processed_transactions[0]['date']
