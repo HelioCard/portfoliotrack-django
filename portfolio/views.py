@@ -131,3 +131,7 @@ def edit_transaction(request, pk):
         'transaction_id': transaction.id,
     }
     return render(request, 'editTransaction.html', context)
+
+@login_required(login_url='login')
+def summary(request):
+    return render(request, 'portfolioSummary.html')

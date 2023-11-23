@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  
+  <!-- Main Body begins ----------------------------------------------->
+  <main role="main" class="col-12 col-xl-10">
+    <div class="container-fluid my-2">
+
+      <div class="row justify-content-center align-items-center my-2">
+        <div class="col-12 col-md-6 my-2">
+          <h4>Bem vindo, <span class="h4">{{ user.first_name }}!</span> </h4>
+          <p class="m-0">Acompanhe de perto sua carteira!</p>
+        </div>
+        <div class="col-12 col-md-6 my-2 d-flex align-items-center justify-content-md-end">
+          <h6>{{weekday}}, {{today}}</h6>
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap align-items-center mt-4 mb-3 gap-3">
+        <div class="fs-5 me-auto">Portfolio - Resumo:</div>
+      </div>
+      <div class="container-fluid border rounded hover-shadow py-4 px-4 table-responsive" style="background-color: white;">
+        <table id="portfolioTable" class="">
+          <thead>
+            <tr>
+              <th scope="col">Ativos</th>
+              <th scope="col">Classe</th>
+              <th scope="col">Qtde</th>
+              <th scope="col">Preço Médio</th>
+              <th scope="col">Cotação</th>
+              <th scope="col">Aportes</th>
+              <th scope="col">Patrimônio</th>
+              <th scope="col">Proventos</th>
+              <th scope="col">Resultado</th>
+              <th scope="col">Perf(%)</th>
+              <th scope="col">YoC%</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr class="align-middle">
+                <th>AESB3</th>
+                <td>Ações</td>
+                <td>2000</td>
+                <td>R$12,22</td>
+                <td>R$16,30</td>
+                <td>R$52.000,00</td>
+                <td>R$62.500,00</td>
+                <td>R$502,00</td>
+                <td>R$5.600,00</td>
+                <td>5,26 %</td>
+                <td>0,8 %</td>
+              </tr>
+              <tr class="align-middle">
+                <th>AESB3</th>
+                <td>Ações</td>
+                <td>2000</td>
+                <td>R$12,22</td>
+                <td>R$16,30</td>
+                <td>R$52.000,00</td>
+                <td>R$62.500,00</td>
+                <td>R$502,00</td>
+                <td>R$5.600,00</td>
+                <td>5,26 %</td>
+                <td>0,8 %</td>
+              </tr>
+              <tr class="align-middle">
+                <th>AESB3</th>
+                <td>Ações</td>
+                <td>2000</td>
+                <td>R$12,22</td>
+                <td>R$16,30</td>
+                <td>R$52.000,00</td>
+                <td>R$62.500,00</td>
+                <td>R$502,00</td>
+                <td>R$5.600,00</td>
+                <td>5,26 %</td>
+                <td>0,8 %</td>
+              </tr>
+        </table>
+      </div>
+
+    </div>
+  </main>
+  <!-- Main Body ends --------------------------------------------->
+  
+
+  {% include 'includes/message.html' %}
+  
+  
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="{% static 'CSS/custom-datatables.css' %}" />
+  
+ 
+  <!-- <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css"> -->
+
+  <script src="{% static 'js/portfolioTable.js' %}"></script>
+  
+{% endblock %}
+
+
+
+
+
