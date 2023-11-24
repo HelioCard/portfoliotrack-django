@@ -154,8 +154,9 @@ class TransactionsFromFile(DataFromYFinance):
 
         for transaction in transactions_list:
             ticker = transaction['ticker']
-            portfolio[ticker]['sort_of'] = transaction['sort_of']
             operation = transaction['operation']
+            if operation != 'A': # Define o tipo do ativo somente se a transação for diferente de split/agrupamento
+                portfolio[ticker]['sort_of'] = transaction['sort_of']
             quantity = transaction['quantity']
             unit_price = transaction['unit_price']
 

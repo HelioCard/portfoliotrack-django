@@ -12,14 +12,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
         self.subtract_dividends_from_contribution = subtract_dividends_from_contribution.upper()
 
         self.transactions_list = self._get_transactions_list()
-
-        if not self.transactions_list:
-            raise ValueError('No data')
-
         self.tickers_list = self.extract_tickers_list(self.transactions_list)
-        self.portfolio_balance = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list) # -> portfolio e asset_history
-        self.portfolio = self.portfolio_balance[0] # Index 0 -> somente portfolio
-        self.asset_history = self.portfolio_balance[1] # Index 1 -> somente asset_history
+        self.portfolio, self.asset_history = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list)
         self.first_transaction_date = self._get_first_transaction_date()
         self.interval = self._get_interval()
         self.history_data = self.load_history_data_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=self.first_transaction_date, interval=self.interval)
@@ -42,6 +36,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
         else:
             result = Transactions.objects.filter(portfolio__user=self.user, ticker=self.ticker)
         list_result = list(result.values())
+        if not list_result:
+            raise ValueError('No data')
         return self.list_of_dicts_order_by(list_result, ['date', 'ticker', 'operation'])
     
     def _get_first_transaction_date(self):
@@ -72,7 +68,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
         if isinstance(date, str):
             return datetime.strptime(date, '%d/%m/%Y').date()
 
-    def _calculate_contribution_equity_dividends(self):
+    def _calculate_individual_performance_data(self):
         # Cria um dicionário que conterá o histórico de data, aportes acumulados, patrimônio e dividendos acumulados ao longo do tempo. Tudo isso de cada ativo:
         individual_performance_data = {
             ticker: {
@@ -122,11 +118,15 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 if data['split_groupment'] > 0.0:
                     for i, equity_value in enumerate(individual_performance_data[ticker]['equity']):
                         individual_performance_data[ticker]['equity'][i] *= data['split_groupment']
-        return individual_performance_data
+        self.individual_performance_data = individual_performance_data
+        return self.individual_performance_data
 
-    def _consolidate_performance_data(self, individual_performance_data):
+    def _calculate_performance_data(self):
+        if self.individual_performance_data is None:
+            self._calculate_individual_performance_data()
+
         # Cria um dicionário que conterá os dados consolidados de todos os ativos:
-        final_performance_data = {
+        performance_data = {
             'date': [],
             'contribution': [],
             'equity': [],
@@ -134,31 +134,31 @@ class DashboardChartsProcessing(TransactionsFromFile):
         }
 
         # Inicializa o dicionário com todas as datas do histórico e com os valores correspondentes zerados:
-        for key, values in individual_performance_data.items():
-            final_performance_data['date'] = values['date']
-            final_performance_data['contribution'] = [0.0] * len(values['contribution'])
-            final_performance_data['equity'] = [0.0] * len(values['equity'])
-            final_performance_data['dividends'] = [0.0] * len(values['dividends'])
+        for key, values in self.individual_performance_data.items():
+            performance_data['date'] = values['date']
+            performance_data['contribution'] = [0.0] * len(values['contribution'])
+            performance_data['equity'] = [0.0] * len(values['equity'])
+            performance_data['dividends'] = [0.0] * len(values['dividends'])
         
         # Consolida os valores da lista somando por data
-        for _, values in individual_performance_data.items():
+        for _, values in self.individual_performance_data.items():
             for key in ['contribution', 'equity', 'dividends']:
-                final_performance_data[key] = list(np.round(np.add(final_performance_data[key], values[key]), 2))
+                performance_data[key] = list(np.round(np.add(performance_data[key], values[key]), 2))
                 # final_performance_data[key] = [round(x + y, 2) for x, y in zip(final_performance_data[key], values[key])]
-        return final_performance_data
+        self.performance_data = performance_data
+        return self.performance_data
+
+    def _calculate_change(self, value_in_period, initial_value):
+        if initial_value == 0:
+            return 0.0
+        else:
+            return value_in_period / initial_value
 
     def get_performance_chart_data(self):
-
-        individual_performance_data = self._calculate_contribution_equity_dividends()
-        self.individual_performance_data = individual_performance_data
-
-        final_performance_data = self._consolidate_performance_data(individual_performance_data)
-
-        self.performance_data = final_performance_data
-        return final_performance_data
+        return self.performance_data if self.performance_data is not None else self._calculate_performance_data()
 
     def get_category_data(self):
-        categories_set = {asset['sort_of'] for asset in self.portfolio.values() if asset['sort_of'] != 'Split/Agrup'}
+        categories_set = {asset['sort_of'] for asset in self.portfolio.values()}
         category_data = []
 
         # Percorre a lista de categorias
@@ -170,7 +170,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 # inclui o valor do patrimonio atual daquele ativo
                 if asset['sort_of'] == category:
                     value += asset['quantity'] * self.history_data[ticker][-1]['close'] # Obtem o último fechamento do histórico de preços
-            
+
             category_data.append(
                 {
                     'value': round(value, 2),
@@ -190,16 +190,10 @@ class DashboardChartsProcessing(TransactionsFromFile):
             )
         return self.list_of_dicts_order_by(asset_data, ['value',], reversed_output=True)
 
-    def _calculate_change(self, value_in_period, initial_value):
-        if initial_value == 0:
-            return 0.0
-        else:
-            return value_in_period / initial_value
-
     def get_cards_data(self):
         # Se os dados de performance ainda não foram calculados, executa o cálculo:
         if not self.performance_data:
-            self.get_performance_chart_data()
+            self._calculate_performance_data()
 
         equity_data: dict = {}
         contribution_data : dict = {}
@@ -288,7 +282,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
         # Caso ainda não tenha sido calculada a performance, calcula
         if self.performance_data is None:
-            self.get_performance_chart_data()
+            self._calculate_performance_data()
 
         # Percorre as datas dos dados de performance
         for date_ in self.performance_data['date']:
@@ -323,6 +317,10 @@ class DashboardChartsProcessing(TransactionsFromFile):
             'ticker': [],
             'variation': [],
         }
+
+        # Se ainda não foi calculada a performance individual dos ativos, calcula:
+        if self.individual_performance_data is None:
+            self._calculate_individual_performance_data()
         
         #Percorre os dados de performance individual de cada ativo:
         for ticker, data in self.individual_performance_data.items():
@@ -335,3 +333,24 @@ class DashboardChartsProcessing(TransactionsFromFile):
         
         return asset_variation_data
 
+    def get_portfolio_summary(self):
+        summary_data = []
+        for ticker, data in self.portfolio.items():
+            temp_dict = {
+                'asset': ticker,
+                'sort_of': data['sort_of'],
+                'quantity': data['quantity'],
+                'average_price': data['average_price'],
+                'last_price': 0.0,
+                'contribution': 0.0,
+                'equity': 0.0,
+                'earnings': 0.0,
+                'yield': 0.0,
+                'result': 0.0,
+                'yield_on_cost': 0.0,
+            }
+            summary_data.append(temp_dict)
+
+        if self.individual_performance_data is None:
+            self._calculate_individual_performance_data()
+        return summary_data

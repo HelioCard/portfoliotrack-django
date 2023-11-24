@@ -2,12 +2,14 @@ from django.shortcuts import render, redirect
 from .forms import UploadFormFile, RegisterTransactionForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import FileResponse, JsonResponse
+from django.conf import settings
+
 from tasks.tasks import register_transactions, update_transaction, update_events_of_transactions
 from helpers.TransactionsFromFile import TransactionsFromFile
+from helpers.DashboardChartsProcessing import DashboardChartsProcessing
 from .models import Transactions
 
-from django.http import FileResponse
-from django.conf import settings
 import os
 import datetime
 
@@ -135,3 +137,12 @@ def edit_transaction(request, pk):
 @login_required(login_url='login')
 def summary(request):
     return render(request, 'portfolioSummary.html')
+
+@login_required(login_url='login')
+def get_portfolio_summary(request):
+    processor = DashboardChartsProcessing(user=request.user, ticker=None)
+    summary_data = processor.get_portfolio_summary()
+    context = {
+        'summary_data': summary_data,
+    }
+    return JsonResponse(context)

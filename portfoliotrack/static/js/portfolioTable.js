@@ -1,3 +1,32 @@
+var data = [
+    {
+        asset: "AESB3",
+        sort_of:   "Ações",
+        quantity:     "2000",
+        average_price: "12,00",
+        last_price:     "13,80",
+        contribution:       "50.000,00",
+        equity: "52.800,00",
+        earnings:     "0,00",
+        yield:       "2.800,00",
+        result: "5 %",
+        yield_on_cost:     "0 %",
+    },
+    {
+        asset:       "TRPL4",
+        sort_of:   "Ações",
+        quantity:     "1500",
+        average_price: "22,00",
+        last_price:     "23,63",
+        contribution:       "60.000,00",
+        equity: "65.000,00",
+        earnings:     "3.000,00",
+        yield:       "8.000,00",
+        result: "10 %",
+        yield_on_cost:     "6 %",
+    }
+]
+
 let portfolioTable = new DataTable('#portfolioTable', {
     responsive: true,
     language: {
@@ -29,6 +58,20 @@ let portfolioTable = new DataTable('#portfolioTable', {
     paging: false,
     select: false,
 
+    data: data,
+    columns: [
+        { data: 'asset' },
+        { data: 'sort_of' },
+        { data: 'quantity' },
+        { data: 'average_price' },
+        { data: 'last_price' },
+        { data: 'contribution' },
+        { data: 'equity' },
+        { data: 'earnings' },
+        { data: 'yield' },
+        { data: 'result' },
+        { data: 'yield_on_cost' },
+    ],
 });
 
 

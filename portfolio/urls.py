@@ -9,4 +9,5 @@ urlpatterns = [
     path('delete_transaction/', views.delete_transaction, name='delete_transaction'),
     path('edit_transaction/<int:pk>/', views.edit_transaction, name='edit_transaction'),
     path('summary/', views.summary, name='summary'),
+    path('get_portfolio_summary/', views.get_portfolio_summary, name='get_portfolio_summary'),
 ]
