@@ -140,9 +140,15 @@ def summary(request):
 
 @login_required(login_url='login')
 def get_portfolio_summary(request):
-    processor = DashboardChartsProcessing(user=request.user, ticker=None)
-    summary_data = processor.get_portfolio_summary()
-    context = {
-        'summary_data': summary_data,
-    }
-    return JsonResponse(context)
+    try:        
+        processor = DashboardChartsProcessing(user=request.user, ticker=None, subtract_dividends_from_contribution='N')
+        summary_data = processor.get_portfolio_summary()
+        context = {
+            'summary_data': summary_data,
+        }
+        return JsonResponse(context)
+    except ValueError as e:
+        return JsonResponse({'Erro': str(e)}, status=404)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'Erro': str(e)}, status=500)
