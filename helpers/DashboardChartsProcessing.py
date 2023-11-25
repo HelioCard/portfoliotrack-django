@@ -441,7 +441,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     'yield_on_cost': self._format_float(yield_on_cost),
                 }
                 summary_data.append(temp_dict)
-            return summary_data
+            return self.list_of_dicts_order_by(summary_data, sort_keys=['asset'], reversed_output=False)
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name

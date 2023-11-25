@@ -139,9 +139,9 @@ def summary(request):
     return render(request, 'portfolioSummary.html')
 
 @login_required(login_url='login')
-def get_portfolio_summary(request):
+def get_portfolio_summary(request, subtract_dividends):
     try:        
-        processor = DashboardChartsProcessing(user=request.user, ticker=None, subtract_dividends_from_contribution='N')
+        processor = DashboardChartsProcessing(user=request.user, ticker=None, subtract_dividends_from_contribution=subtract_dividends)
         summary_data = processor.get_portfolio_summary()
         context = {
             'summary_data': summary_data,
