@@ -4,6 +4,7 @@ from datetime import date as dt
 from datetime import datetime
 import numpy as np
 import inspect
+import locale
 
 class DashboardChartsProcessing(TransactionsFromFile):
     def __init__(self, user, ticker=None, subtract_dividends_from_contribution: str='N'):
@@ -189,6 +190,15 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 return 0.0
             else:
                 return value_in_period / initial_value
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
+    def _format_float(self, value):
+        try:
+            locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+            return locale.currency(value, grouping=True, symbol=False)
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name
@@ -410,25 +420,25 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 self._calculate_individual_performance_data()
             summary_data = []
             for ticker, data in self.portfolio.items():
-                last_price = round(self.history_data[ticker][-1]['close'], 2)
-                contribution = round(self.individual_performance_data[ticker]['contribution'][-1], 2)
-                equity = round(self.individual_performance_data[ticker]['equity'][-1], 2)
-                dividends = round(self.individual_performance_data[ticker]['dividends'][-1], 2)
-                yield_ = round(equity - contribution)
-                result = round(self._calculate_change(yield_, contribution) * PERCENT, 2)
-                yield_on_cost = round(self._calculate_change(dividends, contribution) * PERCENT, 2)
+                last_price = self.history_data[ticker][-1]['close']
+                contribution = self.individual_performance_data[ticker]['contribution'][-1]
+                equity = self.individual_performance_data[ticker]['equity'][-1]
+                dividends = self.individual_performance_data[ticker]['dividends'][-1]
+                yield_ = equity - contribution
+                result = self._calculate_change(yield_, contribution) * PERCENT
+                yield_on_cost = self._calculate_change(dividends, contribution) * PERCENT
                 temp_dict = {
                     'asset': ticker,
                     'sort_of': data['sort_of'],
                     'quantity': data['quantity'],
-                    'average_price': round(data['average_price'], 2),
-                    'last_price': last_price,
-                    'contribution': contribution,
-                    'equity': equity,
-                    'earnings': dividends,
-                    'yield': equity,
-                    'result': result,
-                    'yield_on_cost': yield_on_cost,
+                    'average_price': self._format_float(data['average_price']),
+                    'last_price': self._format_float(last_price),
+                    'contribution': self._format_float(contribution),
+                    'equity': self._format_float(equity),
+                    'earnings': self._format_float(dividends),
+                    'yield': self._format_float(yield_),
+                    'result': self._format_float(result),
+                    'yield_on_cost': self._format_float(yield_on_cost),
                 }
                 summary_data.append(temp_dict)
             return summary_data

@@ -20,26 +20,24 @@
       <div class="d-flex flex-wrap align-items-center mt-4 mb-3 gap-3">
         <div class="fs-5 me-auto">Portfolio - Resumo:</div>
       </div>
-      <div class="container-fluid border rounded hover-shadow py-4 px-4 table-responsive" style="background-color: white;">
-        <table id="portfolioTable" class="">
+      <div class="container-fluid border rounded py-4 px-4 table-responsive" style="background-color: white;">
+        <table id="portfolioTable" class="table table-hover">
           <thead>
             <tr>
               <th scope="col">Ativos</th>
               <th scope="col">Classe</th>
               <th scope="col">Qtde</th>
-              <th scope="col">Preço Médio</th>
+              <th scope="col">Pr_Médio</th>
               <th scope="col">Cotação</th>
               <th scope="col">Aportes</th>
               <th scope="col">Patrim</th>
               <th scope="col">Prov</th>
-              <th scope="col">Lucro Prejuízo</th>
-              <th scope="col">Result(%)</th>
+              <th scope="col">Resultado</th>
+              <th scope="col">(%)</th>
               <th scope="col">YoC%</th>
             </tr>
           </thead>
-          <tbody>
-              
-          </tbody>
+          <tbody id="tableBody"></tbody>
         </table>
       </div>
 
@@ -56,8 +54,8 @@
   <link rel="stylesheet" href="{% static 'CSS/custom-datatables.css' %}" />
   
  
-  <!-- <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css"> -->
+  <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
 
   <script> var getPortfolioSummaryURL = "{% url 'get_portfolio_summary' %}" </script>
 

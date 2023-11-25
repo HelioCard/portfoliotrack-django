@@ -25,7 +25,7 @@
         <div class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#load_file_modal">Carregar de Arquivo</div>
       </div>
       <div class="container-fluid border rounded hover-shadow py-4 px-4 table-responsive" style="background-color: white;">
-        <table id="transactionsTable" class="table-responsive table-hover">
+        <table id="transactionsTable" class="table table-hover">
           <thead>
             <tr>
               <th scope="col">ID</th>
@@ -48,7 +48,7 @@
                 <td>{% if transaction.operation == 'A' %} {% else %}R${% endif %}{{ transaction.unit_price|floatformat:2 }}</td>
                 <td>
                   <a href="{% url 'edit_transaction' transaction.id %}"
-                    class="btn btn-outline-secondary my-1" 
+                    class="btn btn-outline-info my-1" 
                     style="padding: 4px 8px;">
                       <i class="bi bi-pen"></i>
                   </a>

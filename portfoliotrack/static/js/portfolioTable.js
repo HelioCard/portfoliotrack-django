@@ -1,32 +1,3 @@
-// var data = [
-//     {
-//         asset: "AESB3",
-//         sort_of:   "Ações",
-//         quantity:     "2000",
-//         average_price: "12,00",
-//         last_price:     "13,80",
-//         contribution:       "50.000,00",
-//         equity: "52.800,00",
-//         earnings:     "0,00",
-//         yield:       "2.800,00",
-//         result: "5 %",
-//         yield_on_cost:     "0 %",
-//     },
-//     {
-//         asset:       "TRPL4",
-//         sort_of:   "Ações",
-//         quantity:     "1500",
-//         average_price: "22,00",
-//         last_price:     "23,63",
-//         contribution:       "60.000,00",
-//         equity: "65.000,00",
-//         earnings:     "3.000,00",
-//         yield:       "8.000,00",
-//         result: "10 %",
-//         yield_on_cost:     "6 %",
-//     }
-// ]
-
 // Obter dados da API
 const getPortfolioSummaryData = async (url) => {
     try {
@@ -47,38 +18,53 @@ const getPortfolioSummaryData = async (url) => {
     }
   }
 
+function buildTable(tableData) {
+  var table = document.getElementById('tableBody');
+  for (var i = 0; i < tableData.length; i++){
+    var row = `<tr class="align-middle" style="height: 60px">
+      <td><a href="#">${tableData[i].asset}</a></td>
+      <td>${tableData[i].sort_of}</td>
+      <td class="text-end">${tableData[i].quantity}</td>
+      <td class="text-end">${tableData[i].average_price}</td>
+      <td class="text-end">${tableData[i].last_price}</td>
+      <td class="text-end">${tableData[i].contribution}</td>
+      <td class="text-end">${tableData[i].equity}</td>
+      <td class="text-end">${tableData[i].earnings}</td>
+      <td class="text-end">${tableData[i].yield}</td>
+      <td class="text-end">${tableData[i].result} %</td>
+      <td class="text-end">${tableData[i].yield_on_cost} %</td>
+    </tr>`
+    table.innerHTML += row;
+  };
+}
+
 async function updatePortfolioSummary(URL) {
     try {
         const data = await getPortfolioSummaryData(URL)
         if (data) {
-            console.log(data.summary_data)
-            let portfolioTable = new DataTable('#portfolioTable', {
-                data: data.summary_data,
-                columns: [
-                    { data: 'asset' },
-                    { data: 'sort_of' },
-                    { data: 'quantity' },
-                    { data: 'average_price' },
-                    { data: 'last_price' },
-                    { data: 'contribution' },
-                    { data: 'equity' },
-                    { data: 'earnings' },
-                    { data: 'yield' },
-                    { data: 'result' },
-                    { data: 'yield_on_cost' },
-                ],
-                responsive: true,
-                language: {
-                    decimal: ',',
-                    thousands: '.',
-                    zeroRecords: 'Não há dados',
+          buildTable(data.summary_data)
+          let portfolioTable = new DataTable('#portfolioTable', {
+              responsive: true,
+              language: {
+                decimal: ',',
+                thousands: '.',
+                zeroRecords: 'Não há dados',
+                info: 'Mostrando página _PAGE_ de _PAGES_',
+                infoEmpty: 'Não há dados',
+                infoFiltered: '(dados filtrados de _MAX_ registros totais)',
+                lengthMenu: 'Mostrar _MENU_ registros por página',
+                zeroRecords: 'Não há dados',
+                paginate: {
+                    "first": "Primeiro",
+                    "last": "Último",
+                    "next": "Próximo",
+                    "previous": "Anterior"
                 },
-                order: [[0, 'desc']],
-                info: false,
-                searching: false,
-                paging: false,
-                select: false,
-            });            
+                search: "Pesquisar:",
+              },
+              order: [[0, 'desc']],
+              
+          });       
         }
     } catch (error) {
         alert('Erro: ', error)
