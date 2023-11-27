@@ -49,29 +49,37 @@ def register(request):
             last_name = form.cleaned_data['last_name']
             email = form.cleaned_data['email']
             password = form.cleaned_data['password']
-            username = email.split('@')[0]
-            user =  Account.objects.create_user(first_name=first_name, last_name=last_name, email=email, username=username, password=password)
-            user.save()
+            base_username = email.split('@')[0]
+            username = base_username
+            count = 1
+            while Account.objects.filter(username=username).exists():
+                username = f"{base_username}{count}"
+            try: 
+                user =  Account.objects.create_user(first_name=first_name, last_name=last_name, email=email, username=username, password=password)
+                user.save()
 
-            # Create Portfolio:
-            portfolio = Portfolio()
-            portfolio.user_id = user.id
-            portfolio.save()
+                # Create Portfolio:
+                portfolio = Portfolio()
+                portfolio.user_id = user.id
+                portfolio.save()
 
-            # User Activation:
-            current_site = get_current_site(request)
-            mail_subject = 'Portfolio Track - Ative sua conta!'
-            message = render_to_string('accounts/account_verification_email.html', {
-                'user': user,
-                'domain': current_site,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': default_token_generator.make_token(user),
-            })
-            to_email = email
-            send_email = EmailMessage(mail_subject, message, to=[to_email])
-            send_email.send()
+                # User Activation:
+                current_site = get_current_site(request)
+                mail_subject = 'Portfolio Track - Ative sua conta!'
+                message = render_to_string('accounts/account_verification_email.html', {
+                    'user': user,
+                    'domain': current_site,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': default_token_generator.make_token(user),
+                })
+                to_email = email
+                send_email = EmailMessage(mail_subject, message, to=[to_email])
+                send_email.send()
 
-            messages.success(request, f'Obrigado pelo cadastro em nosso site! Enviamos o link de ativação para {email}')
+                messages.success(request, f'Obrigado pelo cadastro em nosso site! Enviamos o link de ativação para {email}')
+            except Exception as e:
+                messages.error(request, f'Erro: {str(e)}')
+                print(f'Erro: {str(e)}')
             return redirect('register')
     else:
         if request.user.id:
@@ -81,8 +89,6 @@ def register(request):
     context = {
         'form': form,
     }
-    
-
     return render(request, 'accounts/register.html', context)
 
 def activate(request, uidb64, token):

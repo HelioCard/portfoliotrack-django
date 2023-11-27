@@ -4,7 +4,8 @@ from django.utils import timezone
 from helpers.TransactionsFromFile import TransactionsFromFile
 from helpers.Cache.cache import session
 
-from portfolio.models import Portfolio, Transactions
+from portfolio.models import Portfolio
+from transactions.models import Transactions
 MINUTES_TO_EXPIRE = 30
 
 @shared_task

@@ -1,4 +1,4 @@
-from portfolio.models import Transactions
+from transactions.models import Transactions
 from .TransactionsFromFile import TransactionsFromFile
 from datetime import date as dt
 from datetime import datetime
@@ -14,6 +14,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
         self.subtract_dividends_from_contribution = subtract_dividends_from_contribution.upper()
 
         self.transactions_list = self._get_transactions_list()
+        if not self.transactions_list:
+            raise ValueError('No data')
         self.tickers_list = self.extract_tickers_list(self.transactions_list)
         self.portfolio, self.asset_history = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list)
         self.first_transaction_date = self._get_first_transaction_date()
@@ -44,8 +46,6 @@ class DashboardChartsProcessing(TransactionsFromFile):
             else:
                 result = Transactions.objects.filter(portfolio__user=self.user, ticker=self.ticker)
             list_result = list(result.values())
-            if not list_result:
-                raise ValueError('No data')
             return self.list_of_dicts_order_by(list_result, ['date', 'ticker', 'operation'])
         except Exception as e:
             class_ = self.__class__.__name__

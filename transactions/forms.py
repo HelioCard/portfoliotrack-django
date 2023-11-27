@@ -1,9 +1,7 @@
 from django import forms
-from portfolio.models import Transactions
+from .models import Transactions
 from datetime import date as dt
-from datetime import datetime
-import yfinance as yt
-from helpers.Cache.cache import session
+
 
 class UploadFormFile(forms.Form):
     file = forms.FileField(

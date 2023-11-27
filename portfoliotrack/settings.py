@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'dashboard',
     'portfolio',
     'tasks',
+    'transactions',
 ]
 
 MIDDLEWARE = [
@@ -68,7 +69,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'portfolio.context_processors.portfolio_context',
+                'transactions.context_processors.transactions_context',
                 'portfoliotrack.context_processors.get_date',
             ],
         },
