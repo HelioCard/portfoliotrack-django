@@ -119,7 +119,6 @@ def edit_transaction(request, pk):
             user_id = request.user.id
             task = update_transaction.delay(edited_transaction, user_id, pk)
             messages.success(request, f"Processando alteração da transação: {edited_transaction[0]['operation']} de {edited_transaction[0]['ticker']}. Aguarde ...")
-
             context = {
                 'task_id': task.task_id,
                 'redirect_url': 'transactions',
@@ -127,12 +126,11 @@ def edit_transaction(request, pk):
             return render(request, 'processTransactions.html', context)
     else:
         form = RegisterTransactionForm(instance=transaction)
-
-    context = {
-        'edit_transaction_form': form,
-        'transaction_id': transaction.id,
-    }
-    return render(request, 'editTransaction.html', context)
+        context = {
+            'edit_transaction_form': form,
+            'transaction_id': transaction.id,
+        }
+        return render(request, 'editTransaction.html', context)
 
 @login_required(login_url='login')
 def summary(request):

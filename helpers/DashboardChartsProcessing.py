@@ -420,6 +420,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 self._calculate_individual_performance_data()
             summary_data = []
             for ticker, data in self.portfolio.items():
+                if data['quantity'] <= 0: # Se a posição foi fechada, não exibe.
+                    continue
                 last_price = self.history_data[ticker][-1]['close']
                 contribution = self.individual_performance_data[ticker]['contribution'][-1]
                 equity = self.individual_performance_data[ticker]['equity'][-1]
