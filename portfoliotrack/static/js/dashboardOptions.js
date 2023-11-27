@@ -1,6 +1,6 @@
 var performance_options = {
     title: {
-        text: 'Aportes Acum. x Patrimônio x Dividendos Acum.',
+        text: 'Aportes x Patrimônio x Dividendos',
         left: 'center',
     },
     tooltip: {
@@ -16,7 +16,7 @@ var performance_options = {
         },
     },
     legend: {
-        'data': ['Aportes Acumulados', 'Patrimônio', 'Dividendos Acumulados'],
+        'data': ['Aportes', 'Patrimônio', 'Dividendos'],
         'top': 30,
     },
     grid: {
@@ -40,7 +40,7 @@ var performance_options = {
     },
     series: [    
         {
-            name: 'Aportes Acumulados',
+            name: 'Aportes',
             type: 'line',
             data: [0,0,0],
             smooth: false,
@@ -55,7 +55,7 @@ var performance_options = {
             smooth: true,  
         },
         {
-            name: 'Dividendos Acumulados',
+            name: 'Dividendos',
             type: 'line',
             step: 'end',
             yAxisIndex: 0,

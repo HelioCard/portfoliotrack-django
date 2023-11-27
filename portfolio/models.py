@@ -27,4 +27,4 @@ class PortfolioItems(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"{self.portfolio} - {self.ticker} - {self.quantity}"
+        return f"{self.portfolio} - {self.ticker} - {self.quantity} cotas"

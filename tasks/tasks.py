@@ -115,3 +115,7 @@ def register_split_group_events(processed_transactions, user_id):
         # Retorna somente a transação editada pelo usuário:
         return edited_transaction
     return processed_transactions
+
+def update_portfolio_items(user_id):
+    pass
+    # TODO: Implementar atualização dos itens do portfolio

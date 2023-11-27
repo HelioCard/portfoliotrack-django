@@ -141,10 +141,12 @@ class TransactionsFromFile(DataFromYFinance):
             print(f'Erro ao adicionar as transações de splits/agrupamentos: {e}')
             raise Exception(e)
     
-    def calculate_portfolio_balance_and_asset_history(self, transactions_list, tickers_list):
-        
+    def calculate_portfolio_balance_and_asset_history(self, transactions_list, tickers_list=None):
+        if tickers_list is None:
+            tickers_list = self.extract_tickers_list(transactions_list)
+
         # Inicialize o portfólio com todos os tickers e valores iniciais para serem rastreados
-        portfolio = {
+        portfolio_items = {
             ticker: {'ticker': ticker, 'quantity': 0, 'average_price': 0.0, 'sort_of': ''} for ticker in tickers_list
         }
 
@@ -156,26 +158,26 @@ class TransactionsFromFile(DataFromYFinance):
             ticker = transaction['ticker']
             operation = transaction['operation']
             if operation != 'A': # Define o tipo do ativo somente se a transação for diferente de split/agrupamento
-                portfolio[ticker]['sort_of'] = transaction['sort_of']
+                portfolio_items[ticker]['sort_of'] = transaction['sort_of']
             quantity = transaction['quantity']
             unit_price = transaction['unit_price']
 
             if operation == 'C':
                 # Compra: atualiza a quantidade e o preço médio
-                portfolio[ticker]['quantity'] += quantity
-                portfolio[ticker]['average_price'] = (
-                    portfolio[ticker]['average_price'] * (portfolio[ticker]['quantity'] - quantity) +
+                portfolio_items[ticker]['quantity'] += quantity
+                portfolio_items[ticker]['average_price'] = (
+                    portfolio_items[ticker]['average_price'] * (portfolio_items[ticker]['quantity'] - quantity) +
                     unit_price * quantity
-                ) / portfolio[ticker]['quantity']
+                ) / portfolio_items[ticker]['quantity']
 
             elif operation == 'V':
                 # Venda: atualiza a quantidade
-                portfolio[ticker]['quantity'] -= quantity
+                portfolio_items[ticker]['quantity'] -= quantity
 
             elif operation == 'A':
                 # Ação: multiplique a quantidade pelo fator de split/agrupamento/bonificação
-                portfolio[ticker]['quantity'] = int(portfolio[ticker]['quantity'] * unit_price) # Neste caso a variavel unit_price recebe o 'ratio'
-                portfolio[ticker]['average_price'] = portfolio[ticker]['average_price'] / unit_price
+                portfolio_items[ticker]['quantity'] = int(portfolio_items[ticker]['quantity'] * unit_price) # Neste caso a variavel unit_price recebe o 'ratio'
+                portfolio_items[ticker]['average_price'] = portfolio_items[ticker]['average_price'] / unit_price
 
             # Cria um histórico de quantidade e preço médio de ativos ao longo das datas das operações referente ao ativo:
             """ Por exemplo: na data 01/mm/YYYY havia x quantidade com y preço médio
@@ -183,12 +185,12 @@ class TransactionsFromFile(DataFromYFinance):
             temp_dict = {
                 'ticker': ticker,
                 'date': transaction['date'],
-                'quantity': portfolio[ticker]['quantity'],
-                'average_price': portfolio[ticker]['average_price'],
+                'quantity': portfolio_items[ticker]['quantity'],
+                'average_price': portfolio_items[ticker]['average_price'],
             }
             asset_history[ticker].append(temp_dict)
         
-        return portfolio, asset_history
+        return portfolio_items, asset_history
 
     def process_raw_transactions(self, raw_transactions, existing_events_list=[]) -> list:
         print('Processing...')

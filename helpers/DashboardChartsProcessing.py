@@ -17,7 +17,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
         if not self.transactions_list:
             raise ValueError('No data')
         self.tickers_list = self.extract_tickers_list(self.transactions_list)
-        self.portfolio, self.asset_history = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list)
+        self.portfolio_items, self.asset_history = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list)
         self.first_transaction_date = self._get_first_transaction_date()
         self.interval = self._get_interval()
         self.history_data = self.load_history_data_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=self.first_transaction_date, interval=self.interval)
@@ -214,14 +214,14 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
     def get_category_data(self):
         try:
-            categories_set = {asset['sort_of'] for asset in self.portfolio.values()}
+            categories_set = {asset['sort_of'] for asset in self.portfolio_items.values()}
             category_data = []
 
             # Percorre a lista de categorias
             for category in categories_set:
                 value = 0
                 # Percorre todos os itens do portfolio:
-                for ticker, asset in self.portfolio.items():
+                for ticker, asset in self.portfolio_items.items():
                     # Se a categoria do item do portfolio for a mesma categoria do loop inicial
                     # inclui o valor do patrimonio atual daquele ativo
                     if asset['sort_of'] == category:
@@ -242,7 +242,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
     def get_asset_data(self):
         try:
             asset_data = []
-            for ticker, asset in self.portfolio.items():
+            for ticker, asset in self.portfolio_items.items():
                 asset_data.append(
                     {
                         'name': ticker,
@@ -419,7 +419,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
             if self.individual_performance_data is None:
                 self._calculate_individual_performance_data()
             summary_data = []
-            for ticker, data in self.portfolio.items():
+            for ticker, data in self.portfolio_items.items():
                 if data['quantity'] <= 0: # Se a posição foi fechada, não exibe.
                     continue
                 last_price = self.history_data[ticker][-1]['close']
