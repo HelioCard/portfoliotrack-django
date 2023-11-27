@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import FileResponse
 from django.conf import settings
 
-from tasks.tasks import register_transactions, update_transaction, update_events_of_transactions
+from tasks.tasks import register_transactions, update_transaction, update_events_of_transactions, update_portfolio_items
 from helpers.TransactionsFromFile import TransactionsFromFile
 from .models import Transactions
 
@@ -92,11 +92,12 @@ def delete_transaction(request):
             list_of_tickers = TransactionsFromFile().extract_tickers_list(list(transactions.values())) # Obtem a lista de tickers das transações apagadas
             transactions.delete()
             update_events_of_transactions(list_of_tickers=list_of_tickers, user_id=user.id) # Atualiza os eventos de splits/agrupamentos
+            update_portfolio_items(user_id=user.id)
             messages.success(request, f'{len(list_of_ids)} transações apagadas com sucesso!')
             return redirect('transactions')
         except Exception as e:
             print(e)
-            messages.error(request, f'Algo de errado: {str(e)}')
+            messages.error(request, f'Algo deu errado: {str(e)}')
     return redirect('transactions')
 
 @login_required(login_url='login')

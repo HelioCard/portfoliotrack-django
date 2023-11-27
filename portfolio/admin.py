@@ -6,7 +6,7 @@ class PortfolioAdmin(admin.ModelAdmin):
     list_display = ['user', 'dividends_target']
 
 class PortfolioItemsAdmin(admin.ModelAdmin):
-    list_display = ['portfolio', 'ticker', 'sort_of', 'quantity', 'average_price', 'portfolio_weight', 'is_active', 'created_at', 'updated_at']
+    list_display = ['portfolio', 'ticker', 'portfolio_weight', 'is_active', 'created_at', 'updated_at']
 
 admin.site.register(Portfolio, PortfolioAdmin)
 admin.site.register(PortfolioItems, PortfolioItemsAdmin)

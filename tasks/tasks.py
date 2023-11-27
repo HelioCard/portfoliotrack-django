@@ -1,10 +1,11 @@
 from celery import shared_task
 from django_celery_results.models import TaskResult
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 from helpers.TransactionsFromFile import TransactionsFromFile
 from helpers.Cache.cache import session
 
-from portfolio.models import Portfolio
+from portfolio.models import Portfolio, PortfolioItems
 from transactions.models import Transactions
 MINUTES_TO_EXPIRE = 30
 
@@ -24,6 +25,7 @@ def register_transactions(raw_transactions_list, user_id):
         transactions = process_transactions(transactions_list=raw_transactions_list, user_id=user_id)
         if isinstance(transactions, list):
             bulk_create_of_transactions(transactions=transactions, user_id=user_id)
+            update_portfolio_items(user_id=user_id)
             return 'SUCCESS'
         else:
             raise ValueError(transactions)
@@ -50,6 +52,7 @@ def update_transaction(edited_transaction, user_id, pk):
             # a exclusão de um evento de split/agrupamento:
             list_of_ticker = [transaction.ticker]
             update_events_of_transactions(list_of_tickers=list_of_ticker, user_id=user_id)
+            update_portfolio_items(user_id=user_id)
             return 'SUCCESS'
         else:
             raise ValueError(processed_transactions)
@@ -116,6 +119,35 @@ def register_split_group_events(processed_transactions, user_id):
         return edited_transaction
     return processed_transactions
 
+@shared_task
 def update_portfolio_items(user_id):
-    pass
-    # TODO: Implementar atualização dos itens do portfolio
+    # Busca as transações e calcula o balanço do portfolio:
+    portfolio = Portfolio.objects.get(user_id=user_id)
+    transactions = Transactions.objects.filter(portfolio__user_id=user_id).values()
+    transactions_list = list(transactions)
+    portfolio_items, _ = TransactionsFromFile().calculate_portfolio_balance_and_asset_history(transactions_list)
+    # Busca os dados salvos no modelo PortfolioItems:
+    saved_portfolio_items = PortfolioItems.objects.filter(portfolio__user_id=user_id)
+    # Percorre os items do portfolio:
+    for ticker, data in portfolio_items.items():
+        try:
+            obj = PortfolioItems.objects.get(portfolio=portfolio, ticker=ticker)
+            # Quantidade >  0: Se o objeto já existir em PortfolioItems, ativa-o.
+            if data['quantity'] > 0:
+                obj.is_active = True
+                obj.save()
+            else: # Quantidade <= 0: Se o objeto existir, desativa-o:
+                obj.is_active = False
+                obj.save()
+        except ObjectDoesNotExist:
+            if data['quantity'] > 0:
+                portfolio_item = PortfolioItems(portfolio=portfolio, ticker=ticker)
+                portfolio_item.save()
+            else:
+                portfolio_item = PortfolioItems(portfolio=portfolio, ticker=ticker, is_active=False)
+                portfolio_item.save()
+    
+    for item in saved_portfolio_items:
+        if not portfolio_items.get(item.ticker):
+            item.delete()
+
