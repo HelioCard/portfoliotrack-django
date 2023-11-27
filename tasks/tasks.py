@@ -146,7 +146,7 @@ def update_portfolio_items(user_id):
             else:
                 portfolio_item = PortfolioItems(portfolio=portfolio, ticker=ticker, is_active=False)
                 portfolio_item.save()
-    
+    # Percorre os itens salvos no modelo PortfolioItems e verifica se há algum objeto salvo, mas que não consta das transações. Se encontrar, exclui:
     for item in saved_portfolio_items:
         if not portfolio_items.get(item.ticker):
             item.delete()

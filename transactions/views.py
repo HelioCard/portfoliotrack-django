@@ -83,6 +83,7 @@ def delete_transaction(request):
         if strings_of_ids == 'all':
             transactions = Transactions.objects.filter(portfolio__user=user)
             transactions.delete()
+            update_portfolio_items(user_id=user.id)
             messages.success(request, 'Todas as suas transações foram apagadas com sucesso!')
             return redirect('transactions')
         try:
