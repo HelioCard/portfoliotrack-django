@@ -1,4 +1,5 @@
 from transactions.models import Transactions
+from portfolio.models import PortfolioItems
 from .TransactionsFromFile import TransactionsFromFile
 from datetime import date as dt
 from datetime import datetime
@@ -444,6 +445,35 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 }
                 summary_data.append(temp_dict)
             return self.list_of_dicts_order_by(summary_data, sort_keys=['asset'], reversed_output=False)
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
+    def _get_weight_data(self, ticker):
+        return PortfolioItems.objects.get(portfolio__user=self.user, ticker=ticker, is_active=True)
+
+    def get_balance_data(self):
+        try:
+            PERCENT = 100
+            if self.individual_performance_data is None:
+                self._calculate_individual_performance_data()
+            balance_data = []
+            for ticker, data in self.portfolio_items.items():
+                if data['quantity'] <= 0: # Se a posição foi fechada, não exibe.
+                    continue
+                last_price = self.history_data[ticker][-1]['close']
+                equity = self.individual_performance_data[ticker]['equity'][-1]
+                weight_data = self._get_weight_data(ticker)
+                temp_dict = {
+                    'asset': ticker,
+                    'quantity': data['quantity'],
+                    'average_price': self._format_float(data['average_price']),
+                    'last_price': self._format_float(last_price),
+                    'equity': self._format_float(equity)
+                }
+                balance_data.append(temp_dict)
+            return self.list_of_dicts_order_by(balance_data, sort_keys=['asset'], reversed_output=False)
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name

@@ -10,6 +10,15 @@ def summary(request):
     return render(request, 'portfolio/portfolioSummary.html')
 
 @login_required(login_url='login')
+def balance(request):
+    processor = DashboardChartsProcessing(user=request.user, ticker=None, subtract_dividends_from_contribution='N')
+    balance_data = processor.get_balance_data()
+    context = {
+        'balance_data': balance_data,
+    }
+    return render(request, 'portfolio/balance.html', context)
+
+@login_required(login_url='login')
 def get_portfolio_summary(request, subtract_dividends):
     try:        
         processor = DashboardChartsProcessing(user=request.user, ticker=None, subtract_dividends_from_contribution=subtract_dividends)
