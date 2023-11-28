@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  
+  <!-- Main Body begins ----------------------------------------------->
+  <main role="main" class="col-12 col-xl-10">
+    <div class="container-fluid my-2">
+
+      <div class="row justify-content-center align-items-center my-2">
+        <div class="col-12 col-md-6 my-2">
+          <h4>Bem vindo, <span class="h4">{{ user.first_name }}!</span> </h4>
+          <p class="m-0">Acompanhe de perto sua carteira!</p>
+        </div>
+        <div class="col-12 col-md-6 my-2 d-flex align-items-center justify-content-md-end">
+          <h6>{{weekday}}, {{today}}</h6>
+        </div>
+      </div>
+
+      <div class="row ms-0 mt-4 d-flex align-items-center justify-content-start fs-5">
+        <div class="col-auto pt-3 ">
+          <p><span>Defina o peso que cada ativo terá no portfolio: </span></p>
+        </div>
+      </div>
+      <div class="container-fluid border rounded py-4 px-4 table-responsive" style="background-color: white;">
+        <table id="portfolioTable" class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col" class="text-center">Ativos</th>
+              <th scope="col" class="text-center">Qtde</th>
+              <th scope="col" class="text-center">Pr_Médio</th>
+              <th scope="col" class="text-center">Cotação</th>
+              <th scope="col" class="text-center">Patrim</th>
+              <th scope="col" class="text-center">(%)</th>
+              <th scope="col" class="text-center">YoC%</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+  <!-- Main Body ends --------------------------------------------->
+  
+
+  {% include 'includes/message.html' %}
+  
+  
+  <!-- <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href="{% static 'CSS/custom-datatables.css' %}" />
+  
+ 
+  <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
+
+  <script> var getPortfolioSummaryURL = "{% url 'get_portfolio_summary' subtract_dividends='N' %}" </script>
+
+  <script src="{% static 'js/portfolioSummaryTable.js' %}"></script> -->
+    
+{% endblock %}
+
+
+
+
+

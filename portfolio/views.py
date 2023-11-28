@@ -7,7 +7,7 @@ from helpers.DashboardChartsProcessing import DashboardChartsProcessing
 # Create your views here.
 @login_required(login_url='login')
 def summary(request):
-    return render(request, 'portfolioSummary.html')
+    return render(request, 'portfolio/portfolioSummary.html')
 
 @login_required(login_url='login')
 def get_portfolio_summary(request, subtract_dividends):

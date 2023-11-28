@@ -19,7 +19,7 @@ def transactions(request):
     context = {
         'transactions': transactions,
     }
-    return render(request, 'transactions.html', context)
+    return render(request, 'transactions/transactions.html', context)
 
 @login_required(login_url='login')
 def download_model_file(request):
@@ -40,7 +40,7 @@ def upload_file(request):
                 'task_id': task.task_id,
                 'redirect_url': 'dashboard',
             }
-            return render(request, 'processTransactions.html', context)
+            return render(request, 'transactions/processTransactions.html', context)
         else:
             messages.error(request, form.errors)        
     return redirect('dashboard')
@@ -67,7 +67,7 @@ def register_transaction(request):
                 'task_id': task.task_id,
                 'redirect_url': 'dashboard',
             }
-            return render(request, 'processTransactions.html', context)
+            return render(request, 'transactions/processTransactions.html', context)
         else:
             messages.error(request, form.errors['__all__'])
     return redirect('dashboard')
@@ -124,11 +124,11 @@ def edit_transaction(request, pk):
                 'task_id': task.task_id,
                 'redirect_url': 'transactions',
             }
-            return render(request, 'processTransactions.html', context)
+            return render(request, 'transactions/processTransactions.html', context)
     else:
         form = RegisterTransactionForm(instance=transaction)
         context = {
             'edit_transaction_form': form,
             'transaction_id': transaction.id,
         }
-        return render(request, 'editTransaction.html', context)
+        return render(request, 'transactions/editTransaction.html', context)
