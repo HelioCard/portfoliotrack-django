@@ -24,7 +24,7 @@ function buildDomTable(tableData) {
     var resultColor = parseFloat(tableData[i].result) >= 0 ? 'text-success' : 'text-danger';
     var assetColor = parseFloat(tableData[i].result) >= 0 ? 'text-bg-primary' : 'text-bg-danger';
     var row = `<tr class="align-middle" style="height: 60px">
-      <td><a href="#"> <span class="badge ${assetColor} w-100">${tableData[i].asset}</span> </a></td>
+      <td><a href="#"> <span class="badge ${assetColor} w-100" style="font-size: 1.0rem;">${tableData[i].asset}</span> </a></td>
       <td class="text-center">${tableData[i].sort_of}</td>
       <td class="text-end">${tableData[i].quantity}</td>
       <td class="text-end">${tableData[i].average_price}</td>
