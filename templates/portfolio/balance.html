@@ -17,75 +17,30 @@
         </div>
       </div>
 
-      <div class="row ms-0 mt-4 d-flex align-items-center justify-content-start fs-5">
-        <div class="col-auto pt-3 ">
-          <p><span>Defina o peso que cada ativo terá no portfolio: </span></p>
-        </div>
+      <div class="row ms-0 mt-4 mb-1 d-flex align-items-center justify-content-start fs-5">
+          <span>
+            Defina o peso que cada ativo terá no portfolio:
+            <div id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" hidden>
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </span>
       </div>
       <div class="container-fluid border rounded py-4 px-4 table-responsive" style="background-color: white;">
-        <table id="portfolioTable" class="table">
+        <table id="portfolioTable" class="table table-responsive">
           <thead>
             <tr>
-              <th scope="col">Ativos</th>
-              <th scope="col">Qtde</th>
-              <th scope="col">Pr_Médio</th>
-              <th scope="col">Cotação</th>
-              <th scope="col">Patrim</th>
-              <th scope="col">Peso</th>
-              <th scope="col">(%)Ideal</th>
-              <th scope="col">(%)Atual</th>
-              <th scope="col">Equilíbrio</th>
+              <th scope="col" class="text-center">Ativos</th>
+              <th scope="col" class="text-center">Qtde</th>
+              <th scope="col" class="text-center">Cotação</th>
+              <th scope="col" class="text-center">Patrim</th>
+              <th scope="col" class="text-center">Peso</th>
+              <th scope="col" class="text-center">(%)Ideal</th>
+              <th scope="col" class="text-center">(%)Atual</th>
+              <th scope="col" class="text-center">Equilíbrio</th>
             </tr>
           </thead>
           <tbody id="tableBody">
-            <tr class="align-middle">
-              <th><a href="#"><span class="badge text-bg-primary w-100 my-2">TRPL4</span></a></th>
-              <td>500</td>
-              <td>22,23</td>
-              <td>25,15</td>
-              <td>R$ 50.000,00</td>
-              <td>
-                <div class="d-flex align-items-center justify-content-start gap-1">
-                  <span class="align-middle badge text-bg-primary" style="min-width: 50px;">55</span>
-                  <input type="range" class="form-range" style="min-width: 100px;" min="0" max="100" value="55" class="align-middle">
-                </div>
-              </td>
-              <td>20,00%</td>
-              <td>18,00%</td>
-              <td>-R$ 5.000,00 - 50 cotas</td>
-            </tr>
-            <tr class="align-middle">
-              <th><a href="#"><span class="badge text-bg-primary w-100 my-2">TRPL4</span></a></th>
-              <td>500</td>
-              <td>22,23</td>
-              <td>25,15</td>
-              <td>R$ 50.000,00</td>
-              <td>
-                <div class="d-flex align-items-center justify-content-start gap-1">
-                  <span class="align-middle badge text-bg-primary" style="min-width: 50px;">55</span>
-                  <input type="range" class="form-range" style="min-width: 100px;" min="0" max="100" value="55" class="align-middle">
-                </div>
-              </td>
-              <td>20,00%</td>
-              <td>18,00%</td>
-              <td>-R$ 5.000,00 - 50 cotas</td>
-            </tr>
-            <tr class="align-middle">
-              <th><a href="#"><span class="badge text-bg-primary w-100 my-2">TRPL4</span></a></th>
-              <td>500</td>
-              <td>22,23</td>
-              <td>25,15</td>
-              <td>R$ 50.000,00</td>
-              <td>
-                <div class="d-flex align-items-center justify-content-start gap-1">
-                  <span class="align-middle badge text-bg-primary" style="min-width: 50px;">55</span>
-                  <input type="range" class="form-range" style="min-width: 100px;" min="0" max="100" value="55" class="align-middle">
-                </div>
-              </td>
-              <td>20,00%</td>
-              <td>18,00%</td>
-              <td>-R$ 5.000,00 - 50 cotas</td>
-            </tr>
+            
           </tbody>
         </table>
       </div>
@@ -132,18 +87,11 @@
 
   {% include 'includes/message.html' %}
   
+  <script>
+    var getBalanceURL = "{% url 'get_balance_data' %}"
+  </script>
+  <script src="{% static 'js/balanceTable.js' %}"></script>
   
-  <!-- <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
-  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-  <link rel="stylesheet" href="{% static 'CSS/custom-datatables.css' %}" />
-  
- 
-  <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
-
-  <script> var getPortfolioSummaryURL = "{% url 'get_portfolio_summary' subtract_dividends='N' %}" </script>
-
-  <script src="{% static 'js/portfolioSummaryTable.js' %}"></script> -->
     
 {% endblock %}
 

@@ -6,7 +6,6 @@ const getPortfolioSummaryData = async (url) => {
         const errorData = await response.json();
         if (errorData.Erro === 'No data') {
           alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
-          showNoData()
         } else {
           throw new Error(`Erro: ${errorData.Erro}`);
         }

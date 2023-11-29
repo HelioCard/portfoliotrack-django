@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from transactions.models import Transactions
 from portfolio.models import PortfolioItems
 from .TransactionsFromFile import TransactionsFromFile
@@ -185,12 +186,12 @@ class DashboardChartsProcessing(TransactionsFromFile):
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
-    def _calculate_change(self, value_in_period, initial_value):
+    def _calculate_percent(self, value, total): 
         try:
-            if initial_value == 0:
+            if total == 0:
                 return 0.0
             else:
-                return value_in_period / initial_value
+                return value / total
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name
@@ -288,29 +289,29 @@ class DashboardChartsProcessing(TransactionsFromFile):
             current_contribution = contribution_data[periods[0]]
             initial_contribution = contribution_data[periods[-1]]
             contribution_in_period = current_contribution - initial_contribution
-            contribution_change = self._calculate_change(contribution_in_period, initial_contribution)
+            contribution_change = self._calculate_percent(contribution_in_period, initial_contribution)
             contribution = {'value': current_contribution, 'period': periods[-1], 'change': contribution_change}
 
             # Cálculo relacionado ao Patrimônio
             current_equity = equity_data[periods[0]]
             initial_equity = equity_data[periods[-1]]
             result_in_period = current_equity - initial_equity
-            equity_change = self._calculate_change(result_in_period, initial_equity)
+            equity_change = self._calculate_percent(result_in_period, initial_equity)
             equity = {'value': current_equity, 'period': periods[-1], 'change': equity_change}
 
             # Cálculos relacionados aos Resultados (em porcentagem):
             current_result = current_equity - current_contribution
-            current_result_percent = self._calculate_change(current_result, current_contribution)
+            current_result_percent = self._calculate_percent(current_result, current_contribution)
             initial_result = initial_equity - initial_contribution
-            initial_result_percent = self._calculate_change(initial_result, initial_contribution)
+            initial_result_percent = self._calculate_percent(initial_result, initial_contribution)
             result_change = current_result_percent - initial_result_percent
             result = {'value': current_result_percent, 'period': periods[-1], 'change': result_change}
 
             # Cálculo relacionados ao Yield on Cost:
             current_dividends = dividends_data[periods[0]]
             initial_dividends = dividends_data[periods[-1]]
-            current_yield_on_cost = self._calculate_change(current_dividends, current_contribution)
-            initial_yield_on_cost = self._calculate_change(initial_dividends, initial_contribution)
+            current_yield_on_cost = self._calculate_percent(current_dividends, current_contribution)
+            initial_yield_on_cost = self._calculate_percent(initial_dividends, initial_contribution)
             yield_on_cost_change = current_yield_on_cost - initial_yield_on_cost
             yield_on_coast = {'value': current_yield_on_cost, 'period': periods[-1], 'change': yield_on_cost_change}
 
@@ -404,7 +405,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 equity = data['equity'][-1] # Obtêm o valor do patrimônio atual do ativo (último item da lista)
                 contribution = data['contribution'][-1] # Obtêm o valor acumulado de aportes do ativo (último item da lista)
                 income = equity - contribution # Calcula o lucro ou prejuízo do período
-                variation = self._calculate_change(income, contribution) # Calcula a porcentagem do lucro ou prejuízo
+                variation = self._calculate_percent(income, contribution) # Calcula a porcentagem do lucro ou prejuízo
                 asset_variation_data['ticker'].append(ticker)
                 asset_variation_data['variation'].append(round(variation * 100, 2))
             
@@ -428,8 +429,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 equity = self.individual_performance_data[ticker]['equity'][-1]
                 dividends = self.individual_performance_data[ticker]['dividends'][-1]
                 yield_ = equity - contribution
-                result = self._calculate_change(yield_, contribution) * PERCENT
-                yield_on_cost = self._calculate_change(dividends, contribution) * PERCENT
+                result = self._calculate_percent(yield_, contribution) * PERCENT
+                yield_on_cost = self._calculate_percent(dividends, contribution) * PERCENT
                 temp_dict = {
                     'asset': ticker,
                     'sort_of': data['sort_of'],
@@ -451,28 +452,61 @@ class DashboardChartsProcessing(TransactionsFromFile):
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def _get_weight_data(self, ticker):
-        return PortfolioItems.objects.get(portfolio__user=self.user, ticker=ticker, is_active=True)
+        try:
+            obj = PortfolioItems.objects.get(portfolio__user=self.user, ticker=ticker, is_active=True)
+            return obj
+        except ObjectDoesNotExist as e:
+            raise ValueError(f'Erro: {ticker}: {e}')
+
+    def _calculate_balance(self, temp_balance_data, total_equity, total_weight):
+        try:
+            PERCENT = 100
+            balance_data = temp_balance_data
+            for data in balance_data:
+                current_percentage = self._calculate_percent(value=data['equity'], total=total_equity) * PERCENT
+                ideal_percentage = self._calculate_percent(value=data['weight'], total=total_weight)
+                variation_value =  (ideal_percentage * total_equity) - data['equity']
+                variation_of_quotas = variation_value / data['last_price'] if data['last_price'] != 0 else 0.0
+                signal = '+' if variation_value > 0 else ''
+
+                data['last_price'] = self._format_float(data['last_price'])
+                data['equity'] = self._format_float(data['equity'])
+                data['current_percentage'] = self._format_float(current_percentage)
+                data['ideal_percentage'] = self._format_float(ideal_percentage * PERCENT)
+                data['to_balance'] = f'{signal}{int(variation_of_quotas)} cotas: {signal}{self._format_float(variation_value)}'
+            return balance_data
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def get_balance_data(self):
         try:
-            PERCENT = 100
             if self.individual_performance_data is None:
                 self._calculate_individual_performance_data()
-            balance_data = []
+            temp_balance_data = []
+            total_equity = 0.0
+            total_weight = 0.0
             for ticker, data in self.portfolio_items.items():
                 if data['quantity'] <= 0: # Se a posição foi fechada, não exibe.
                     continue
                 last_price = self.history_data[ticker][-1]['close']
                 equity = self.individual_performance_data[ticker]['equity'][-1]
+                total_equity += equity
                 weight_data = self._get_weight_data(ticker)
+                total_weight += weight_data.portfolio_weight
                 temp_dict = {
                     'asset': ticker,
                     'quantity': data['quantity'],
-                    'average_price': self._format_float(data['average_price']),
-                    'last_price': self._format_float(last_price),
-                    'equity': self._format_float(equity)
+                    'last_price': last_price,
+                    'equity': equity,
+                    'weight': weight_data.portfolio_weight,
+                    'current_percentage': 0.0,
+                    'ideal_percentage': 0.0,
+                    'to_balance': '',
                 }
-                balance_data.append(temp_dict)
+                temp_balance_data.append(temp_dict)
+            balance_data = self._calculate_balance(temp_balance_data=temp_balance_data, total_equity=total_equity, total_weight=total_weight)
             return self.list_of_dicts_order_by(balance_data, sort_keys=['asset'], reversed_output=False)
         except Exception as e:
             class_ = self.__class__.__name__
