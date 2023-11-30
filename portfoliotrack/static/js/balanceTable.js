@@ -20,7 +20,9 @@ const getBalanceData = async (url) => {
 function buildDomTable(tableData) {
   var table = document.getElementById('tableBody');
   for (var i = 0; i < tableData.length; i++){
-    var toBalanceColor = parseFloat(tableData[i].current_percentage) <= parseFloat(tableData[i].ideal_percentage) ? 'text-success' : 'text-warning';
+    var currentPercentage = parseFloat(tableData[i].current_percentage.replace(',', '.'));
+    var idealPercentage = parseFloat(tableData[i].ideal_percentage);
+    var toBalanceColor = currentPercentage <= idealPercentage ? 'text-success' : 'text-warning';
     var textID = `text${tableData[i].asset}`
     var row = `<tr class="align-middle" style="height: 60px;">
       <th><a href="#"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].asset}</span> </a></th>
@@ -35,7 +37,8 @@ function buildDomTable(tableData) {
                 type="range"
                 class="form-range align-middle"
                 style="min-width: 100px;" min="0" max="100" value="${tableData[i].weight}"
-                oninput="updateBalanceValue(this, ${textID})"
+                oninput="updateBalanceValues(this, ${textID})"
+                onblur="updateUpdateURL()"
             >
         </div>
       </td>
@@ -62,19 +65,13 @@ async function updateBalanceTable(URL) {
 
 updateBalanceTable(getBalanceURL)
 
-var arrayJson = []
 
-function updateBalanceValue(inputElement, textID) {
+var objJson = {}
+
+function updateBalanceValues(inputElement, textID) {
     textID.innerHTML = inputElement.value
-    let asset = inputElement.dataset.asset
+    let ticker = inputElement.dataset.asset
     let weight = inputElement.value
-
-    for (let i = 0; i < arrayJson.length; i++) {
-        if (arrayJson[i].asset === asset) {
-            arrayJson[i].value = weight
-            return
-        }
-    }
-
-    arrayJson.push({asset: asset, value: weight})
+    document.querySelector('#btnUpdateURL').classList.remove('disabled')
+    objJson[ticker] = parseInt(weight)
 }

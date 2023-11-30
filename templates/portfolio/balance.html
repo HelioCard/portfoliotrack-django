@@ -17,14 +17,20 @@
         </div>
       </div>
 
-      <div class="row ms-0 mt-4 mb-3 d-flex align-items-center justify-content-start fs-5">
+      <div class="d-flex align-items-center flex-wrap my-2">
+        <div class="d-flex col-12 col-md-8">
           <span>
             Balanceamento - Defina o peso que cada ativo terá no portfolio:
             <div id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" hidden>
-              <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">Loading...</span>
             </div>
           </span>
+        </div>
+        <div class="d-flex col-12 col-md-4 justify-content-md-end">
+          <a href="#" id="btnUpdateURL" data-bs-toggle="modal" data-bs-target="#editWeightsModal" class="btn btn-primary disabled">Confirmar Alterações</a>
+        </div>
       </div>
+
       <div class="container-fluid border rounded py-4 px-4 table-responsive" style="background-color: white;">
         <table id="portfolioTable" class="table table-responsive">
           <thead>
@@ -44,41 +50,6 @@
           </tbody>
         </table>
       </div>
-      
-
-      <div class="d-flex mt-3">
-        <form id="meuForm" action="">
-          <div class="form-row d-flex gap-3">
-            <div class="col p-auto">
-              <input type="text" id="campoJson" name="campoJson" class="form-control">
-            </div>
-            <div class="col">
-              <button type="submit" class="btn btn-primary" onclick="preencherCampoJson()">Salvar Alterações</button>
-            </div>
-          </div>
-        </form>
-      </div>
-      
-    
-      <script>
-        function preencherCampoJson() {
-          // Array de JSON para ser inserido no campo
-          const arrayJson = [
-            { nome: 'Item 1', valor: 10 },
-            { nome: 'Item 2', valor: 20 },
-            { nome: 'Item 3', valor: 30 }
-          ];
-    
-          // Convertendo o array de JSON para uma string JSON
-          const jsonString = JSON.stringify(arrayJson);
-    
-          // Atribuindo a string JSON ao valor do campo de entrada
-          document.getElementById('campoJson').value = jsonString;
-        }
-      </script>
-
-
-
 
     </div>
   </main>
@@ -91,11 +62,13 @@
     var getBalanceURL = "{% url 'get_balance_data' %}"
   </script>
   <script src="{% static 'js/balanceTable.js' %}"></script>
-  
-    
+  <script>
+    function updateUpdateURL() {
+      var updateBalanceURL = "{% url 'update_balance' new_weights='PLACEHOLDER' %}".replace('PLACEHOLDER', JSON.stringify(objJson));
+      document.getElementById('editWeightForm').action = updateBalanceURL
+    }
+  </script>
+
 {% endblock %}
-
-
-
 
 

@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.contrib import messages
+import json
 
+from portfolio.models import PortfolioItems
 from helpers.DashboardChartsProcessing import DashboardChartsProcessing
 
 # Create your views here.
@@ -42,3 +45,18 @@ def get_balance_data(request):
     except Exception as e:
         print(e)
         return JsonResponse({'Erro': str(e)}, status=500)
+
+@login_required(login_url='login')
+def update_balance(request, new_weights):
+    if request.method == 'POST':
+        try:
+            weights = json.loads(new_weights)
+            objects = PortfolioItems.objects.filter(ticker__in=weights.keys())
+            for obj in objects:
+                obj.portfolio_weight = weights[obj.ticker]            
+            PortfolioItems.objects.bulk_update(objects, ['portfolio_weight'])
+            messages.success(request, 'Pesos atualizados com sucesso!')
+        except Exception as e:
+            print(e)
+            messages.error(request, f'Erro: {e}')
+    return redirect('balance')

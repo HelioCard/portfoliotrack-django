@@ -139,3 +139,35 @@
 </div>
 <!-- Modal (delete transaction) ends--------------------------------------------------- -->
 
+
+<!-- Modal (edit weights) begins--------------------------------------------------- -->
+<div class="modal fade" id="editWeightsModal" tabindex="-1" aria-labelledby="ModalEditWeights" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="ModalLabel">Confirmar Edições</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body my-2">
+            <form method="POST" id="editWeightForm" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+
+                <div class="form-row mb-3">
+                    <p>Confirma a edição dos pesos?</p>
+                </div>
+
+                <input type="hidden" name="weigthsInput" id="inputWeights" value="">
+
+                <div class="d-flex justify-content-end mt-3 mx-2 gap-3">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" >Confirmar</button>
+                </div>
+
+            </form>  
+        </div>
+
+        </div>
+    </div>
+</div>
+<!-- Modal (edit weights) ends--------------------------------------------------- -->
