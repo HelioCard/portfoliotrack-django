@@ -533,14 +533,30 @@ class DashboardChartsProcessing(TransactionsFromFile):
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def get_target_data(self):
+        PERCENT = 100
         if self.average_dividend is None:
             self._get_average_dividend()
 
         obj = Portfolio.objects.get(user=self.user)
-        dividends_target = obj.dividends_target
-        print(dividends_target)
+        total_dividends_target = obj.dividends_target
+        
+        target_data = []
+
         for ticker in self.tickers_list:
             portfolio_item = self._get_weight_data(ticker)
-            print(ticker, portfolio_item.portfolio_weight)
-        # TODO: -----------------
+            weight = portfolio_item.portfolio_weight
+            quantity = self.portfolio_items[ticker]['quantity']
+            average_dividend = self.average_dividend[ticker]['average_dividend']
+            yearly_dividend = quantity * average_dividend
+            target_yearly_dividend = total_dividends_target * weight / PERCENT
+            
+            temp_dict = {
+                'ticker': ticker,
+                'quantity': quantity,
+                'yearly_dividend': yearly_dividend,
+                'target_yearly_dividend': target_yearly_dividend,
+                'average_dividend': average_dividend,
+            }
+            target_data.append(temp_dict)
+        print(target_data)
         return self.average_dividend
