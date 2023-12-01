@@ -1,4 +1,4 @@
-
+import numpy as np
 from datetime import date
 import datetime as dt
 import yfinance as yf
@@ -315,7 +315,7 @@ class DataFromYFinance:
                     except Exception as e:
                         print(f'Erro: {e}. Dados perdidos: {ticker}: data: {data[0]}, close: {data[1]}, dividends: {data[2]}')
                         continue
-                    accumulated_dividends += data[0]
+                    accumulated_dividends += data[0] if not np.isnan(data[0]) else 0.0
 
                 average_dividend = accumulated_dividends / months
                 if period == 'yearly':

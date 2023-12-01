@@ -1,4 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Sum
 from transactions.models import Transactions
 from portfolio.models import PortfolioItems, Portfolio
 from .TransactionsFromFile import TransactionsFromFile
@@ -468,6 +469,15 @@ class DashboardChartsProcessing(TransactionsFromFile):
         except ObjectDoesNotExist as e:
             raise ValueError(f'Erro: {ticker}: {e}')
 
+    def _get_sum_of_weights(self):
+        try:
+            total_sum = PortfolioItems.objects.aggregate(sum_=Sum('portfolio_weight'))['sum_']
+            return total_sum if total_sum is not None else 0.0
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
     def _calculate_balance(self, temp_balance_data, total_equity, total_weight):
         try:
             PERCENT = 100
@@ -490,10 +500,11 @@ class DashboardChartsProcessing(TransactionsFromFile):
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
-    def _get_average_dividend(self):
+    def _get_average_dividend(self, years):
         try:
-            two_years_ago = dt.today() - timedelta(days=730)
-            self.average_dividend = self.load_average_dividend_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=two_years_ago, interval='1mo', period='yearly')
+            days = years * 365
+            initial_date = dt.today() - timedelta(days=days)
+            self.average_dividend = self.load_average_dividend_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=initial_date, interval='1mo', period='yearly')
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name
@@ -533,30 +544,41 @@ class DashboardChartsProcessing(TransactionsFromFile):
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def get_target_data(self):
-        PERCENT = 100
-        if self.average_dividend is None:
-            self._get_average_dividend()
+        try:
+            PERCENT = 100
+            if self.average_dividend is None:
+                self._get_average_dividend(years=2)
 
-        obj = Portfolio.objects.get(user=self.user)
-        total_dividends_target = obj.dividends_target
-        
-        target_data = []
-
-        for ticker in self.tickers_list:
-            portfolio_item = self._get_weight_data(ticker)
-            weight = portfolio_item.portfolio_weight
-            quantity = self.portfolio_items[ticker]['quantity']
-            average_dividend = self.average_dividend[ticker]['average_dividend']
-            yearly_dividend = quantity * average_dividend
-            target_yearly_dividend = total_dividends_target * weight / PERCENT
+            obj = Portfolio.objects.get(user=self.user)
+            total_dividends_target = obj.dividends_target
             
-            temp_dict = {
-                'ticker': ticker,
-                'quantity': quantity,
-                'yearly_dividend': yearly_dividend,
-                'target_yearly_dividend': target_yearly_dividend,
-                'average_dividend': average_dividend,
-            }
-            target_data.append(temp_dict)
-        print(target_data)
-        return self.average_dividend
+            target_data = []
+            sum_of_weights = self._get_sum_of_weights()
+            for ticker in self.tickers_list:
+                portfolio_item = self._get_weight_data(ticker)
+                weight = portfolio_item.portfolio_weight
+                fraction = self._calculate_percent(value=weight, total=sum_of_weights)
+                quantity = self.portfolio_items[ticker]['quantity']
+                average_dividend = self.average_dividend[ticker]['average_dividend']
+                yearly_dividend = quantity * average_dividend
+                target_yearly_dividend = total_dividends_target * fraction
+                quantity_target = int(target_yearly_dividend / average_dividend) if average_dividend != 0.0 else 0
+                difference = quantity_target - quantity if quantity_target != 0 else 0
+                accomplished = self._calculate_percent(value=quantity, total=quantity_target) * PERCENT
+                
+                temp_dict = {
+                    'ticker': ticker,
+                    'quantity': quantity,
+                    'quantity_target': quantity_target if quantity_target != 0 else 'Indefinido',
+                    'difference': difference if difference != 0 else 'Indefinido',
+                    'accomplished': self._format_float(accomplished) if accomplished != 0 else 'Indefinido',
+                    'yearly_dividend': self._format_float(yearly_dividend),
+                    'target_yearly_dividend': self._format_float(target_yearly_dividend),
+                    'average_dividend': self._format_float(average_dividend),
+                }
+                target_data.append(temp_dict)        
+            return self.list_of_dicts_order_by(target_data, ['ticker'], reversed_output=False)
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
