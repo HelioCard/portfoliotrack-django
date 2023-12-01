@@ -22,10 +22,10 @@ let table = new DataTable('#transactionsTable', {
                 1: '%d linha selecionada',
             },
         },
-        ordering: false,
     },
+    ordering: false,
     select: true,
-    order: [[0, 'desc']],
+    // order: [[0, 'desc']],
 
 });
 

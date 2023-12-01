@@ -16,6 +16,7 @@ import datetime
 @login_required(login_url='login')
 def transactions(request):
     transactions = Transactions.objects.filter(portfolio__user=request.user).order_by('-date')
+    print(transactions.values())
     context = {
         'transactions': transactions,
     }

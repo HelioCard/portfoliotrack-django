@@ -280,3 +280,60 @@ class DataFromYFinance:
 
 
 
+
+    #############################################
+    ###### GET AVERAGE DIVIDEND YIELD DATA ######
+    #############################################
+
+    def _get_average_dividend_data(self, list_of_tickers, initial_date, ending_date, interval, period):
+        try:
+            THIRTY_DAYS = 30
+            TWELVE_MONTHS = 12
+            months = (ending_date - initial_date).days // THIRTY_DAYS
+            if months <= 0:
+                raise ValueError('Datas inicial e final inválidas. Período mínimo permitido: 1 dia atrás')
+            raw_data = yf.download(list_of_tickers, start=initial_date, end=ending_date, group_by='ticker', interval=interval, repair=True, actions=True, session=session)
+
+            final_dict: dict = {}
+            for ticker in list_of_tickers: # Percorre a lista de tickers
+
+                # Obtem os dados referente ao ticker, no formato dicionário
+                if len(list_of_tickers) > 1: # Se houver mais de um ticker na lista
+                    temp_result = raw_data[ticker] 
+                    temp_result.reset_index(inplace=True) # Nivela o index de todas as colunas do df
+                else:
+                    temp_result = raw_data
+                    temp_result.reset_index(inplace=True)
+                
+                selected_data = temp_result[['Dividends']].values.tolist()
+                
+                accumulated_dividends = 0.0
+                average_dividend = 0.0
+                for data in selected_data:
+                    try:
+                        float(data[0])
+                    except Exception as e:
+                        print(f'Erro: {e}. Dados perdidos: {ticker}: data: {data[0]}, close: {data[1]}, dividends: {data[2]}')
+                        continue
+                    accumulated_dividends += data[0]
+
+                average_dividend = accumulated_dividends / months
+                if period == 'yearly':
+                    average_dividend = average_dividend * TWELVE_MONTHS
+                
+                temp_dict = {
+                    'ticker': ticker[:-3],
+                    'average_dividend': average_dividend,
+                    'period': period,
+                }
+
+                final_dict[ticker[:-3]] = temp_dict
+            return final_dict
+        except Exception as e:
+            return e
+
+    def load_average_dividend_of_tickers_list(self, list_of_tickers: list, initial_date: date, ending_date: date=None, interval='1d', period='monthly'):
+        if ending_date is None: ending_date = date.today()
+        list_of_tickers = [ticker.upper() + '.SA' for ticker in list_of_tickers]
+        return self._get_average_dividend_data(list_of_tickers, initial_date, ending_date, interval, period=period)
+

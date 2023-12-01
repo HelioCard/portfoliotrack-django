@@ -60,3 +60,22 @@ def update_balance(request, new_weights):
             print(e)
             messages.error(request, f'Erro: {e}')
     return redirect('balance')
+
+@login_required(login_url='login')
+def target(request):
+    return render(request, 'portfolio/target.html')
+
+@login_required(login_url='login')
+def get_target_data(request):
+    try:        
+        processor = DashboardChartsProcessing(user=request.user, ticker=None, subtract_dividends_from_contribution='N')
+        target_data = processor.get_target_data()
+        context = {
+            'target_data': target_data,
+        }
+        return JsonResponse(context)
+    except ValueError as e:
+        return JsonResponse({'Erro': str(e)}, status=404)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'Erro': str(e)}, status=500)

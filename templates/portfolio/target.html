@@ -20,33 +20,42 @@
       <div class="d-flex align-items-center flex-wrap my-2">
         <div class="d-flex col-12 col-md-8">
           <span>
-            Balanceamento - Defina o peso que cada ativo terá no portfolio:
+            Metas - Defina uma meta de dividendos anuais (R$):
             <div id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" hidden>
             <span class="visually-hidden">Loading...</span>
             </div>
           </span>
         </div>
         <div class="d-flex col-12 col-md-4 justify-content-md-end">
-          <a href="#" id="btnUpdateURL" data-bs-toggle="modal" data-bs-target="#editWeightsModal" class="btn btn-primary disabled">Confirmar Alterações</a>
+          <a href="#" id="btnUpdateURL" class="btn btn-primary disabled">Confirmar Alterações</a>
         </div>
       </div>
 
       <div class="container-fluid border rounded py-4 px-4 table-responsive" style="background-color: white;">
-        <table id="balanceTable" class="table table-responsive">
+        <table id="targetTable" class="table table-responsive">
           <thead>
             <tr>
               <th scope="col" class="text-center">Ativos</th>
+              <th scope="col" class="text-center">Meta</th>
               <th scope="col" class="text-center">Qtde</th>
-              <th scope="col" class="text-center">Cotação</th>
-              <th scope="col" class="text-center">Patrim</th>
-              <th scope="col" class="text-center">Peso</th>
-              <th scope="col" class="text-center">(%)Ideal</th>
-              <th scope="col" class="text-center">(%)Atual</th>
-              <th scope="col" class="text-center">Equilíbrio</th>
+              <th scope="col" class="text-center">Falta</th>
+              <th scope="col" class="text-center">(%)Concluído</th>
+              <th scope="col" class="text-center">Div Anual Ativo</th>
+              <th scope="col" class="text-center">Div Anual Objet</th>
+              <th scope="col" class="text-center">Div Médio / Ativo</th>
             </tr>
           </thead>
           <tbody id="tableBody">
-            
+            <tr class="align-middle" style="height: 60px;">
+              <th><a href="#"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">TRPL4</span> </a></th>
+              <td class="text-center">1234</td>
+              <td class="text-center">1000</td>
+              <td class="text-center">234</td>
+              <td class="text-center">92%</td>
+              <td class="text-center">4.374,50</td>
+              <td class="text-center">4.800,00</td>
+              <td class="text-center">2,81</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -59,15 +68,15 @@
   {% include 'includes/message.html' %}
   
   <script>
-    var getBalanceURL = "{% url 'get_balance_data' %}"
+    var getTargetURL = "{% url 'get_target_data' %}"
   </script>
-  <script src="{% static 'js/balanceTable.js' %}"></script>
-  <script>
+  <script src="{% static 'js/targetTable.js' %}"></script>
+  <!-- <script>
     function updateUpdateURL() {
       var updateBalanceURL = "{% url 'update_balance' new_weights='PLACEHOLDER' %}".replace('PLACEHOLDER', JSON.stringify(objJson));
       document.getElementById('editWeightForm').action = updateBalanceURL
     }
-  </script>
+  </script> -->
 
 {% endblock %}
 

@@ -1,9 +1,9 @@
 from django.core.exceptions import ObjectDoesNotExist
 from transactions.models import Transactions
-from portfolio.models import PortfolioItems
+from portfolio.models import PortfolioItems, Portfolio
 from .TransactionsFromFile import TransactionsFromFile
 from datetime import date as dt
-from datetime import datetime
+from datetime import datetime, timedelta
 import numpy as np
 import inspect
 import locale
@@ -22,10 +22,11 @@ class DashboardChartsProcessing(TransactionsFromFile):
         self.portfolio_items, self.asset_history = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list)
         self.first_transaction_date = self._get_first_transaction_date()
         self.interval = self._get_interval()
-        self.history_data = self.load_history_data_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=self.first_transaction_date, interval=self.interval)
+        self.history_data = None # Dados históricos de fechamento, dividendos e splits/agrupamentos
 
         self.individual_performance_data = None # Dados de performance de cada ativo individualmente
         self.performance_data = None # Dados de performance consolidados (todos os ativos do portfolio)
+        self.average_dividend = None
     
     def _get_interval(self):
         try:
@@ -63,6 +64,9 @@ class DashboardChartsProcessing(TransactionsFromFile):
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
+    def _load_history_data(self):
+        self.history_data = self.load_history_data_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=self.first_transaction_date, interval=self.interval)
+
     def _get_values_in_a_date(self, date, asset_history):
         try:
             # Classifica a lista de dicionários com base na data
@@ -97,6 +101,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def _calculate_individual_performance_data(self):
+        if not self.history_data:
+            self._load_history_data()
         try:
             # Cria um dicionário que conterá o histórico de data, aportes acumulados, patrimônio e dividendos acumulados ao longo do tempo. Tudo isso de cada ativo:
             individual_performance_data = {
@@ -215,6 +221,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def get_category_data(self):
+        if not self.history_data:
+            self._load_history_data()
         try:
             categories_set = {asset['sort_of'] for asset in self.portfolio_items.values()}
             category_data = []
@@ -242,6 +250,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def get_asset_data(self):
+        if not self.history_data:
+            self._load_history_data()
         try:
             asset_data = []
             for ticker, asset in self.portfolio_items.items():
@@ -480,6 +490,15 @@ class DashboardChartsProcessing(TransactionsFromFile):
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
+    def _get_average_dividend(self):
+        try:
+            two_years_ago = dt.today() - timedelta(days=730)
+            self.average_dividend = self.load_average_dividend_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=two_years_ago, interval='1mo', period='yearly')
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
     def get_balance_data(self):
         try:
             if self.individual_performance_data is None:
@@ -512,3 +531,16 @@ class DashboardChartsProcessing(TransactionsFromFile):
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
+    def get_target_data(self):
+        if self.average_dividend is None:
+            self._get_average_dividend()
+
+        obj = Portfolio.objects.get(user=self.user)
+        dividends_target = obj.dividends_target
+        print(dividends_target)
+        for ticker in self.tickers_list:
+            portfolio_item = self._get_weight_data(ticker)
+            print(ticker, portfolio_item.portfolio_weight)
+        # TODO: -----------------
+        return self.average_dividend
