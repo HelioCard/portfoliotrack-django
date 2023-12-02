@@ -152,10 +152,9 @@ class TransactionsFromFile(DataFromYFinance):
                
             return transactions_list_added_splits_bonus
         except Exception as e:
-            print(f'Erro ao adicionar as transações de splits/agrupamentos: {e}')
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name
-            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+            raise ValueError(f'Classe: {class_} => Método: {method_} => Erro ao adicionar as transações de splits/agrupamentos: {e}')
     
     def calculate_portfolio_balance_and_asset_history(self, transactions_list, tickers_list=None):
         try:
