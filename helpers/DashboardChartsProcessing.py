@@ -569,9 +569,9 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 temp_dict = {
                     'ticker': ticker,
                     'quantity': quantity,
-                    'quantity_target': quantity_target if quantity_target != 0 else 'Indefinido',
-                    'difference': difference if difference != 0 else 'Indefinido',
-                    'accomplished': self._format_float(accomplished) if accomplished != 0 else 'Indefinido',
+                    'quantity_target': quantity_target if quantity_target != 0 else '0.0',
+                    'difference': difference if difference != 0 else '0.0',
+                    'accomplished': round(accomplished, 2) if accomplished != 0 else 0.0,
                     'yearly_dividend': self._format_float(yearly_dividend),
                     'target_yearly_dividend': self._format_float(target_yearly_dividend),
                     'average_dividend': self._format_float(average_dividend),

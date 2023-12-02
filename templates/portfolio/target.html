@@ -32,30 +32,20 @@
       </div>
 
       <div class="container-fluid border rounded py-4 px-4 table-responsive" style="background-color: white;">
-        <table id="targetTable" class="table table-responsive">
+        <table id="targetTable" class="table table-hover table-responsive">
           <thead>
             <tr>
               <th scope="col" class="text-center">Ativos</th>
               <th scope="col" class="text-center">Qtde</th>
-              <th scope="col" class="text-center">Meta</th>
-              <th scope="col" class="text-center">Falta</th>
-              <th scope="col" class="text-center">(%)Concluído</th>
-              <th scope="col" class="text-center">Div Anual Ativo</th>
-              <th scope="col" class="text-center">Div Anual Objet</th>
-              <th scope="col" class="text-center">Div Médio / Ativo</th>
+              <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Dividendos por Ação - Valores médios anuais considerando os últimos dois anos">Por_Ação</th>
+              <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Dividendo anual gerado pelo ativo">Div_Anual</th>
+              <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Meta de Dividendo para o ativo, considerando o peso definido">Div_Meta</th>
+              <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Quantidade de cotas para atingir a meta de dividendos">Qtde_Meta</th>
+              <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Quantidade de cotas faltantes para atingir a meta">Faltam</th>
+              <th scope="col" class="text-center">Concluído</th>
             </tr>
           </thead>
           <tbody id="tableBody">
-            <tr class="align-middle" style="height: 60px;">
-              <th><a href="#"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">TRPL4</span> </a></th>
-              <td class="text-center">1234</td>
-              <td class="text-center">1000</td>
-              <td class="text-center">234</td>
-              <td class="text-center">92%</td>
-              <td class="text-center">4.374,50</td>
-              <td class="text-center">4.800,00</td>
-              <td class="text-center">2,81</td>
-            </tr>
           </tbody>
         </table>
       </div>
@@ -71,6 +61,10 @@
     var getTargetURL = "{% url 'get_target_data' %}"
   </script>
   <script src="{% static 'js/targetTable.js' %}"></script>
+  <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+  </script>
   <!-- <script>
     function updateUpdateURL() {
       var updateBalanceURL = "{% url 'update_balance' new_weights='PLACEHOLDER' %}".replace('PLACEHOLDER', JSON.stringify(objJson));

@@ -16,7 +16,6 @@ import datetime
 @login_required(login_url='login')
 def transactions(request):
     transactions = Transactions.objects.filter(portfolio__user=request.user).order_by('-date')
-    print(transactions.values())
     context = {
         'transactions': transactions,
     }
@@ -34,14 +33,17 @@ def upload_file(request):
         if form.is_valid():
             file = request.FILES['file']   
             user_id = request.user.id
-            raw_transactions_list = TransactionsFromFile().load_file(file)
-            task = register_transactions.delay(raw_transactions_list, user_id)
-            messages.success(request, f'Processando transações do arquivo "{file}". Aguarde ...')
-            context = {
-                'task_id': task.task_id,
-                'redirect_url': 'dashboard',
-            }
-            return render(request, 'transactions/processTransactions.html', context)
+            try:
+                raw_transactions_list = TransactionsFromFile().load_file(file)
+                task = register_transactions.delay(raw_transactions_list, user_id)
+                messages.success(request, f'Processando transações do arquivo "{file}". Aguarde ...')
+                context = {
+                    'task_id': task.task_id,
+                    'redirect_url': 'dashboard',
+                }
+                return render(request, 'transactions/processTransactions.html', context)
+            except Exception as e:
+                messages.error(request, f'Erro: {e}')
         else:
             messages.error(request, form.errors)        
     return redirect('dashboard')

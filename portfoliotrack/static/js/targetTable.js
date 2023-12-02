@@ -20,31 +20,21 @@ const getTargetData = async (url) => {
 function buildDomTable(tableData) {
   var table = document.getElementById('tableBody');
   for (var i = 0; i < tableData.length; i++){
-    var currentPercentage = parseFloat(tableData[i].current_percentage.replace(',', '.'));
-    var idealPercentage = parseFloat(tableData[i].ideal_percentage);
-    var toBalanceColor = currentPercentage <= idealPercentage ? 'text-success' : 'text-warning';
-    var textID = `text${tableData[i].asset}`
     var row = `<tr class="align-middle" style="height: 60px;">
-      <th><a href="#"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].asset}</span> </a></th>
-      <td class="text-end">${tableData[i].quantity}</td>
-      <td class="text-end">${tableData[i].last_price}</td>
-      <td class="text-end">${tableData[i].equity}</td>
-      <td>
-        <div class="d-flex align-items-center justify-content-start gap-1">
-            <span id="${textID}" class="align-middle badge text-bg-primary" style="min-width: 50px; font-size: 1.0rem">${tableData[i].weight}</span>
-            <input
-                data-asset="${tableData[i].asset}"
-                type="range"
-                class="form-range align-middle"
-                style="min-width: 100px;" min="0" max="100" value="${tableData[i].weight}"
-                oninput="updateBalanceValues(this, ${textID})"
-                onblur="updateUpdateURL()"
-            >
-        </div>
+      <th><a href="#"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].ticker}</span> </a></th>
+      <td class="text-center">${tableData[i].quantity}</td>
+      <td class="text-center">${tableData[i].average_dividend}</td>
+      <td class="text-center">${tableData[i].yearly_dividend}</td>
+      <td class="text-center">${tableData[i].target_yearly_dividend}</td>
+      <td class="text-center">${tableData[i].quantity_target}</td>
+      <td class="text-center">${tableData[i].difference}</td>
+      <td class="text-center">
+      ${tableData[i].accomplished}%
+      <div class="progress" role="progressbar" aria-label="Success striped example" aria-valuenow="${tableData[i].accomplished}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar progress-bar-striped bg-success" style="width: ${tableData[i].accomplished}%;"></div>
+      </div>
       </td>
-      <td class="text-end">${tableData[i].ideal_percentage} %</td>
-      <td class="text-end">${tableData[i].current_percentage} %</td>
-      <td class="text-center ${toBalanceColor}">${tableData[i].to_balance}</td>
+      
     </tr>`
     table.innerHTML += row;
   };
@@ -56,7 +46,7 @@ async function updateTargetTable(URL) {
         const data = await getTargetData(URL)
         if (data) {
           console.log(data)
-          // buildDomTable(data.balance_data) 
+          buildDomTable(data.target_data) 
         };
         document.querySelector('#spinner').hidden = true;
     } catch (error) {

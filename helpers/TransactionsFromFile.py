@@ -1,5 +1,6 @@
 import pandas as pd
 import datetime
+import inspect
 
 from .DataFromYFinance import DataFromYFinance
 
@@ -12,51 +13,61 @@ class TransactionsFromFile(DataFromYFinance):
     #########################################################
 
     def load_file(self, file):
-        df = pd.read_excel(file)
-        columns = []
-        for i in range(len(df.columns)):
-            columns.append(df.columns[i].title().lower())
+        try:
+            df = pd.read_excel(file)
+            columns = []
+            for i in range(len(df.columns)):
+                columns.append(df.columns[i].title().lower())
 
-        initial_list = []
-        for index, row in df.iterrows():
-            temp_dict = {
-                column: row[column] for column in columns
-            }
-            initial_list.append(temp_dict)
-        
-        if initial_list:
-            return initial_list
-        else:
-            raise ValueError('Nenhum dado foi lido. Planilha vazia?')
+            initial_list = []
+            for index, row in df.iterrows():
+                temp_dict = {
+                    column: row[column] for column in columns
+                }
+                initial_list.append(temp_dict)
+            
+            if initial_list:
+                return initial_list
+            else:
+                raise ValueError('Nenhum dado foi lido. Planilha vazia?')
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def _validate_trasactions_data(self, data_list):
-        for i, data in enumerate(data_list):
-            
+        for data in data_list:
+            operation = f"Data: {data['date']} - Ticker: {data['ticker']} - Operação: {data['operation']} - Quantidade: {data['quantity']} - Preço Unitário: {data['unit_price']} - Tipo: {data['sort_of']}"
             # Valida a coluna "Data"
             try:
                 data['date'] = data['date'].date() # Converte timestamp em objeto datetime
             except:
-                raise ValueError('Dados corrompidos na coluna "Data". Verifique se há valores inválidos de data.')
+                raise ValueError(f'Dados corrompidos em "Data", na seguinte operação: {operation}')
             
             # Valida a coluna "Ticker"
             try:
                 data['ticker'] = data['ticker'].upper() # Tickers em letras maiúsculas
             except:
-                raise ValueError(f'Dados corrompidos na coluna "Ticker", Linha {i+2}: {data["ticker"]}.')
+                raise ValueError(f'Dados corrompidos em "Ticker" na seguinte operação: {operation}.')
                 
 
             # Valida a coluna "Operações"
             try:
                 data['operation'] = data['operation'].upper()
                 if data['operation'] not in ['C', 'V', 'A']:
-                    raise ValueError(f'Dados corrompidos na coluna "Operações", Linha {i+2}: {data["operation"]} não é uma operação aceita. (Use "C", "V" ou "A")')
+                    raise ValueError(f'Dados corrompidos em "Operações", na seguinte operação: {operation}. (Use "C" para compra, "V" para venda ou "A" para split/agrupamento/bonificação)')
             except Exception as e:
                 raise ValueError(e) from e
             
             # Valida a coluna "Quantidade"
             try:
-                if not isinstance(data['quantity'], int) or int(data['quantity']) < 0:
-                    raise ValueError(f'Dados corrompidos na coluna "Quantidade", Linha {i+2}: {data["quantity"]}. Os valores de quantidade devem ser do tipo inteiro e maiores ou iguais a 0.')
+                if not isinstance(data['quantity'], int):
+                    raise ValueError(f'Dados corrompidos em "Quantidade", na seguinte operação: {operation}. Os valores de quantidade devem ser do tipo inteiro.')
+                elif int(data['quantity']) <= 0 and data['operation'] != 'A':
+                    raise ValueError(f'Dados corrompidos em "Quantidade" na seguinte operação: {operation}. Os valores de quantidade devem ser maiores que 0 para operações de compra ou venda.')
+                elif data['operation'] == 'A':
+                    data['quantity'] = 0
+
             except Exception as e:
                 raise ValueError(e) from e
             
@@ -64,23 +75,28 @@ class TransactionsFromFile(DataFromYFinance):
             try:
                 data['unit_price'] = round(float(data['unit_price']), 2)
                 if data['unit_price'] <= 0:
-                    raise ValueError(f'Dados corrompidos na coluna "Valor Unitário", Linha {i+2}: {data["unit_price"]}. Os valores devem ser do tipo flutuante e maiores que 0,00.')
+                    raise ValueError(f'Dados corrompidos em "Valor Unitário", na seguinte operação: {operation}. Os valores devem ser do tipo flutuante e maiores que 0,00.')
             except:
-                raise ValueError(f'Dados corrompidos na coluna "Valor Unitário", Linha {i+2}: {data["unit_price"]}. Os valores devem ser do tipo flutuante e maiores que 0,00.')
+                raise ValueError(f'Dados corrompidos em "Valor Unitário", na seguinte operação: {operation}. Os valores devem ser do tipo flutuante e maiores que 0,00.')
             
             # Valida a coluna "Tipo"
             try:
                 data['sort_of'] = data['sort_of'].upper()
                 if data['sort_of'] not in ['AÇÕES', 'FIIS', 'SPLIT/AGRUP']:
-                    raise ValueError(f'Dados corrompidos na coluna "Tipo", Linha {i+2}: {data["sort_of"]}.')
+                    raise ValueError(f'Dados corrompidos em "Tipo", na seguinte operação: {operation}. Use Ações, Fiis ou Split/Agrup')
             except Exception as e:
                 raise ValueError(e) from e
 
         return data_list
 
     def extract_tickers_list(self, transactions_list):
-        tickers_set = {transaction['ticker'] for transaction in transactions_list}
-        return tickers_set
+        try:
+            tickers_set = {transaction['ticker'] for transaction in transactions_list}
+            return tickers_set
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def _add_splits_transactions(self, transactions_list, tickers_list, existing_events_list):
         try:
@@ -133,64 +149,69 @@ class TransactionsFromFile(DataFromYFinance):
                                 }
                             )
                             print(f'{ticker} splits/groupments added')
-                
-                
-                        
+               
             return transactions_list_added_splits_bonus
         except Exception as e:
             print(f'Erro ao adicionar as transações de splits/agrupamentos: {e}')
-            raise Exception(e)
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
     
     def calculate_portfolio_balance_and_asset_history(self, transactions_list, tickers_list=None):
-        if tickers_list is None:
-            tickers_list = self.extract_tickers_list(transactions_list)
+        try:
+            if tickers_list is None:
+                tickers_list = self.extract_tickers_list(transactions_list)
 
-        # Inicialize o portfólio com todos os tickers e valores iniciais para serem rastreados
-        portfolio_items = {
-            ticker: {'ticker': ticker, 'quantity': 0, 'average_price': 0.0, 'sort_of': ''} for ticker in tickers_list
-        }
-
-        asset_history = {
-            ticker: [] for ticker in tickers_list
-        }
-
-        for transaction in transactions_list:
-            ticker = transaction['ticker']
-            operation = transaction['operation']
-            if operation != 'A': # Define o tipo do ativo somente se a transação for diferente de split/agrupamento
-                portfolio_items[ticker]['sort_of'] = transaction['sort_of']
-            quantity = transaction['quantity']
-            unit_price = transaction['unit_price']
-
-            if operation == 'C':
-                # Compra: atualiza a quantidade e o preço médio
-                portfolio_items[ticker]['quantity'] += quantity
-                portfolio_items[ticker]['average_price'] = (
-                    portfolio_items[ticker]['average_price'] * (portfolio_items[ticker]['quantity'] - quantity) +
-                    unit_price * quantity
-                ) / portfolio_items[ticker]['quantity']
-
-            elif operation == 'V':
-                # Venda: atualiza a quantidade
-                portfolio_items[ticker]['quantity'] -= quantity
-
-            elif operation == 'A':
-                # Ação: multiplique a quantidade pelo fator de split/agrupamento/bonificação
-                portfolio_items[ticker]['quantity'] = int(portfolio_items[ticker]['quantity'] * unit_price) # Neste caso a variavel unit_price recebe o 'ratio'
-                portfolio_items[ticker]['average_price'] = portfolio_items[ticker]['average_price'] / unit_price
-
-            # Cria um histórico de quantidade e preço médio de ativos ao longo das datas das operações referente ao ativo:
-            """ Por exemplo: na data 01/mm/YYYY havia x quantidade com y preço médio
-                             na data 10/mm/YYYY havia z quantidade com t preço médio"""
-            temp_dict = {
-                'ticker': ticker,
-                'date': transaction['date'],
-                'quantity': portfolio_items[ticker]['quantity'],
-                'average_price': portfolio_items[ticker]['average_price'],
+            # Inicialize o portfólio com todos os tickers e valores iniciais para serem rastreados
+            portfolio_items = {
+                ticker: {'ticker': ticker, 'quantity': 0, 'average_price': 0.0, 'sort_of': ''} for ticker in tickers_list
             }
-            asset_history[ticker].append(temp_dict)
-        
-        return portfolio_items, asset_history
+
+            asset_history = {
+                ticker: [] for ticker in tickers_list
+            }
+
+            for transaction in transactions_list:
+                ticker = transaction['ticker']
+                operation = transaction['operation']
+                if operation != 'A': # Define o tipo do ativo somente se a transação for diferente de split/agrupamento
+                    portfolio_items[ticker]['sort_of'] = transaction['sort_of']
+                quantity = transaction['quantity']
+                unit_price = transaction['unit_price']
+
+                if operation == 'C':
+                    # Compra: atualiza a quantidade e o preço médio
+                    portfolio_items[ticker]['quantity'] += quantity
+                    portfolio_items[ticker]['average_price'] = (
+                        portfolio_items[ticker]['average_price'] * (portfolio_items[ticker]['quantity'] - quantity) +
+                        unit_price * quantity
+                    ) / portfolio_items[ticker]['quantity']
+
+                elif operation == 'V':
+                    # Venda: atualiza a quantidade
+                    portfolio_items[ticker]['quantity'] -= quantity
+
+                elif operation == 'A':
+                    # Ação: multiplique a quantidade pelo fator de split/agrupamento/bonificação
+                    portfolio_items[ticker]['quantity'] = int(portfolio_items[ticker]['quantity'] * unit_price) # Neste caso a variavel unit_price recebe o 'ratio'
+                    portfolio_items[ticker]['average_price'] = portfolio_items[ticker]['average_price'] / unit_price
+
+                # Cria um histórico de quantidade e preço médio de ativos ao longo das datas das operações referente ao ativo:
+                """ Por exemplo: na data 01/mm/YYYY havia x quantidade com y preço médio
+                                na data 10/mm/YYYY havia z quantidade com t preço médio"""
+                temp_dict = {
+                    'ticker': ticker,
+                    'date': transaction['date'],
+                    'quantity': portfolio_items[ticker]['quantity'],
+                    'average_price': portfolio_items[ticker]['average_price'],
+                }
+                asset_history[ticker].append(temp_dict)
+            
+            return portfolio_items, asset_history
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def process_raw_transactions(self, raw_transactions, existing_events_list=[]) -> list:
         print('Processing...')
