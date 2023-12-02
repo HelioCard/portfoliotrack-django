@@ -228,13 +228,8 @@ class DataFromYFinance:
             for ticker in list_of_tickers: # Percorre a lista de tickers
 
                 # Obtem os dados referente ao ticker, no formato dicionário
-                if len(list_of_tickers) > 1: # Se houver mais de um ticker na lista
-                    temp_result = raw_data[ticker] 
-                    temp_result.reset_index(inplace=True) # Nivela o index de todas as colunas do df
-                else:
-                    temp_result = raw_data
-                    temp_result.reset_index(inplace=True)
-                
+                temp_result = raw_data[ticker] if len(list_of_tickers) > 1 else raw_data
+                temp_result.reset_index(inplace=True) # Nivela o index de todas as colunas do df
                 selected_data = temp_result[['Date', 'Close', 'Dividends', 'Stock Splits']].values.tolist()
 
                 for data in selected_data:
@@ -307,13 +302,8 @@ class DataFromYFinance:
             for ticker in list_of_tickers: # Percorre a lista de tickers
 
                 # Obtem os dados referente ao ticker, no formato dicionário
-                if len(list_of_tickers) > 1: # Se houver mais de um ticker na lista
-                    temp_result = raw_data[ticker] 
-                    temp_result.reset_index(inplace=True) # Nivela o index de todas as colunas do df
-                else:
-                    temp_result = raw_data
-                    temp_result.reset_index(inplace=True)
-                
+                temp_result = raw_data[ticker] if len(list_of_tickers) > 1 else raw_data
+                temp_result.reset_index(inplace=True) # Nivela o index de todas as colunas do df
                 selected_data = temp_result[['Dividends']].values.tolist()
                 
                 accumulated_dividends = 0.0
