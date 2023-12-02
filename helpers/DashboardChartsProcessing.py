@@ -504,7 +504,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
         try:
             days = years * 365
             initial_date = dt.today() - timedelta(days=days)
-            self.average_dividend = self.load_average_dividend_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=initial_date, interval='1mo', period='yearly')
+            self.average_dividend = self.calculate_average_dividend_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=initial_date, interval='1mo', period='yearly')
+            # self.average_dividend = self.get_average_dividend_of_tickers_list(list_of_tickers=self.tickers_list)
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name
@@ -547,7 +548,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
         try:
             PERCENT = 100
             if self.average_dividend is None:
-                self._get_average_dividend(years=3)
+                self._get_average_dividend(years=4)
 
             obj = Portfolio.objects.get(user=self.user)
             total_dividends_target = obj.dividends_target

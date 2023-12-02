@@ -292,17 +292,15 @@ class DataFromYFinance:
 
 
 
-    #############################################
-    ###### GET AVERAGE DIVIDEND YIELD DATA ######
-    #############################################
+    ##############################################################
+    ###### CALCULATE AVERAGE DIVIDEND ANNUALY DATA - MANNUALY ######
+    ##############################################################
 
-    def _get_average_dividend_data(self, list_of_tickers, initial_date, ending_date, interval, period):
+    def _calculate_average_dividend_data(self, list_of_tickers, initial_date, ending_date, interval, period):
         try:
-            THIRTY_DAYS = 30
             TWELVE_MONTHS = 12
-            months = (ending_date - initial_date).days // THIRTY_DAYS
-            if months <= 0:
-                raise ValueError('Datas inicial e final inválidas. Período mínimo permitido: 1 dia atrás')
+            if (ending_date - initial_date).days < 180:
+                raise ValueError('Datas inicial e final inválidas. Período mínimo permitido: 180 dias atrás')
             raw_data = yf.download(list_of_tickers, start=initial_date, end=ending_date, group_by='ticker', interval=interval, repair=True, actions=True, session=session)
 
             final_dict: dict = {}
@@ -320,13 +318,16 @@ class DataFromYFinance:
                 
                 accumulated_dividends = 0.0
                 average_dividend = 0.0
+                months = 0
                 for data in selected_data:
                     try:
                         float(data[0])
                     except Exception as e:
                         print(f'Erro: {e}. Dados perdidos: {ticker}: data: {data[0]}, close: {data[1]}, dividends: {data[2]}')
                         continue
-                    accumulated_dividends += data[0] if not np.isnan(data[0]) else 0.0
+                    if not np.isnan(data[0]):
+                        accumulated_dividends += data[0]
+                        months += 1
 
                 average_dividend = accumulated_dividends / months
                 if period == 'yearly':
@@ -345,8 +346,39 @@ class DataFromYFinance:
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
-    def load_average_dividend_of_tickers_list(self, list_of_tickers: list, initial_date: date, ending_date: date=None, interval='1d', period='monthly'):
+    def calculate_average_dividend_of_tickers_list(self, list_of_tickers: list, initial_date: date, ending_date: date=None, interval='1d', period='monthly'):
         if ending_date is None: ending_date = date.today()
         list_of_tickers = [ticker.upper() + '.SA' for ticker in list_of_tickers]
-        return self._get_average_dividend_data(list_of_tickers, initial_date, ending_date, interval, period=period)
+        return self._calculate_average_dividend_data(list_of_tickers, initial_date, ending_date, interval, period=period)
 
+
+
+
+
+    #############################################
+    ###### GET AVERAGE DIVIDEND YIELD DATA ######
+    #############################################
+
+    def _get_average_dividend_data(self, list_of_tickers):
+        try:
+            raw_data = yf.Tickers(list_of_tickers, session=session)
+            final_dict: dict = {}
+            for ticker in list_of_tickers: # Percorre a lista de tickers 
+                try:
+                    average_dividend = float(raw_data.tickers[ticker].info['trailingAnnualDividendRate'])
+                except:
+                    average_dividend = 0.0
+                temp_dict = {
+                    'ticker': ticker[:-3],
+                    'average_dividend': average_dividend,
+                }
+                final_dict[ticker[:-3]] = temp_dict
+            return final_dict
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
+    def get_average_dividend_of_tickers_list(self, list_of_tickers: list):
+        list_of_tickers = [ticker.upper() + '.SA' for ticker in list_of_tickers]
+        return self._get_average_dividend_data(list_of_tickers)
