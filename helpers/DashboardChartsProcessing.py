@@ -547,7 +547,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
         try:
             PERCENT = 100
             if self.average_dividend is None:
-                self._get_average_dividend(years=2)
+                self._get_average_dividend(years=3)
 
             obj = Portfolio.objects.get(user=self.user)
             total_dividends_target = obj.dividends_target
