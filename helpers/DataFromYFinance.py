@@ -3,6 +3,7 @@ from datetime import date
 import datetime as dt
 import yfinance as yf
 from .Cache.cache import session
+import inspect
 
 class DataFromYFinance:
     
@@ -86,7 +87,9 @@ class DataFromYFinance:
                 list_of_splits.append(temp_dict)
             return list_of_splits
         except Exception as e:
-            return e
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def load_splits_groupments(self, ticker):
         ticker = ticker.upper() + '.SA'
@@ -116,7 +119,9 @@ class DataFromYFinance:
                 list_of_splits.append(temp_dict)
             return list_of_splits
         except Exception as e:
-            return e
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def load_dividends(self, ticker):
         ticker = ticker.upper() + '.SA'
@@ -155,7 +160,9 @@ class DataFromYFinance:
             return final_dict
 
         except Exception as e:
-            return e
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def load_dividends_of_tickers_list(self, list_of_tickers=list):
         list_of_tickers = [ticker.upper() + '.SA' for ticker in list_of_tickers]
@@ -195,7 +202,9 @@ class DataFromYFinance:
             return final_dict
 
         except Exception as e:
-            return e
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def load_splits_groupments_of_tickers_list(self, list_of_tickers=list):
         list_of_tickers = [ticker.upper() + '.SA' for ticker in list_of_tickers]
@@ -270,7 +279,9 @@ class DataFromYFinance:
             return final_dict
 
         except Exception as e:
-            return e
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def load_history_data_of_tickers_list(self, list_of_tickers: list, initial_date: date, ending_date: date=None, interval='1d'):
         if ending_date is None: ending_date = date.today()
@@ -330,7 +341,9 @@ class DataFromYFinance:
                 final_dict[ticker[:-3]] = temp_dict
             return final_dict
         except Exception as e:
-            return e
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def load_average_dividend_of_tickers_list(self, list_of_tickers: list, initial_date: date, ending_date: date=None, interval='1d', period='monthly'):
         if ending_date is None: ending_date = date.today()
