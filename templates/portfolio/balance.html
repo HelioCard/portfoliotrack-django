@@ -17,38 +17,41 @@
         </div>
       </div>
 
-      <div class="d-flex align-items-center flex-wrap mb-2 mt-4 fs-5">
-        <div class="d-flex col-12 col-md-8">
-          <span>
-            Balanceamento - Defina o peso que cada ativo terá no portfolio:
-            <div id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" hidden>
-            <span class="visually-hidden">Loading...</span>
+      <div class="card mt-5 mb-4">
+        <div class="card-header ps-5">
+          <div class="d-flex align-items-center flex-wrap fs-5">
+            <div class="d-flex col-12 col-md-8">
+              <span>
+                Balanceamento - Defina o peso que cada ativo terá no portfolio:
+                <div id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" hidden>
+                <span class="visually-hidden">Loading...</span>
+                </div>
+              </span>
             </div>
-          </span>
+            <div class="d-flex col-12 col-md-4 justify-content-md-end">
+              <a href="#" id="btnUpdateURL" data-bs-toggle="modal" data-bs-target="#editWeightsModal" class="btn btn-primary disabled">Confirmar Alterações</a>
+            </div>
+          </div>
         </div>
-        <div class="d-flex col-12 col-md-4 justify-content-md-end">
-          <a href="#" id="btnUpdateURL" data-bs-toggle="modal" data-bs-target="#editWeightsModal" class="btn btn-primary disabled">Confirmar Alterações</a>
+        <div class="card-body mx-4">
+          <table id="balanceTable" class="table table-responsive">
+            <thead>
+              <tr>
+                <th scope="col" class="text-center">Ativos</th>
+                <th scope="col" class="text-center">Qtde</th>
+                <th scope="col" class="text-center">Cotação</th>
+                <th scope="col" class="text-center">Patrim</th>
+                <th scope="col" class="text-center">Peso</th>
+                <th scope="col" class="text-center">(%)Ideal</th>
+                <th scope="col" class="text-center">(%)Atual</th>
+                <th scope="col" class="text-center">Equilíbrio</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              
+            </tbody>
+          </table>
         </div>
-      </div>
-
-      <div class="container-fluid border rounded py-4 px-4 mb-4 table-responsive" style="background-color: white;">
-        <table id="balanceTable" class="table table-responsive">
-          <thead>
-            <tr>
-              <th scope="col" class="text-center">Ativos</th>
-              <th scope="col" class="text-center">Qtde</th>
-              <th scope="col" class="text-center">Cotação</th>
-              <th scope="col" class="text-center">Patrim</th>
-              <th scope="col" class="text-center">Peso</th>
-              <th scope="col" class="text-center">(%)Ideal</th>
-              <th scope="col" class="text-center">(%)Atual</th>
-              <th scope="col" class="text-center">Equilíbrio</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-            
-          </tbody>
-        </table>
       </div>
 
     </div>

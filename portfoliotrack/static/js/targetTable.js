@@ -30,8 +30,8 @@ function buildDomTable(tableData) {
       <td class="text-center">${tableData[i].difference}</td>
       <td class="text-center">
       ${tableData[i].accomplished}%
-      <div class="progress" role="progressbar" aria-label="Success striped example" aria-valuenow="${tableData[i].accomplished}" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-bar progress-bar-striped bg-success" style="width: ${tableData[i].accomplished}%;"></div>
+      <div class="progress" role="progressbar" aria-label="progress striped" aria-valuenow="${tableData[i].accomplished}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar progress-bar-striped bg-primary" style="width: ${tableData[i].accomplished}%;"></div>
       </div>
       </td>
       
@@ -42,13 +42,12 @@ function buildDomTable(tableData) {
 
 async function updateTargetTable(URL) {
     try {
-        document.querySelector('#spinner').hidden = false;
+        // document.querySelector('#spinner').hidden = false;
         const data = await getTargetData(URL)
         if (data) {
-          console.log(data)
           buildDomTable(data.target_data) 
         };
-        document.querySelector('#spinner').hidden = true;
+        // document.querySelector('#spinner').hidden = true;
     } catch (error) {
         alert('Erro: ', error)
     }

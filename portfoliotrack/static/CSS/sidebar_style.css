@@ -7,7 +7,7 @@
 }
 
 .side-btn:hover {
-  background-color: #00855d;
+  background-color: rgb(0, 102, 150);
   color: white;
 }
 
@@ -22,7 +22,7 @@
 }
 
 .side-btn-list:hover {
-  background-color: #00855d;
+  background-color: rgb(0, 102, 150);
   color: white;
 }
 
