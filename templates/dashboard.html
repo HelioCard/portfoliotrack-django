@@ -18,33 +18,70 @@
         </div>
       </div>
 
-
-      <!-- Performance + quatro cards - INÍCIO -->
-      <div class="row">
-        <div class="row ms-0 mt-4 d-flex align-items-center justify-content-start fs-5">
-          <div class="col-auto pt-3 ps-0">
-            <p><span>Performance: </span><span id="yield" class="fw-semibold">R$0,00</span></p>
-          </div>
-          <div class="col-12 d-flex align-items-center col-lg-6 gap-2">
-            <div class="form-check form-switch">
-              <input class="form-check-input" type="checkbox" role="switch" id="dividendsSwitch">
-              <label class="form-check-label" for="dividendsSwitch">Considerar reinvestimentos dos dividendos</label>
+      <!-- Performance e Dividendos - Início -->
+      <div class="row d-flex my-5">
+        
+        <div class="col-md-6">
+          <div class="card h-100">
+            <h5 class="card-header ps-5 text-bg-primary">Performance</h5>
+            <div class="card-body p-5">
+              
+              <h5 id="yield" class="fs-3">R$0,00</h5>
+              <h5 class="fs-6">Resultado</h5>
+              
+              <div class="d-flex align-items-center fs-5 mt-3">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" role="switch" id="dividendsSwitch">
+                  <label class="form-check-label" for="dividendsSwitch">Considerar reinvestimento dos dividendos</label>
+                </div>
+                <div id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" hidden>
+                  <span class="visually-hidden">Loading...</span>
+                </div> 
+              </div>
+              <span class="card-text">O valor dos dividendos são subtraídos dos valores aportados.</span>
             </div>
-            <div id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" hidden>
-              <span class="visually-hidden">Loading...</span>
-            </div> 
           </div>
         </div>
 
-        <!-- Gráfico de evolução patrimonial INÍCIO -->
-        <div class="col-12 col-xl-7 mb-3 mb-xl-0">
-          <div id="performanceChart" class="chart-container align-items-center pt-3 ms-0 border rounded hover-shadow" style="width: 100%; height: 45vh; min-height: 380px; background-color: white;">
-            <div id="performanceChartStatus"  style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
-              <span class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </span>
+        <div class="col-md-6 mt-md-0 mt-3">
+          <div class="card h-100">
+            <h5 class="card-header ps-5 text-bg-primary">Proventos</h5>
+            <div class="card-body p-5">
+              
+              <h5 id="yield" class="fs-3">R$ 0,00</h5>
+              <h5 class="fs-6">Recebidos</h5>
+              <span class="card-text">Soma de todos os proventos recebidos.</span>
+              <div class="d-flex mt-1">
+                <a href="#" class="btn btn-outline-primary">Ver Proventos</a>
+              </div>
+
             </div>
           </div>
+        </div>
+
+      </div>
+      <!-- Performance e Dividendos - Início -->
+
+
+      <!-- Gráfico Evolução Patrimonial + quatro cards - INÍCIO -->
+      <div class="row">
+
+        <!-- Gráfico de evolução patrimonial INÍCIO -->
+        <div class="col-12 col-xl-7 mb-3 mb-xl-0">
+
+          <div class="card">
+            <h5 class="card-header ps-5 text-bg-primary">Evolução Patrimonial</h5>
+            <div class="card-body">
+              <div id="performanceChart" class="chart-container align-items-center ms-0" style="width: 100%; height: 45vh; min-height: 380px; background-color: white;">
+                <div id="performanceChartStatus"  style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                  <span class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
         <!-- Gráfico de evolução patrimonial FIM -->
 
@@ -98,7 +135,7 @@
             </div>
         </div>
       </div>
-      <!-- Performance + quatro cards - FIM -->
+      <!-- Gráfico Evolução Patrimonial + quatro cards - FIM -->
 
 
       <!-- Gráficos de Exposição por Categorias e por Ativos - INÍCIO -->
@@ -171,7 +208,7 @@
   {% include 'includes/message.html' %}
 
   <script> var DashBoardDataURL = "{% url 'get_dashboard_data' subtract_dividends='N' %}" </script>
-  <script src="{% static 'themes/walden.js' %}"></script>
+  <script src="{% static 'themes/shine.js' %}"></script>
   <script src="{% static 'js/dashboardOptions.js' %}"></script>
   <script src="{% static 'js/dashboardCharts.js' %}" type="text/javascript"></script>
   <script>

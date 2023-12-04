@@ -23,7 +23,7 @@ let table = new DataTable('#transactionsTable', {
             },
         },
     },
-    ordering: false,
+    ordering: true,
     select: true,
     // order: [[0, 'desc']],
 

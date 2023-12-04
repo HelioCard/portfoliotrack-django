@@ -1,8 +1,8 @@
 var performance_options = {
-    title: {
-        text: 'Aportes x Patrimônio x Dividendos',
-        left: 'center',
-    },
+    // title: {
+    //     text: 'Aportes x Patrimônio x Dividendos',
+    //     left: 'center',
+    // },
     tooltip: {
         trigger: 'axis',
         formatter: function (params) {
@@ -17,7 +17,7 @@ var performance_options = {
     },
     legend: {
         'data': ['Aportes', 'Patrimônio', 'Dividendos'],
-        'top': 30,
+        'top': 10,
     },
     grid: {
         left: '3%',
