@@ -49,31 +49,31 @@ async function updatePortfolioSummary(URL) {
         const data = await getPortfolioSummaryData(URL)
         if (data) {
           buildDomTable(data.summary_data)
-          const portfolioSummaryTableElement = document.getElementById('portfolioTable')
-          // Confere se a tabela já foi inicializada:
-          if (!portfolioSummaryTableElement.hasAttribute('data-datatable-initialized')) {
-            portfolioSummaryTable = new DataTable('#portfolioTable', {
-              responsive: true,
-              language: {
-                decimal: ',',
-                thousands: '.',
-                zeroRecords: 'Não há dados',
-                info: 'Mostrando página _PAGE_ de _PAGES_',
-                infoEmpty: 'Não há dados',
-                infoFiltered: '(dados filtrados de _MAX_ registros totais)',
-                lengthMenu: 'Mostrar _MENU_ registros por página',
-                paginate: {
-                    "first": "Primeiro",
-                    "last": "Último",
-                    "next": "Próximo",
-                    "previous": "Anterior"
-                },
-                search: "Pesquisar:",
-              },
-              order: [[0, 'asc']],
-            });
-            portfolioSummaryTableElement.setAttribute('data-datatable-initialized', 'true'); //Adiciona atributo para indicar que a tabela não foi inicializada
-          } 
+          // const portfolioSummaryTableElement = document.getElementById('portfolioTable')
+          // // Confere se a tabela já foi inicializada:
+          // if (!portfolioSummaryTableElement.hasAttribute('data-datatable-initialized')) {
+          //   portfolioSummaryTable = new DataTable('#portfolioTable', {
+          //     responsive: true,
+          //     language: {
+          //       decimal: ',',
+          //       thousands: '.',
+          //       zeroRecords: 'Não há dados',
+          //       info: 'Mostrando página _PAGE_ de _PAGES_',
+          //       infoEmpty: 'Não há dados',
+          //       infoFiltered: '(dados filtrados de _MAX_ registros totais)',
+          //       lengthMenu: 'Mostrar _MENU_ registros por página',
+          //       paginate: {
+          //           "first": "Primeiro",
+          //           "last": "Último",
+          //           "next": "Próximo",
+          //           "previous": "Anterior"
+          //       },
+          //       search: "Pesquisar:",
+          //     },
+          //     order: [[0, 'asc']],
+          //   });
+          //   portfolioSummaryTableElement.setAttribute('data-datatable-initialized', 'true'); //Adiciona atributo para indicar que a tabela não foi inicializada
+          // } 
         };
         document.querySelector('#spinner').hidden = true;
     } catch (error) {

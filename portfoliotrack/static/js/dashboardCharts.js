@@ -1,4 +1,4 @@
-const THEME = 'westeros'
+const THEME = 'walden'
 let assetChart, categoryChart, portfolioPerformanceChart, contributionChart, assetVariationChart
 
 // Elementos do DOM

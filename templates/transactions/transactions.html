@@ -61,7 +61,7 @@
                   <td>{% if transaction.operation == 'A' %} {% else %}R${% endif %}{{ transaction.unit_price|floatformat:2 }}</td>
                   <td>
                     <a href="{% url 'edit_transaction' transaction.id %}"
-                      class="btn btn-outline-info my-1" 
+                      class="btn btn-outline-primary my-1" 
                       style="padding: 4px 8px;">
                         <i class="bi bi-pen"></i>
                     </a>
