@@ -21,6 +21,9 @@ const elements = {
   yield: document.querySelector('#yield'),
   contributionChartStatus: document.querySelector('#contributionChartStatus'),
   assetVariationChartStatus: document.querySelector('#assetVariationChartStatus'),
+  dividends: document.querySelector('#dividendsCard'),
+  highestYield: document.querySelector('#highestYield'),
+  tickerOfHighestYield: document.querySelector('#tickerOfHighestYield')
 }
 
 // Exibir mensagem quando não houver dados
@@ -70,6 +73,12 @@ async function updateDashboardData(dashboardDataURL) {
     const data = await getDashboardData(dashboardDataURL);
     if (data) {
       const { asset_data, category_data, performance_data, cards_data, contribution_data, asset_variation_data } = data;
+
+      elements.dividends.innerHTML = cards_data.dividends.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+
+      elements.highestYield.innerHTML = (cards_data.highest_yield * 100).toFixed(2).replace('.', ',') + '%';
+
+      elements.tickerOfHighestYield.innerHTML = cards_data.ticker_of_highest_yield
 
       elements.equity.innerHTML = cards_data.equity.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
       elements.equityChange.innerHTML = (cards_data.equity.change * 100).toFixed(2).replace('.', ',') + '%';

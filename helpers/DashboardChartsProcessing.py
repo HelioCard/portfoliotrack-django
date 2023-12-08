@@ -328,14 +328,29 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
             yield_ = round(current_equity - current_contribution, 2)
 
+            # Cálculo da recordista de dividendos:
+            highest_yield = 0.0
+            ticker_of_highest_yield = "Não há pagamentos"
+            for ticker, data in self.individual_performance_data.items():
+                dividend_yield = self._calculate_percent(data['dividends'][-1], data['contribution'][-1])
+                if  dividend_yield > highest_yield:
+                    highest_yield = dividend_yield
+                    ticker_of_highest_yield = ticker
+
+            print(highest_yield)
+            print(ticker_of_highest_yield)
+
             cards_data = {
                 'contribution': contribution,
                 'equity': equity,
                 'result': result,
                 'yield_on_cost': yield_on_coast,
                 'yield': yield_,
+                'dividends': current_dividends,
+                'highest_yield': highest_yield,
+                'ticker_of_highest_yield': ticker_of_highest_yield,
             }
-            
+
             return cards_data
         except Exception as e:
             class_ = self.__class__.__name__
