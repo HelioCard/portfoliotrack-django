@@ -304,7 +304,7 @@ class DataFromYFinance:
                 # Obtem os dados referente ao ticker, no formato dicionário
                 temp_result = raw_data[ticker] if len(list_of_tickers) > 1 else raw_data
                 temp_result.reset_index(inplace=True) # Nivela o index de todas as colunas do df
-                selected_data = temp_result[['Dividends']].values.tolist()
+                selected_data = temp_result[['Dividends', 'Close']].values.tolist()
                 
                 accumulated_dividends = 0.0
                 average_dividend = 0.0
@@ -327,6 +327,7 @@ class DataFromYFinance:
                     'ticker': ticker[:-3],
                     'average_dividend': average_dividend,
                     'period': period,
+                    'last_price': selected_data[-1][1] # Último item da lista é o último preço. Posição 0 do index é o dividendo. Posição 1 do index é o da cotação
                 }
 
                 final_dict[ticker[:-3]] = temp_dict

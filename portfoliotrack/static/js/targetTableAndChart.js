@@ -1,3 +1,11 @@
+// Elementos do DOM
+const elements = {
+  targetText: document.querySelector('#targetText'),
+  averageDividendsText: document.querySelector('#averageDividendsText'),
+  averageYieldText: document.querySelector('#averageYieldText'),
+  missingContributionText: document.querySelector('#missingContributionText'),
+}
+
 // Obter dados da API
 const getTargetData = async (url) => {
     try {
@@ -22,12 +30,12 @@ function buildDomTable(tableData) {
   for (var i = 0; i < tableData.length; i++){
     var row = `<tr class="align-middle" style="height: 60px;">
       <th><a href="#"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].ticker}</span> </a></th>
-      <td class="text-center">${tableData[i].quantity}</td>
+      <td class="text-center">${tableData[i].quantity.toLocaleString('pt-BR', {useGrouping: true})}</td>
       <td class="text-center">${tableData[i].average_dividend}</td>
       <td class="text-center">${tableData[i].yearly_dividend}</td>
       <td class="text-center">${tableData[i].target_yearly_dividend}</td>
-      <td class="text-center">${tableData[i].quantity_target}</td>
-      <td class="text-center">${tableData[i].difference}</td>
+      <td class="text-center">${tableData[i].quantity_target.toLocaleString('pt-BR', {useGrouping: true})}</td>
+      <td class="text-center">${tableData[i].difference.toLocaleString('pt-BR', {useGrouping: true})}</td>
       <td class="text-center">
       ${tableData[i].accomplished}%
       <div class="progress" role="progressbar" aria-label="progress striped" aria-valuenow="${tableData[i].accomplished}" aria-valuemin="0" aria-valuemax="100">
@@ -45,7 +53,12 @@ async function updateTargetTable(URL) {
         // document.querySelector('#spinner').hidden = false;
         const data = await getTargetData(URL)
         if (data) {
-          buildDomTable(data.target_data) 
+          const {target_data, cards_data} = data
+          buildDomTable(target_data) 
+          elements.targetText.innerHTML = 'R$ ' + cards_data.total_dividends_target;
+          elements.averageDividendsText.innerHTML = 'R$ ' + cards_data.total_average_dividend;
+          elements.averageYieldText.innerHTML = cards_data.average_yield.toFixed(2).replace('.', ',') + '%';
+          elements.missingContributionText.innerHTML = 'R$ ' + cards_data.missing_contribution;
         };
         // document.querySelector('#spinner').hidden = true;
     } catch (error) {

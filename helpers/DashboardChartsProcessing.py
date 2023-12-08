@@ -337,9 +337,6 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     highest_yield = dividend_yield
                     ticker_of_highest_yield = ticker
 
-            print(highest_yield)
-            print(ticker_of_highest_yield)
-
             cards_data = {
                 'contribution': contribution,
                 'equity': equity,
@@ -568,19 +565,23 @@ class DashboardChartsProcessing(TransactionsFromFile):
             obj = Portfolio.objects.get(user=self.user)
             total_dividends_target = obj.dividends_target
             
+            total_average_dividend = 0.0
             target_data = []
             sum_of_weights = self._get_sum_of_weights()
+            sum_of_yield = 0.0
             for ticker in self.tickers_list:
                 portfolio_item = self._get_weight_data(ticker)
                 weight = portfolio_item.portfolio_weight
                 fraction = self._calculate_percent(value=weight, total=sum_of_weights)
                 quantity = self.portfolio_items[ticker]['quantity']
                 average_dividend = self.average_dividend[ticker]['average_dividend']
+                sum_of_yield += self._calculate_percent(average_dividend, self.average_dividend[ticker]['last_price']) * PERCENT
                 yearly_dividend = quantity * average_dividend
                 target_yearly_dividend = total_dividends_target * fraction
                 quantity_target = int(target_yearly_dividend / average_dividend) if average_dividend != 0.0 else 0
                 difference = quantity_target - quantity if quantity_target != 0 else 0
                 accomplished = self._calculate_percent(value=quantity, total=quantity_target) * PERCENT
+                total_average_dividend += yearly_dividend
                 
                 temp_dict = {
                     'ticker': ticker,
@@ -592,8 +593,22 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     'target_yearly_dividend': self._format_float(target_yearly_dividend),
                     'average_dividend': self._format_float(average_dividend),
                 }
-                target_data.append(temp_dict)        
-            return self.list_of_dicts_order_by(target_data, ['ticker'], reversed_output=False)
+                target_data.append(temp_dict)
+
+            average_yield = round(sum_of_yield / len(self.tickers_list), 2) if len(self.tickers_list) > 0 else 0.0
+            # Valor faltante de aportes para alcançar a meta:
+            missing_value = total_dividends_target - total_average_dividend
+            missing_contribution = missing_value / average_yield * PERCENT if average_yield > 0 else 0.0
+            concluded = self._calculate_percent(total_average_dividend, total_dividends_target) * PERCENT
+            cards_data = {
+                'total_dividends_target': self._format_float(total_dividends_target),
+                'total_average_dividend': self._format_float(total_average_dividend),
+                'average_yield': average_yield,
+                'missing_contribution': self._format_float(missing_contribution),
+                'concluded': round(concluded, 2)
+            }
+
+            return self.list_of_dicts_order_by(target_data, ['ticker'], reversed_output=False), cards_data
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name

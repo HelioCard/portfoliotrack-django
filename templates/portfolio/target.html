@@ -29,13 +29,13 @@
                 <h5 class="card-header ps-5 text-primary border-primary">Metas e Dividendos</h5>
                 <div class="card-body p-5">
                   <div class="row p-0">
-                      <h5 class="fs-3">R$ 60.000,00</h5>
-                      <h5 class="fs-6"> Meta definida</h5>    
+                      <h5 id="targetText" class="fs-3">R$ 0,00</h5>
+                      <h5 class="fs-6"> Meta Anual definida</h5>    
                   </div>
                   <a href="#" class="btn btn-primary w-100">Alterar Meta</a>
                   <div class="row mt-5 p-0">
-                      <h5 class="fs-3">R$ 20.000,00</h5>
-                      <h5 class="fs-6">Dividendos Gerados</h5>
+                      <h5 id="averageDividendsText" class="fs-3">R$ 0,00</h5>
+                      <h5 class="fs-6">Dividendo Médio Anual</h5>
                   </div>
                   <a href="#" class="btn btn-outline-primary w-100">Ver Dividendos</a>
                 </div>
@@ -47,14 +47,14 @@
                 <h5 class="card-header ps-5 text-primary border-primary">DY Médio e Aportes</h5>
                 <div class="card-body p-5">
                   <div class="row p-0">
-                      <h5 class="fs-3">6.73 %</h5>
+                      <h5 id="averageYieldText" class="fs-3">0.00 %</h5>
                       <h5 class="fs-6">DY Médio Anual</h5>
                       <p class="card-text">DY médio anual de todos os ativos do portfólio.</p>
                   </div>
                   <div class="row mt-5 p-0">
-                      <h5 class="fs-3">R$ 20.000,00</h5>
+                      <h5 id="missingContributionText" class="fs-3">R$ 0,00</h5>
                       <h5 class="fs-6">Aporte Necessário</h5>
-                      <p class="card-text">Valor do aporte necessário para atingir a meta.</p>
+                      <p class="card-text">Valor aproximado do aporte para atingir a meta.</p>
                   </div>
                 </div>
               </div>
@@ -121,15 +121,14 @@
   <script>
     var getTargetURL = "{% url 'get_target_data' %}"
   </script>
-  <script src="{% static 'js/targetTable.js' %}"></script>
+  <script src="{% static 'themes/westeros.js' %}"></script>
+  <script src="{% static 'js/targetOptions.js' %}"></script>
+  <script src="{% static 'js/targetTableAndChart.js' %}"></script>
   <script>
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
   </script>
 
-  <!-- Carrega ferramentas de gráfico: -->
-  <script src="{% static 'themes/westeros.js' %}"></script>
-  <script src="{% static 'js/targetChart.js' %}"></script>
   <!-- <script>
     function updateUpdateURL() {
       var updateBalanceURL = "{% url 'update_balance' new_weights='PLACEHOLDER' %}".replace('PLACEHOLDER', JSON.stringify(objJson));

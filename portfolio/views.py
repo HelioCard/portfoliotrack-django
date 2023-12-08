@@ -69,9 +69,10 @@ def target(request):
 def get_target_data(request):
     try:        
         processor = DashboardChartsProcessing(user=request.user, ticker=None, subtract_dividends_from_contribution='N')
-        target_data = processor.get_target_data()
+        target_data, cards_data = processor.get_target_data()
         context = {
             'target_data': target_data,
+            'cards_data': cards_data,
         }
         return JsonResponse(context)
     except ValueError as e:
