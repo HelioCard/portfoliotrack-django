@@ -6,56 +6,6 @@
 
 
 
-.card-first {
-    color: #5AB1EF;
-    
-    border-bottom: solid #5AB1EF 6px;
-}
-
-.card-first:hover {
-    background-color: #5ab1ef13;
-}
-
-
-
-.card-second {
-    color: #C8B2F4;
-
-    border-bottom: solid #C8B2F4 6px;
-}
-
-.card-second:hover {
-    background-color: #c8b2f415;
-}
-
-
-
-
-.card-third {
-    color: #32DADD;
-    
-    border-bottom: solid #32DADD 6px;
-}
-
-.card-third:hover {
-    background-color: rgba(107, 230, 193, 0.062)
-}
-
-
-
-.card-fourth {
-    color: #95706D;
-    
-    border-bottom: solid #95706D 6px;
-}
-
-.card-fourth:hover {
-    background-color: #95706d1e;
-}
-
-
-
-
 .hover-shadow{
     transition: all .6s ease;
 }
