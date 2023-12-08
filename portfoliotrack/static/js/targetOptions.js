@@ -1,7 +1,5 @@
-const THEME = 'westeros';
-let fractionChart
 
-var fractionOption = {
+var fractionOptions = {
     legend: {
         top: '5%',
         left: 'center'
@@ -41,22 +39,9 @@ var fractionOption = {
                 show: false,
             },
             data: [
-                { value: 40, name: 'Concluído' },
-                { value: 60, name: 'Pendente', itemStyle: {color: '#e2e0e5'} },
+                { value: 0, name: 'Concluído' },
+                { value: 100, name: 'Pendente', itemStyle: {color: '#e2e0e5'} },
             ]
         }
     ]
 };
-
-fractionChart = echarts.init(document.querySelector('#fractionChart'), THEME);
-fractionChart.setOption(fractionOption)
-
-function resizeDashboardCharts() {
-if (fractionChart) {
-    fractionChart.resize();
-}
-}
-
-setInterval(function () {
-resizeDashboardCharts()
-}, 1000);

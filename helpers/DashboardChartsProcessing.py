@@ -608,7 +608,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 'concluded': round(concluded, 2)
             }
 
-            return self.list_of_dicts_order_by(target_data, ['ticker'], reversed_output=False), cards_data
+            return self.list_of_dicts_order_by(list_of_dicts=target_data, sort_keys=['ticker'], reversed_output=False), cards_data
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name

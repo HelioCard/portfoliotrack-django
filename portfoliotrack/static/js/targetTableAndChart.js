@@ -1,9 +1,13 @@
+const THEME = 'westeros';
+let fractionChart
+
 // Elementos do DOM
 const elements = {
   targetText: document.querySelector('#targetText'),
   averageDividendsText: document.querySelector('#averageDividendsText'),
   averageYieldText: document.querySelector('#averageYieldText'),
   missingContributionText: document.querySelector('#missingContributionText'),
+  fractionChartStatus: document.querySelector('#fractionChartStatus'),
 }
 
 // Obter dados da API
@@ -59,6 +63,11 @@ async function updateTargetTable(URL) {
           elements.averageDividendsText.innerHTML = 'R$ ' + cards_data.total_average_dividend;
           elements.averageYieldText.innerHTML = cards_data.average_yield.toFixed(2).replace('.', ',') + '%';
           elements.missingContributionText.innerHTML = 'R$ ' + cards_data.missing_contribution;
+          
+          fractionChart = echarts.init(document.querySelector('#fractionChart'), THEME);
+          fractionOptions.series[0].data[0].value = cards_data.concluded
+          fractionOptions.series[0].data[1].value = 100 - cards_data.concluded
+          fractionChart.setOption(fractionOptions)
         };
         // document.querySelector('#spinner').hidden = true;
     } catch (error) {
@@ -69,12 +78,12 @@ async function updateTargetTable(URL) {
 updateTargetTable(getTargetURL)
 
 
-var objJson = {}
-
-function updateBalanceValues(inputElement, textID) {
-    textID.innerHTML = inputElement.value
-    let ticker = inputElement.dataset.asset
-    let weight = inputElement.value
-    document.querySelector('#btnUpdateURL').classList.remove('disabled')
-    objJson[ticker] = parseInt(weight)
+function resizeTargetChart() {
+if (fractionChart) {
+    fractionChart.resize();
 }
+}
+
+setInterval(function () {
+resizeTargetChart()
+}, 1000);
