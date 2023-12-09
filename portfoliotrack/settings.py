@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'portfolio',
     'tasks',
     'transactions',
+    'incomes',
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Sum
 from transactions.models import Transactions
 from portfolio.models import PortfolioItems, Portfolio
 from .TransactionsFromFile import TransactionsFromFile
