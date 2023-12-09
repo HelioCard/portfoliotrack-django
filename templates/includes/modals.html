@@ -75,10 +75,7 @@
 
                 <div class="form-row d-flex mb-3 justify-content-center">
                     <div class="form-floating flex-grow-1 mx-2">
-                    {{register_transaction_form.qu<div class="form-floating flex-grow-1 mx-2">
-                        {{register_transaction_form.ticker}}
-                        <label>Ticker</label>
-                        </div>antity}}
+                    {{register_transaction_form.quantity}}
                     <label>Quantidade</label>
                     </div>
 
@@ -186,14 +183,17 @@
         </div>
 
         <div class="modal-body my-2">
-            <form method="POST" id="editTargetForm" action="" enctype="multipart/form-data">
+            <form method="POST" id="editTargetForm" action="{% url 'target' %}" enctype="multipart/form-data">
             {% csrf_token %}
 
                 <div class="form-row mb-3">
                     <div class="form-floating flex-grow-1 mx-2">
-                        <input type="email" class="form-control" id="testInput" placeholder="llll" name="email">
-                        <label>Insira a nova Meta</label>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">R$</span>
+                            {{ update_dividends_target_form.dividends_target }}
+                        </div>
                     </div>
+                    
                 </div>
 
                 <div class="d-flex justify-content-end mt-3 mx-2 gap-3">

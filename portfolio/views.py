@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 import json
+import locale
 
-from portfolio.models import PortfolioItems
+from portfolio.models import PortfolioItems, Portfolio
+from.forms import UpdatePortfolioDividendsTarget
 from helpers.DashboardChartsProcessing import DashboardChartsProcessing
 
 # Create your views here.
@@ -63,7 +66,29 @@ def update_balance(request, new_weights):
 
 @login_required(login_url='login')
 def target(request):
-    return render(request, 'portfolio/target.html')
+    if request.method == 'POST':
+        form = UpdatePortfolioDividendsTarget(request.POST)
+        if form.is_valid():
+            try:
+                portfolio = Portfolio.objects.get(user=request.user)
+                new_value = float(request.POST['dividends_target'])
+                portfolio.dividends_target = new_value
+                locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+                new_value = locale.currency(new_value, grouping=True, symbol=True)
+                portfolio.save()
+                messages.success(request, f'Meta atualizada com sucesso. Novo valor: {new_value}')
+            except ObjectDoesNotExist as e:
+                messages.error(request, f'Erro: {str(e)}')
+                return redirect('target')
+        else:
+            messages.error(request, form.errors['__all__'])
+
+        return redirect('target')
+    update_dividends_target_form = UpdatePortfolioDividendsTarget()
+    context = {
+        'update_dividends_target_form': update_dividends_target_form,
+    }
+    return render(request, 'portfolio/target.html', context)
 
 @login_required(login_url='login')
 def get_target_data(request):
