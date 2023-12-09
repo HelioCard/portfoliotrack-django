@@ -75,7 +75,10 @@
 
                 <div class="form-row d-flex mb-3 justify-content-center">
                     <div class="form-floating flex-grow-1 mx-2">
-                    {{register_transaction_form.quantity}}
+                    {{register_transaction_form.qu<div class="form-floating flex-grow-1 mx-2">
+                        {{register_transaction_form.ticker}}
+                        <label>Ticker</label>
+                        </div>antity}}
                     <label>Quantidade</label>
                     </div>
 
@@ -171,3 +174,37 @@
     </div>
 </div>
 <!-- Modal (edit weights) ends--------------------------------------------------- -->
+
+
+<!-- Modal (edit target) begins--------------------------------------------------- -->
+<div class="modal fade" id="editTargetModal" tabindex="-1" aria-labelledby="ModalEditTarget" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="ModalLabel">Editar Meta</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body my-2">
+            <form method="POST" id="editTargetForm" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+
+                <div class="form-row mb-3">
+                    <div class="form-floating flex-grow-1 mx-2">
+                        <input type="email" class="form-control" id="testInput" placeholder="llll" name="email">
+                        <label>Insira a nova Meta</label>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-3 mx-2 gap-3">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" >Salvar</button>
+                </div>
+
+            </form>  
+        </div>
+
+        </div>
+    </div>
+</div>
+<!-- Modal (edit target) ends--------------------------------------------------- -->
