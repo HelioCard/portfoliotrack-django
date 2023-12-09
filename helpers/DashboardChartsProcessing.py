@@ -20,9 +20,6 @@ class DashboardChartsProcessing(TransactionsFromFile):
         if not self.transactions_list:
             raise ValueError('No data')
         self.tickers_list = self.extract_tickers_list(self.transactions_list)
-        self.active_tickers_list = None
-        self.sum_of_weights = None
-        self.weights = None
         self.portfolio_items, self.asset_history = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list)
         self.first_transaction_date = self._get_first_transaction_date()
         self.interval = self._get_interval()
@@ -31,6 +28,9 @@ class DashboardChartsProcessing(TransactionsFromFile):
         self.individual_performance_data = None # Dados de performance de cada ativo individualmente
         self.performance_data = None # Dados de performance consolidados (todos os ativos do portfolio)
         self.average_dividend = None
+        self.active_tickers_list = None
+        self.sum_of_weights = None
+        self.weights = None
     
     def _get_interval(self):
         try:
@@ -531,9 +531,11 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
     def _get_average_dividend(self, years):
         try:
+            if self.active_tickers_list is None:
+                self._get_active_tickers_list_weights_and_sum_of_weights()
             days = years * 365
             initial_date = dt.today() - timedelta(days=days)
-            self.average_dividend = self.calculate_average_dividend_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=initial_date, interval='1mo', period='yearly')
+            self.average_dividend = self.calculate_average_dividend_of_tickers_list(list_of_tickers=self.active_tickers_list, initial_date=initial_date, interval='1mo', period='yearly')
             # self.average_dividend = self.get_average_dividend_of_tickers_list(list_of_tickers=self.tickers_list)
         except Exception as e:
             class_ = self.__class__.__name__
