@@ -54,7 +54,7 @@
               {% for transaction in transactions %}
                 <tr class="align-middle">
                   <th>{{ transaction.id }}</th>
-                  <td>{{ transaction.date|date:"d/m/Y" }}</td>
+                  <td>{{ transaction.date|date:"Y/m/d" }}</td>
                   <td>{{ transaction.ticker }}</td>
                   <td>{{ transaction.get_operation_display_full }}</td>
                   <td>{{ transaction.quantity }}</td>

@@ -20,6 +20,9 @@ class DashboardChartsProcessing(TransactionsFromFile):
         if not self.transactions_list:
             raise ValueError('No data')
         self.tickers_list = self.extract_tickers_list(self.transactions_list)
+        self.active_tickers_list = None
+        self.sum_of_weights = None
+        self.weights = None
         self.portfolio_items, self.asset_history = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list)
         self.first_transaction_date = self._get_first_transaction_date()
         self.interval = self._get_interval()
@@ -60,6 +63,24 @@ class DashboardChartsProcessing(TransactionsFromFile):
         try:
             result = min(self.transactions_list, key=lambda x: x['date'])
             return result['date']
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
+    def _get_active_tickers_list_weights_and_sum_of_weights(self):
+        try:
+            active_tickers_list = []
+            sum_of_weights = 0.0
+            weights = {}
+            portfolio_items = PortfolioItems.objects.filter(portfolio__user=self.user, is_active=True)
+            for item in portfolio_items:
+                active_tickers_list.append(item.ticker)
+                sum_of_weights += item.portfolio_weight
+                weights[item.ticker] = item.portfolio_weight
+            self.active_tickers_list = active_tickers_list
+            self.sum_of_weights = sum_of_weights
+            self.weights = weights
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name
@@ -141,7 +162,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                         
                         # Subtrai os dividendos recebidos do valor dos aportes:
                         if self.subtract_dividends_from_contribution == 'Y':
-                            acum_contribution = acum_contribution - acum_dividends
+                            acum_contribution = acum_contribution - acum_dividends if (acum_contribution - acum_dividends) > 0 else 0.0
 
                     # Atualiza o dicionário com o ticker e os dados obtidos acima:
                     individual_performance_data[ticker]['date'].append(date)
@@ -310,13 +331,20 @@ class DashboardChartsProcessing(TransactionsFromFile):
             equity_change = self._calculate_percent(result_in_period, initial_equity)
             equity = {'value': current_equity, 'period': periods[-1], 'change': equity_change}
 
+            yield_ = round(current_equity - current_contribution, 2)
+
             # Cálculos relacionados aos Resultados (em porcentagem):
             current_result = current_equity - current_contribution
             current_result_percent = self._calculate_percent(current_result, current_contribution)
             initial_result = initial_equity - initial_contribution
             initial_result_percent = self._calculate_percent(initial_result, initial_contribution)
             result_change = current_result_percent - initial_result_percent
-            result = {'value': current_result_percent, 'period': periods[-1], 'change': result_change}
+            result = {
+                # Se o valor dos aportes for 0 e o patrimônio maior que 0 -> Investimento recuperado:
+                'value': 1 if current_equity > 0 and current_contribution == 0 else current_result_percent,
+                'period': periods[-1],
+                'change': 0 if current_equity > 0 and current_contribution == 0 else result_change,
+            }
 
             # Cálculo relacionados ao Yield on Cost:
             current_dividends = dividends_data[periods[0]]
@@ -324,18 +352,20 @@ class DashboardChartsProcessing(TransactionsFromFile):
             current_yield_on_cost = self._calculate_percent(current_dividends, current_contribution)
             initial_yield_on_cost = self._calculate_percent(initial_dividends, initial_contribution)
             yield_on_cost_change = current_yield_on_cost - initial_yield_on_cost
-            yield_on_coast = {'value': current_yield_on_cost, 'period': periods[-1], 'change': yield_on_cost_change}
-
-            yield_ = round(current_equity - current_contribution, 2)
+            yield_on_coast = {
+                # Se o valor dos aportes for 0 e o patrimônio maior que 0 -> Investimento recuperado:
+                'value': 1 if current_equity > 0 and current_contribution == 0 else current_yield_on_cost,
+                'period': periods[-1],
+                'change': 1 if current_equity > 0 and current_contribution == 0 else yield_on_cost_change
+            }
 
             # Cálculo da recordista de dividendos:
-            highest_yield = 0.0
-            ticker_of_highest_yield = "Não há pagamentos"
+            highest_dividend = 0.0
+            ticker_of_highest_dividend = "Não há pagamentos"
             for ticker, data in self.individual_performance_data.items():
-                dividend_yield = self._calculate_percent(data['dividends'][-1], data['contribution'][-1])
-                if  dividend_yield > highest_yield:
-                    highest_yield = dividend_yield
-                    ticker_of_highest_yield = ticker
+                if data['dividends'][-1] > highest_dividend:
+                    highest_dividend = data['dividends'][-1]
+                    ticker_of_highest_dividend = ticker
 
             cards_data = {
                 'contribution': contribution,
@@ -344,8 +374,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 'yield_on_cost': yield_on_coast,
                 'yield': yield_,
                 'dividends': current_dividends,
-                'highest_yield': highest_yield,
-                'ticker_of_highest_yield': ticker_of_highest_yield,
+                'highest_dividend': highest_dividend,
+                'ticker_of_highest_dividend': ticker_of_highest_dividend,
             }
 
             return cards_data
@@ -428,7 +458,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 equity = data['equity'][-1] # Obtêm o valor do patrimônio atual do ativo (último item da lista)
                 contribution = data['contribution'][-1] # Obtêm o valor acumulado de aportes do ativo (último item da lista)
                 income = equity - contribution # Calcula o lucro ou prejuízo do período
-                variation = self._calculate_percent(income, contribution) # Calcula a porcentagem do lucro ou prejuízo
+                variation = 1 if equity > 0 and contribution == 0 else self._calculate_percent(income, contribution) # Calcula a porcentagem do lucro ou prejuízo. Se aportes = 0, então o investimento já se pagou
                 asset_variation_data['ticker'].append(ticker)
                 asset_variation_data['variation'].append(round(variation * 100, 2))
             
@@ -474,22 +504,6 @@ class DashboardChartsProcessing(TransactionsFromFile):
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
-    def _get_weight_data(self, ticker):
-        try:
-            obj = PortfolioItems.objects.get(portfolio__user=self.user, ticker=ticker, is_active=True)
-            return obj
-        except ObjectDoesNotExist as e:
-            raise ValueError(f'Erro: {ticker}: {e}')
-
-    def _get_sum_of_weights(self):
-        try:
-            total_sum = PortfolioItems.objects.aggregate(sum_=Sum('portfolio_weight'))['sum_']
-            return total_sum if total_sum is not None else 0.0
-        except Exception as e:
-            class_ = self.__class__.__name__
-            method_ = inspect.currentframe().f_code.co_name
-            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
-
     def _calculate_balance(self, temp_balance_data, total_equity, total_weight):
         try:
             PERCENT = 100
@@ -527,29 +541,28 @@ class DashboardChartsProcessing(TransactionsFromFile):
         try:
             if self.individual_performance_data is None:
                 self._calculate_individual_performance_data()
+            if self.weights is None:
+                self._get_active_tickers_list_weights_and_sum_of_weights()
             temp_balance_data = []
             total_equity = 0.0
-            total_weight = 0.0
             for ticker, data in self.portfolio_items.items():
                 if data['quantity'] <= 0: # Se a posição foi fechada, não exibe.
                     continue
                 last_price = self.history_data[ticker][-1]['close']
                 equity = self.individual_performance_data[ticker]['equity'][-1]
                 total_equity += equity
-                weight_data = self._get_weight_data(ticker)
-                total_weight += weight_data.portfolio_weight
                 temp_dict = {
                     'asset': ticker,
                     'quantity': data['quantity'],
                     'last_price': last_price,
                     'equity': equity,
-                    'weight': weight_data.portfolio_weight,
+                    'weight': self.weights[ticker],
                     'current_percentage': 0.0,
                     'ideal_percentage': 0.0,
                     'to_balance': '',
                 }
                 temp_balance_data.append(temp_dict)
-            balance_data = self._calculate_balance(temp_balance_data=temp_balance_data, total_equity=total_equity, total_weight=total_weight)
+            balance_data = self._calculate_balance(temp_balance_data=temp_balance_data, total_equity=total_equity, total_weight=self.sum_of_weights)
             return self.list_of_dicts_order_by(balance_data, sort_keys=['asset'], reversed_output=False)
         except Exception as e:
             class_ = self.__class__.__name__
@@ -567,27 +580,30 @@ class DashboardChartsProcessing(TransactionsFromFile):
             
             total_average_dividend = 0.0
             target_data = []
-            sum_of_weights = self._get_sum_of_weights()
+            if self.sum_of_weights is None:
+                self._get_active_tickers_list_weights_and_sum_of_weights()
+            
             sum_of_yield = 0.0
-            for ticker in self.tickers_list:
-                portfolio_item = self._get_weight_data(ticker)
-                weight = portfolio_item.portfolio_weight
-                fraction = self._calculate_percent(value=weight, total=sum_of_weights)
+            for ticker in self.active_tickers_list:
+                weight = self.weights[ticker]
+                fraction = self._calculate_percent(value=weight, total=self.sum_of_weights)
                 quantity = self.portfolio_items[ticker]['quantity']
                 average_dividend = self.average_dividend[ticker]['average_dividend']
                 sum_of_yield += self._calculate_percent(average_dividend, self.average_dividend[ticker]['last_price']) * PERCENT
                 yearly_dividend = quantity * average_dividend
                 target_yearly_dividend = total_dividends_target * fraction
                 quantity_target = int(target_yearly_dividend / average_dividend) if average_dividend != 0.0 else 0
-                difference = quantity_target - quantity if quantity_target != 0 else 0
+                difference = quantity_target - quantity if quantity_target != 0 and quantity < quantity_target else 0
                 accomplished = self._calculate_percent(value=quantity, total=quantity_target) * PERCENT
+                if accomplished > 100:
+                    accomplished = 100.00
                 total_average_dividend += yearly_dividend
                 
                 temp_dict = {
                     'ticker': ticker,
                     'quantity': quantity,
-                    'quantity_target': quantity_target if quantity_target != 0 else '0.0',
-                    'difference': difference if difference != 0 else '0.0',
+                    'quantity_target': quantity_target if quantity_target != 0 else '0',
+                    'difference': difference if difference != 0 else '0',
                     'accomplished': round(accomplished, 2) if accomplished != 0 else 0.0,
                     'yearly_dividend': self._format_float(yearly_dividend),
                     'target_yearly_dividend': self._format_float(target_yearly_dividend),
@@ -597,7 +613,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
             average_yield = round(sum_of_yield / len(self.tickers_list), 2) if len(self.tickers_list) > 0 else 0.0
             # Valor faltante de aportes para alcançar a meta:
-            missing_value = total_dividends_target - total_average_dividend
+            missing_value = total_dividends_target - total_average_dividend if total_average_dividend < total_dividends_target else 0.0
             missing_contribution = missing_value / average_yield * PERCENT if average_yield > 0 else 0.0
             concluded = self._calculate_percent(total_average_dividend, total_dividends_target) * PERCENT
             cards_data = {

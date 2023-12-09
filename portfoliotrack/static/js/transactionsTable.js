@@ -25,7 +25,7 @@ let table = new DataTable('#transactionsTable', {
     },
     ordering: true,
     select: true,
-    // order: [[0, 'desc']],
+    order: [[1, 'desc']],
 
 });
 

@@ -22,8 +22,8 @@ const elements = {
   contributionChartStatus: document.querySelector('#contributionChartStatus'),
   assetVariationChartStatus: document.querySelector('#assetVariationChartStatus'),
   dividends: document.querySelector('#dividendsCard'),
-  highestYield: document.querySelector('#highestYield'),
-  tickerOfHighestYield: document.querySelector('#tickerOfHighestYield')
+  highestDividend: document.querySelector('#highestDividend'),
+  tickerOfHighestDividend: document.querySelector('#tickerOfHighestDividend')
 }
 
 // Exibir mensagem quando não houver dados
@@ -76,29 +76,29 @@ async function updateDashboardData(dashboardDataURL) {
 
       elements.dividends.innerHTML = cards_data.dividends.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
 
-      elements.highestYield.innerHTML = (cards_data.highest_yield * 100).toFixed(2).replace('.', ',') + '%';
+      elements.highestDividend.innerHTML = cards_data.highest_dividend.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
 
-      elements.tickerOfHighestYield.innerHTML = cards_data.ticker_of_highest_yield
+      elements.tickerOfHighestDividend.innerHTML = cards_data.ticker_of_highest_dividend
 
       elements.equity.innerHTML = cards_data.equity.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-      elements.equityChange.innerHTML = (cards_data.equity.change * 100).toFixed(2).replace('.', ',') + '%';
+      elements.equityChange.innerHTML = (cards_data.equity.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
       elements.equityPeriod.innerHTML = '(' + cards_data.equity.period + ')';
       alternateColor(elements.equityChange, cards_data.equity.change)
       
       elements.contribution.innerHTML = cards_data.contribution.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
-      elements.contributionChange.innerHTML = (cards_data.contribution.change * 100).toFixed(2).replace('.', ',') + '%';
+      elements.contributionChange.innerHTML = (cards_data.contribution.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
       elements.contributionPeriod.innerHTML = '(' + cards_data.contribution.period + ')';
       alternateColor(elements.contributionChange, cards_data.contribution.change)
 
-      elements.result.innerHTML = (cards_data.result.value * 100).toFixed(2).replace('.', ',') + '%';
-      elements.resultChange.innerHTML = (cards_data.result.change * 100).toFixed(2).replace('.', ',');
+      elements.result.innerHTML = (cards_data.result.value * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+      elements.resultChange.innerHTML = (cards_data.result.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
       elements.resultPeriod.innerHTML = '(' + cards_data.result.period + ')';
       elements.yield.innerHTML = cards_data.yield.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
       alternateColor(elements.resultChange, cards_data.result.change)
       alternateColor(elements.yield, cards_data.yield)
 
-      elements.yieldOnCost.innerHTML = (cards_data.yield_on_cost.value * 100).toFixed(2).replace('.', ',') + '%';
-      elements.yieldOnCostChange.innerHTML = (cards_data.yield_on_cost.change * 100).toFixed(2).replace('.', ',');
+      elements.yieldOnCost.innerHTML = (cards_data.yield_on_cost.value * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+      elements.yieldOnCostChange.innerHTML = (cards_data.yield_on_cost.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
       elements.yieldOnCostPeriod.innerHTML = '(' + cards_data.yield_on_cost.period + ')';
       alternateColor(elements.yieldOnCostChange, cards_data.yield_on_cost.change)
 

@@ -10,6 +10,10 @@ const elements = {
   fractionChartStatus: document.querySelector('#fractionChartStatus'),
 }
 
+function showNoData() {
+  elements.fractionChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
+}
+
 // Obter dados da API
 const getTargetData = async (url) => {
     try {
@@ -18,6 +22,7 @@ const getTargetData = async (url) => {
         const errorData = await response.json();
         if (errorData.Erro === 'No data') {
           alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
+          showNoData()
         } else {
           throw new Error(`Erro: ${errorData.Erro}`);
         }
