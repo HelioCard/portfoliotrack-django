@@ -175,7 +175,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     if data['split_groupment'] > 0.0:
                         for i, equity_value in enumerate(individual_performance_data[ticker]['equity']):
                             individual_performance_data[ticker]['equity'][i] *= data['split_groupment']
-            self.individual_performance_data = individual_performance_data
+            self.individual_performance_data = dict(sorted(individual_performance_data.items()))
             return self.individual_performance_data
         except Exception as e:
             class_ = self.__class__.__name__
@@ -277,12 +277,13 @@ class DashboardChartsProcessing(TransactionsFromFile):
         try:
             asset_data = []
             for ticker, asset in self.portfolio_items.items():
-                asset_data.append(
-                    {
-                        'name': ticker,
-                        'value': round(asset['quantity'] * self.history_data[ticker][-1]['close'], 2)
-                    }
-                )
+                if asset['quantity'] > 0:
+                    asset_data.append(
+                        {
+                            'name': ticker,
+                            'value': round(asset['quantity'] * self.history_data[ticker][-1]['close'], 2)
+                        }
+                    )
             return self.list_of_dicts_order_by(asset_data, ['value',], reversed_output=True)
         except Exception as e:
             class_ = self.__class__.__name__
@@ -456,6 +457,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
             #Percorre os dados de performance individual de cada ativo:
             for ticker, data in self.individual_performance_data.items():
                 equity = data['equity'][-1] # Obtêm o valor do patrimônio atual do ativo (último item da lista)
+                if equity <= 0: # Se não houver patrimônio, ou seja, se a quantidade = 0, pula para próxima
+                    continue
                 contribution = data['contribution'][-1] # Obtêm o valor acumulado de aportes do ativo (último item da lista)
                 income = equity - contribution # Calcula o lucro ou prejuízo do período
                 variation = 1 if equity > 0 and contribution == 0 else self._calculate_percent(income, contribution) # Calcula a porcentagem do lucro ou prejuízo. Se aportes = 0, então o investimento já se pagou
