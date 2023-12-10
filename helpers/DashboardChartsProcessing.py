@@ -632,3 +632,31 @@ class DashboardChartsProcessing(TransactionsFromFile):
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
+    def get_incomes_history(self):
+        try:
+            PERCENT = 100
+            if self.history_data is None:
+                self._load_history_data()
+            
+            incomes_history = []
+            for ticker, history in self.history_data.items():
+                for data in history:
+                    result = self._get_values_in_a_date(data['date'], self.asset_history[ticker])
+                    # Verifica a quantidade de cotas na data do anúncio. Se for 0, pula a iteração:
+                    if result['quantity'] <= 0:
+                        continue
+                    if data['dividends'] > 0.0:
+                        temp_dict = {
+                            'ticker': ticker,
+                            'date': data['date'],
+                            'value': self._format_float(data['dividends']) if not np.isnan(data['dividends']) else 'Dados Corrompidos',
+                            'dividend_yield': self._calculate_percent(data['dividends'], data['close']) * PERCENT,
+                        }
+                        incomes_history.append(temp_dict)
+            
+            return self.list_of_dicts_order_by(list_of_dicts=incomes_history, sort_keys=['date',], reversed_output=True)
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')

@@ -82,8 +82,8 @@ def target(request):
                 return redirect('target')
         else:
             messages.error(request, form.errors['__all__'])
-
         return redirect('target')
+    
     update_dividends_target_form = UpdatePortfolioDividendsTarget()
     context = {
         'update_dividends_target_form': update_dividends_target_form,
