@@ -1,8 +1,8 @@
 var performance_options = {
-    title: {
-        text: 'Aportes Acum. x Patrimônio x Dividendos Acum.',
-        left: 'center',
-    },
+    // title: {
+    //     text: 'Aportes x Patrimônio x Dividendos',
+    //     left: 'center',
+    // },
     tooltip: {
         trigger: 'axis',
         formatter: function (params) {
@@ -16,8 +16,8 @@ var performance_options = {
         },
     },
     legend: {
-        'data': ['Aportes Acumulados', 'Patrimônio', 'Dividendos Acumulados'],
-        'top': 30,
+        'data': ['Aportes', 'Patrimônio', 'Dividendos'],
+        'top': 10,
     },
     grid: {
         left: '3%',
@@ -40,11 +40,23 @@ var performance_options = {
     },
     series: [    
         {
-            name: 'Aportes Acumulados',
+            name: 'Aportes',
             type: 'line',
             data: [0,0,0],
             smooth: false,
             step: 'end',
+            areaStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
+                    offset: 0,
+                    color: 'rgba(0, 102, 150, 0.5)'
+                  },
+                  {
+                    offset: 1,
+                    color: 'rgba(255,255,255,0.1)'
+                  }
+                ])
+              },
         },
     
         {
@@ -55,7 +67,7 @@ var performance_options = {
             smooth: true,  
         },
         {
-            name: 'Dividendos Acumulados',
+            name: 'Dividendos',
             type: 'line',
             step: 'end',
             yAxisIndex: 0,
@@ -70,9 +82,11 @@ var performance_options = {
 
 
 var category_options = {
-    title: {
-        text: 'Exposição por Categorias',
-        left: 'center'
+    legend: {
+        left: 'center',
+        top: '5%',
+        bottom: 0,
+        show: true,
     },
     tooltip: {
         trigger: 'item',
@@ -123,8 +137,15 @@ var category_options = {
 
 var asset_options = {
     title: {
-        text: 'Exposição por Ativos',
-        left: 'center'
+        subtext: '% de cada ativo no Portfolio',
+        top: '5%',
+        bottom: '5%',
+        left: 'center',
+        show: true,
+    },
+    legend: {
+        top: '5%',
+        show: false,
     },
     tooltip: {
         trigger: 'item',
@@ -183,8 +204,7 @@ var contribution_options = {
         },
     },
     title: {
-        text: 'Aportes Mensais',
-        subtext: 'Valor dos aportes mensais ao longo do tempo',
+        subtext: 'Valor dos aportes mensais ao longo do tempo (mensal)',
         left: 'center',
     },
     xAxis: {
@@ -228,8 +248,7 @@ var asset_variation_options = {
         },
     },
     title: {
-        text: 'Variação dos Ativos (%)',
-        subtext: 'Lucro ou prejuízo de cada ativo',
+        subtext: 'Performance de cada ativo -  lucro ou prejuízo',
         left: 'center',
     },
     xAxis: {
