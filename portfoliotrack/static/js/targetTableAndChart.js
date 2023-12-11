@@ -85,10 +85,10 @@ updateTargetTable(getTargetURL)
 
 function resizeTargetChart() {
 if (fractionChart) {
-    fractionChart.resize();
+  fractionChart.resize();
 }
 }
 
 setInterval(function () {
-resizeTargetChart()
+  resizeTargetChart()
 }, 1000);
