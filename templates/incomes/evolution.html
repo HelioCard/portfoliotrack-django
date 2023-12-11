@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  
+  <!-- Main Body begins ----------------------------------------------->
+  <main role="main" class="col-12 col-xl-10">
+    <div class="container-fluid my-2">
+
+      <div class="row justify-content-center align-items-center my-2">
+        <div class="col-12 col-md-6 my-2">
+          <h4>Bem vindo, <span class="h4">{{ user.first_name }}!</span> </h4>
+          <p class="m-0">Acompanhe de perto sua carteira!</p>
+        </div>
+        <div class="col-12 col-md-6 my-2 d-flex align-items-center justify-content-md-end">
+          <h6>{{weekday}}, {{today}}</h6>
+        </div>
+      </div>
+
+      
+      <!-- Card and target chart: - begins -->
+      <div class="container-fluid px-0 mt-5">
+        <div class="row d-flex">
+          
+          <div class="row d-flex col-lg-8" style="padding: 0; margin: 0;">
+
+            <div class="col-md-6">
+              <div class="card border-primary" style="min-height: 100%; background-color: white;">
+                <h5 class="card-header ps-5 text-primary border-primary">Dividendos Recebidos</h5>
+                <div class="card-body p-5">
+                  <div class="row p-0">
+                      <h5 id="dividendsText" class="fs-3">R$ 0,00</h5>
+                      <h5 class="fs-6"> Total de Dividendos recebidos</h5>
+                  </div>
+                  <a href="#" class="btn btn-primary w-100">Ver Histórico</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mt-md-0 mt-5">
+              <div class="card border-primary" style="min-height: 100%; background-color: white;">
+                <h5 class="card-header ps-5 text-primary border-primary">DY Médio e Aportes</h5>
+                <div class="card-body p-5">
+                  <div class="row p-0">
+                      <h5 id="averageYieldText" class="fs-3">0.00 %</h5>
+                      <h5 class="fs-6">Yield on Cost</h5>
+                      <p class="card-text">Yield on Cost.</p>
+                  </div>
+                  <div class="row mt-5 p-0">
+                      <h5 id="missingContributionText" class="fs-3">R$ 0,00</h5>
+                      <h5 class="fs-6">Aporte Necessário</h5>
+                      <p class="card-text">Valor aproximado do aporte para atingir a meta.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col-lg-4 mt-lg-0 mt-5">
+            <div class="card border-primary" style="min-height: 100%; background-color: white;">
+              <h5 class="card-header ps-5 text-primary border-primary">Andamento</h5>
+              <div class="card-body">
+                <div id="fractionChart" class="chart-container d-flex justify-content-center align-items-center px-2 pt-4" style="width: 100%; min-height: 20rem; background-color: white;">
+                  <div id="fractionChartStatus" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                    <span class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <!-- Card and target chart: - ends -->
+      
+
+      <div class="container-fluid my-5 p-0 table-responsive" style="background-color: white;">
+        <div class="card border-primary">
+          <h5 class="card-header ps-5 text-primary border-primary">Meta de cada ativo</h5>
+          <div class="card-body table-responsive mx-4">
+            <table id="targetTable" class="table table-hover table-responsive m-0 p-0">
+              <thead>
+                <tr>
+                  <th scope="col" class="text-center">Ativos</th>
+                  <th scope="col" class="text-center">Qtde</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Dividendos por Ação - Valores médios anuais considerando os últimos quatro anos">Por_Ação</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Dividendo anual gerado pelo ativo">Div_Anual</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Meta de Dividendo para o ativo, considerando o peso definido">Div_Meta</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Quantidade de cotas para atingir a meta de dividendos">Qtde_Meta</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Quantidade de cotas faltantes para atingir a meta">Faltam</th>
+                  <th scope="col" class="text-center">Concluído</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+        </div>
+        
+      </div>
+
+    </div>
+  </main>
+  <!-- Main Body ends --------------------------------------------->
+  
+
+  {% include 'includes/message.html' %}
+  
+  <script>
+    var getTargetURL = "{% url 'get_target_data' %}"
+  </script>
+  <script src="{% static 'themes/westeros.js' %}"></script>
+  <script src="{% static 'js/targetOptions.js' %}"></script>
+  <script src="{% static 'js/targetTableAndChart.js' %}"></script>
+  <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+  </script>
+
+  <!-- <script>
+    function updateUpdateURL() {
+      var updateBalanceURL = "{% url 'update_balance' new_weights='PLACEHOLDER' %}".replace('PLACEHOLDER', JSON.stringify(objJson));
+      document.getElementById('editWeightForm').action = updateBalanceURL
+    }
+  </script> -->
+
+{% endblock %}
+
+

@@ -18,3 +18,6 @@ def get_incomes_history(request):
     except Exception as e:
         print(e)
         return JsonResponse({'Erro': str(e)}, status=500)
+
+def evolution(request):
+    return render(request, 'incomes/evolution.html')
