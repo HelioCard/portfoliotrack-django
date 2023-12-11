@@ -36,7 +36,7 @@ def upload_file(request):
             try:
                 raw_transactions_list = TransactionsFromFile().load_file(file)
                 task = register_transactions.delay(raw_transactions_list, user_id)
-                messages.success(request, f'Processando transações do arquivo "{file}". Aguarde ...')
+                messages.success(request, f'Processando transações do arquivo "{file}". Enquanto processamos as transações você pode continuar navegando no site!')
                 context = {
                     'task_id': task.task_id,
                     'redirect_url': 'dashboard',
