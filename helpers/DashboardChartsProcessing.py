@@ -8,11 +8,12 @@ import inspect
 import locale
 
 class DashboardChartsProcessing(TransactionsFromFile):
-    def __init__(self, user, ticker=None, subtract_dividends_from_contribution: str='N'):
+    def __init__(self, user, ticker=None, subtract_dividends_from_contribution: str='N', accumulate_dividends_throughout_history: bool=True):
         super().__init__()
         self.user = user
         self.ticker = ticker.upper() if ticker else None
         self.subtract_dividends_from_contribution = subtract_dividends_from_contribution.upper()
+        self.accumulate_dividends_throughout_history = accumulate_dividends_throughout_history
 
         self.transactions_list = self._get_transactions_list()
         if not self.transactions_list:
@@ -136,7 +137,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
             
             # Percorre a lista de tickers
             for ticker in self.tickers_list:
-                acum_dividends = 0
+                dividends = 0
                 # Percorre os dados históricos de cada ticker:
                 for data in self.history_data[ticker]:
 
@@ -151,22 +152,26 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     if np.isnan(data['close']):
                         acum_contribution = 0.0
                         equity = 0.0
-                        acum_dividends = 0.0
+                        dividends = 0.0
                     else:
                         values = self._get_values_in_a_date(data['date'], self.asset_history[ticker])
                         acum_contribution = values['quantity'] * values['average_price']
                         equity = values['quantity'] * data['close']
-                        acum_dividends = acum_dividends + values['quantity'] * data['dividends']
+                        # Condição para acumular dividendos ao longo do histórico ou não:
+                        if self.accumulate_dividends_throughout_history:
+                            dividends = dividends + values['quantity'] * data['dividends']
+                        else:
+                            dividends = values['quantity'] * data['dividends']
                         
                         # Subtrai os dividendos recebidos do valor dos aportes:
                         if self.subtract_dividends_from_contribution == 'Y':
-                            acum_contribution = acum_contribution - acum_dividends if (acum_contribution - acum_dividends) > 0 else 0.0
+                            acum_contribution = acum_contribution - dividends if (acum_contribution - dividends) > 0 else 0.0
 
                     # Atualiza o dicionário com o ticker e os dados obtidos acima:
                     individual_performance_data[ticker]['date'].append(date)
                     individual_performance_data[ticker]['contribution'].append(acum_contribution)
                     individual_performance_data[ticker]['equity'].append(equity)
-                    individual_performance_data[ticker]['dividends'].append(acum_dividends)
+                    individual_performance_data[ticker]['dividends'].append(dividends)
 
                     '''Se houver splits ou grupamentos, atualiza o valor da lista de patrimonios obtidos até o momento,
                     porque o preço de fechamento (que vem do yfinance) está ajustado e não reflete o preço real da época:'''
@@ -656,6 +661,37 @@ class DashboardChartsProcessing(TransactionsFromFile):
                         incomes_history.append(temp_dict)
             
             return self.list_of_dicts_order_by(list_of_dicts=incomes_history, sort_keys=['date',], reversed_output=True)
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
+    def get_incomes_evolution(self, show_zero_dividends_months=True):
+        try:
+            PERCENT = 100
+            if self.performance_data is None:
+                self._calculate_performance_data()
+            
+            incomes_evolution: dict = {
+                'date': [],
+                'dividends': [],
+                'yield_on_cost': [],
+            }
+            
+            for i, _ in enumerate(self.performance_data['date']):
+                dividends = self.performance_data['dividends'][i]
+                if not show_zero_dividends_months:
+                    if dividends <= 0:
+                        continue
+                date_ = self.performance_data['date'][i]
+                contribution = self.performance_data['contribution'][i]
+                yield_on_cost = self._calculate_percent(value=dividends, total=contribution) * PERCENT
+
+                incomes_evolution['date'].append(date_)
+                incomes_evolution['dividends'].append(dividends)
+                incomes_evolution['yield_on_cost'].append(round(yield_on_cost, 2))
+
+            print(incomes_evolution)
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name

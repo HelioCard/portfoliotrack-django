@@ -19,7 +19,7 @@ const getIncomesData = async (url) => {
         const response = await fetch(url);
         if (!response.ok) {
             const errorData = await response.json();
-            if (erroData.Erro === 'No data') {
+            if (errorData.Erro === 'No data') {
                 alert('Possivelmente ainda não há dados de transações. Adicion suas transações no menu à esquerda!');
                 showNoData()
             } else {
