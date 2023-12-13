@@ -1,3 +1,4 @@
+
 var incomesOptions = {
     legend: {
       data: ['Dividendos', 'Yield on Cost']
@@ -24,17 +25,31 @@ var incomesOptions = {
     yAxis: [
       {
         type: 'value',
+        name: 'Dividendos (R$)',
         position: 'left',
         axisLabel: {
-          formatter: 'R$ {value}'
-        }
+          formatter: '{value}'
+        },
+        axisTick: {
+          show: true,
+          lineStyle: {
+            color: "#cccccc",
+          }
+        },
       },
       {
         type: 'value',
+        name: 'Yield on Cost (%)',
         position: 'right',
         axisLabel: {
-          formatter: '{value} %'
-        }
+          formatter: '{value}'
+        },
+        axisTick: {
+          show: true,
+          lineStyle: {
+            color: "#cccccc",
+          }
+        },
       }
     ],
     series: [
@@ -42,14 +57,20 @@ var incomesOptions = {
         name: 'Dividendos',
         type: 'bar',
         yAxisIndex: 0,
-        data: [10, 52, 200, 334, 390, 330, 220]
+        data: [10, 52, 200, 334, 390, 330, 220],
+        markLine: {
+          data: [{ type: 'average', name: 'Média' }]
+        }
       },
       {
         name: 'Yield on Cost',
         type: 'line',
         yAxisIndex: 1,
         smooth: false,
-        data: [0.6, 0.9, 0.5, 0.4, 0.7, 0.6, 0.35]
+        data: [0.6, 0.9, 0.5, 0.4, 0.7, 0.6, 0.35],
+        markLine: {
+          data: [{ type: 'average', name: 'Média' }]
+        }
       },
     ]
   };

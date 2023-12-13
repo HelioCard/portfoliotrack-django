@@ -666,7 +666,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
-    def get_incomes_evolution(self, show_zero_dividends_months=True):
+    def get_incomes_evolution(self, hide_zero_dividends_months=False):
         try:
             PERCENT = 100
             if self.performance_data is None:
@@ -680,7 +680,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
             
             for i, _ in enumerate(self.performance_data['date']):
                 dividends = self.performance_data['dividends'][i]
-                if not show_zero_dividends_months:
+                if hide_zero_dividends_months:
                     if dividends <= 0:
                         continue
                 date_ = self.performance_data['date'][i]
@@ -691,8 +691,63 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 incomes_evolution['dividends'].append(dividends)
                 incomes_evolution['yield_on_cost'].append(round(yield_on_cost, 2))
 
-            print(incomes_evolution)
+            return incomes_evolution
         except Exception as e:
             class_ = self.__class__.__name__
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
+    def get_incomes_cards_data(self):
+        try:
+            PERCENT = 100
+            if self.performance_data is None:
+                self._calculate_performance_data()
+            
+            # Total de Dividendos e Yield on Cost:
+            total_dividends = sum(self.performance_data['dividends'])
+            total_contribution = self.performance_data['contribution'][-1]
+            total_yield_on_cost = self._calculate_percent(value=total_dividends, total=total_contribution) * PERCENT
+
+            # Cálculo da média de dividendos dos últimos meses
+            # Se não houver, calcula com a quantidade de períodos disponíveis:
+            dividends_data: dict = {}
+
+            # quantidade de perídos a serem analisadas(0m, 0wk, 0d: último período. Os demais são os seis anteriores que serão usados no cálculo da média)
+            time_periods = {
+                '1d': ['0d', '1d', '2d', '3d', '4d', '5d', '6d'],
+                '1wk': ['0sem', '1sem', '2sem', '3sem', '4sem', '5sem', '6sem'],
+                '1mo': ['0m', '1m', '2m', '3m', '4m', '5m', '6m'],
+            }
+            # Obtem o período (diário, semanal ou mensal):
+            periods = time_periods[self.interval]
+            
+            # Verifica se há no mínimo seis periodos para cálculo:
+            iter_range = len(periods)
+            for _ in range(iter_range):
+                if len(self.performance_data['date']) >= len(periods):
+                    for i, period in enumerate(periods):
+                        dividends_data[period] = self.performance_data['dividends'][-(i+1)]
+                    break
+                else:
+                    periods.pop()
+
+            periods_list = list(dividends_data.keys())
+            dividends_list = list(dividends_data.values())
+            calculated_period = periods_list[-1] # ùltimo item da lista se refere ao período mais velho (máximo de 6)
+            dividends_in_period = sum(dividends_list[1:]) # Exclui o primeiro item, que se refere ao mês/semana/dia atual
+            periods_quantity = len(dividends_list[1:]) # Exclui o primeiro item, que se refere ao mês/semana/dia atual
+            average_dividend = dividends_in_period / periods_quantity if periods_quantity > 0 else 0.0
+            
+            incomes_card_data = {
+                'total_dividends': self._format_float(total_dividends),
+                'total_yield_on_cost': self._format_float(total_yield_on_cost),
+                'calculated_period': calculated_period,
+                'average_dividend': self._format_float(average_dividend),
+            }
+            
+            return incomes_card_data
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+

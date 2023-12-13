@@ -11,9 +11,9 @@ def history(request):
 @login_required(login_url='login')
 def get_incomes_history(request):
     try:
-        incomes_history = DashboardChartsProcessing(user=request.user, ticker=None, subtract_dividends_from_contribution='N')
+        processor = DashboardChartsProcessing(user=request.user, ticker=None, subtract_dividends_from_contribution='N')
         context = {
-            'incomes_history': incomes_history.get_incomes_history()
+            'incomes_history': processor.get_incomes_history()
         }
         return JsonResponse(context)
     except ValueError as e:
@@ -29,23 +29,17 @@ def evolution(request):
 @login_required(login_url='login')
 def get_incomes_evolution(request):
     try:
-        incomes_evolution = DashboardChartsProcessing(
+        processor = DashboardChartsProcessing(
             user=request.user,
             ticker=None,
             subtract_dividends_from_contribution='N',
             accumulate_dividends_throughout_history=False,
         )
         context = {
-            'incomes_evolution': incomes_evolution.get_incomes_evolution(show_zero_dividends_months=True),
+            'incomes_evolution': processor.get_incomes_evolution(hide_zero_dividends_months=False),
+            'incomes_cards': processor.get_incomes_cards_data(),
         }
-        return JsonResponse({
-            'incomes_evolution_chart_data': ['data1', 'data2'],
-            'incomes_cards_data': {
-                'data1': 'data1',
-                'data2': 'data2',
-                'data3': 'data3',
-            }
-        })
+        return JsonResponse(context)
     except ValueError as e:
         return JsonResponse({'Erro': str(e)}, status=404)
     except Exception as e:

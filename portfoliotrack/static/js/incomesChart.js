@@ -29,7 +29,8 @@ const getIncomesData = async (url) => {
             return await response.json();
         }
     } catch (ex) {
-        alert(ex);
+        console.error(ex)
+        alert('Ocorreu um erro ao buscar os dados!');
     }
 }
 
@@ -37,15 +38,23 @@ async function updateIncomesEvolutionChart(URL) {
     try {
         const data = await getIncomesData(URL)
         if (data) {
-            const { incomes_evolution_chart_data, incomes_cards_data } = data
-            console.log(incomes_evolution_chart_data)
-            console.log(incomes_cards_data)
+            const { incomes_evolution, incomes_cards } = data
+
+            incomesOptions.xAxis[0].data = incomes_evolution.date
+            incomesOptions.series[0].data = incomes_evolution.dividends
+            incomesOptions.series[1].data = incomes_evolution.yield_on_cost
 
             incomesEvolutionChart = echarts.init(document.querySelector('#dividendEvolutionChart'), THEME);
             incomesEvolutionChart.setOption(incomesOptions);
+
+            document.querySelector('#dividendsText').innerHTML = `R$ ${incomes_cards.total_dividends}`;
+            document.querySelector('#yieldOnCostText').innerHTML = `${incomes_cards.total_yield_on_cost} %`;
+            document.querySelector('#averageDividendsText').innerHTML = `R$ ${incomes_cards.average_dividend}`;
+            document.querySelector('#calculatedPeriodText').innerHTML = `(${incomes_cards.calculated_period})`;
         }
     } catch (error) {
-        alert('Erro: ', error);
+        console.error('Erro:', error);
+        alert('Ocorreu um erro ao atualizar o gráfico.');
     }
 };
 
