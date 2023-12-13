@@ -1,14 +1,10 @@
 var incomesOptions = {
-    title: {
-      subtext: 'Evolução dos proventos ao longo do tempo',
-      left: 'center',
-      show: true,
+    legend: {
+      data: ['Dividendos', 'Yield on Cost']
     },
     tooltip: {
       trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
+      
     },
     grid: {
       left: '3%',
@@ -27,15 +23,33 @@ var incomesOptions = {
     ],
     yAxis: [
       {
-        type: 'value'
+        type: 'value',
+        position: 'left',
+        axisLabel: {
+          formatter: 'R$ {value}'
+        }
+      },
+      {
+        type: 'value',
+        position: 'right',
+        axisLabel: {
+          formatter: '{value} %'
+        }
       }
     ],
     series: [
       {
-        name: 'Direct',
+        name: 'Dividendos',
         type: 'bar',
-        barWidth: '60%',
+        yAxisIndex: 0,
         data: [10, 52, 200, 334, 390, 330, 220]
-      }
+      },
+      {
+        name: 'Yield on Cost',
+        type: 'line',
+        yAxisIndex: 1,
+        smooth: false,
+        data: [0.6, 0.9, 0.5, 0.4, 0.7, 0.6, 0.35]
+      },
     ]
   };

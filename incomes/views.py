@@ -36,7 +36,7 @@ def get_incomes_evolution(request):
             accumulate_dividends_throughout_history=False,
         )
         context = {
-            'incomes_evolution': incomes_evolution.get_incomes_evolution(show_zero_dividends_months=False),
+            'incomes_evolution': incomes_evolution.get_incomes_evolution(show_zero_dividends_months=True),
         }
         return JsonResponse({
             'incomes_evolution_chart_data': ['data1', 'data2'],
