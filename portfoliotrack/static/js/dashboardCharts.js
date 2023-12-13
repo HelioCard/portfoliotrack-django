@@ -74,6 +74,29 @@ async function updateDashboardData(dashboardDataURL) {
     if (data) {
       const { asset_data, category_data, performance_data, cards_data, contribution_data, asset_variation_data } = data;
 
+      performance_options.xAxis.data = performance_data.date;
+      performance_options.series[0].data = performance_data.contribution;
+      performance_options.series[1].data = performance_data.equity;
+      performance_options.series[2].data = performance_data.dividends;
+      category_options.series[0].data = category_data;
+      asset_options.series[0].data = asset_data;
+      contribution_options.xAxis.data = contribution_data.date;
+      contribution_options.series[0].data = contribution_data.contribution;
+      asset_variation_options.xAxis.data = asset_variation_data.ticker;
+      asset_variation_options.series[0].data = asset_variation_data.variation
+
+      portfolioPerformanceChart = echarts.init(document.getElementById('performanceChart'), THEME);
+      assetChart = echarts.init(document.getElementById('assetChart'), THEME);
+      categoryChart = echarts.init(document.getElementById('categoryChart'), THEME);
+      contributionChart = echarts.init(document.querySelector('#contributionChart'), THEME);
+      assetVariationChart = echarts.init(document.querySelector('#assetVariationChart'), THEME);
+
+      portfolioPerformanceChart.setOption(performance_options);
+      assetChart.setOption(asset_options);
+      categoryChart.setOption(category_options);
+      contributionChart.setOption(contribution_options);
+      assetVariationChart.setOption(asset_variation_options);
+
       elements.dividends.innerHTML = cards_data.dividends.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
 
       elements.highestDividend.innerHTML = cards_data.highest_dividend.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
@@ -102,30 +125,6 @@ async function updateDashboardData(dashboardDataURL) {
       elements.yieldOnCostPeriod.innerHTML = '(' + cards_data.yield_on_cost.period + ')';
       alternateColor(elements.yieldOnCostChange, cards_data.yield_on_cost.change)
 
-      portfolioPerformanceChart = echarts.init(document.getElementById('performanceChart'), THEME);
-      assetChart = echarts.init(document.getElementById('assetChart'), THEME);
-      categoryChart = echarts.init(document.getElementById('categoryChart'), THEME);
-      contributionChart = echarts.init(document.querySelector('#contributionChart'), THEME);
-      assetVariationChart = echarts.init(document.querySelector('#assetVariationChart'), THEME);
-
-      performance_options.xAxis.data = performance_data.date;
-      performance_options.series[0].data = performance_data.contribution;
-      performance_options.series[1].data = performance_data.equity;
-      performance_options.series[2].data = performance_data.dividends;
-      category_options.series[0].data = category_data;
-      asset_options.series[0].data = asset_data;
-      contribution_options.xAxis.data = contribution_data.date;
-      contribution_options.series[0].data = contribution_data.contribution;
-      asset_variation_options.xAxis.data = asset_variation_data.ticker;
-      asset_variation_options.series[0].data = asset_variation_data.variation
-
-      portfolioPerformanceChart.setOption(performance_options);
-      assetChart.setOption(asset_options);
-      categoryChart.setOption(category_options);
-      contributionChart.setOption(contribution_options);
-      assetVariationChart.setOption(asset_variation_options);
-
-      resizeDashboardCharts();
     }
   } catch (error) {
     console.error("Ocorreu um erro:", error);
