@@ -51,7 +51,8 @@ const getDashboardData = async (url) => {
       return await response.json();
     }
   } catch (ex) {
-    alert(ex.message);
+    console.error(ex)
+    alert('Erro ao buscar os dados!');
   }
 }
 
@@ -127,7 +128,8 @@ async function updateDashboardData(dashboardDataURL) {
 
     }
   } catch (error) {
-    console.error("Ocorreu um erro:", error);
+    console.error(error);
+    alert('Erro ao atualizar os dados!')
   }
 };
 

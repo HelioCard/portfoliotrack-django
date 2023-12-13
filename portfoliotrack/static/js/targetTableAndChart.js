@@ -30,7 +30,8 @@ const getTargetData = async (url) => {
         return await response.json();
       }
     } catch (ex) {
-      alert(ex.message);
+      console.error(ex)
+      alert('Erro ao buscar os dados!');
     }
   }
 
@@ -76,7 +77,8 @@ async function updateTargetTable(URL) {
         };
         // document.querySelector('#spinner').hidden = true;
     } catch (error) {
-        alert('Erro: ', error)
+      console.error(error)
+      alert('Erro ao atualizar os dados!');
     }
 };
 
