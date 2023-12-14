@@ -32,7 +32,7 @@
                       <h5 id="dividendsText" class="fs-3">R$ 0,00</h5>
                       <h5 class="fs-6"> Total de Dividendos recebidos</h5>
                   </div>
-                  <a href="#" class="btn btn-primary w-100">Ver Histórico</a>
+                  <a href="{% url 'history' %}" class="btn btn-primary w-100">Ver Histórico</a>
                 </div>
               </div>
             </div>
@@ -85,6 +85,23 @@
         </div>
       </div>
       <!-- Evolution of Dividends - Chart - end -->
+
+      <!-- Evolution of Yield - Chart - begin -->
+      <div class="container-fluid my-5 p-0 table-responsive" style="background-color: white;">
+        <div class="card border-primary">
+          <h5 class="card-header ps-5 text-primary border-primary">Histórico de Dividend Yield</h5>
+          <div class="card-body mx-1">
+            <div id="yieldEvolutionChart" class="chart-container d-flex justify-content-center align-items-center pt-2" style="width: 100%; min-height: 22rem; background-color: white;">
+              <div id="yieldEvolutionChartStatus" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                <span class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Evolution of Yield - Chart - end -->
 
     </div>
   </main>
