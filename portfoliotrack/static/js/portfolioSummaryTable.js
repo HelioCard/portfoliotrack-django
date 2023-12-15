@@ -5,7 +5,7 @@ const getPortfolioSummaryData = async (url) => {
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.Erro === 'No data') {
-          alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
+          alert('Possivelmente ainda não há dados de transações ou posições abertas. Adicione suas transações no menu à esquerda!');
         } else {
           throw new Error(`Erro: ${errorData.Erro}`);
         }
@@ -49,32 +49,7 @@ async function updatePortfolioSummary(URL) {
         document.querySelector('#spinner').hidden = false;
         const data = await getPortfolioSummaryData(URL)
         if (data) {
-          buildDomTable(data.summary_data)
-          // const portfolioSummaryTableElement = document.getElementById('portfolioTable')
-          // // Confere se a tabela já foi inicializada:
-          // if (!portfolioSummaryTableElement.hasAttribute('data-datatable-initialized')) {
-          //   portfolioSummaryTable = new DataTable('#portfolioTable', {
-          //     responsive: true,
-          //     language: {
-          //       decimal: ',',
-          //       thousands: '.',
-          //       zeroRecords: 'Não há dados',
-          //       info: 'Mostrando página _PAGE_ de _PAGES_',
-          //       infoEmpty: 'Não há dados',
-          //       infoFiltered: '(dados filtrados de _MAX_ registros totais)',
-          //       lengthMenu: 'Mostrar _MENU_ registros por página',
-          //       paginate: {
-          //           "first": "Primeiro",
-          //           "last": "Último",
-          //           "next": "Próximo",
-          //           "previous": "Anterior"
-          //       },
-          //       search: "Pesquisar:",
-          //     },
-          //     order: [[0, 'asc']],
-          //   });
-          //   portfolioSummaryTableElement.setAttribute('data-datatable-initialized', 'true'); //Adiciona atributo para indicar que a tabela não foi inicializada
-          // } 
+          buildDomTable(data.summary_data);
         };
         document.querySelector('#spinner').hidden = true;
     } catch (error) {

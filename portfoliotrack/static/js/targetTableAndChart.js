@@ -21,7 +21,7 @@ const getTargetData = async (url) => {
       if (!response.ok) {
         const errorData = await response.json();
         if (errorData.Erro === 'No data') {
-          alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
+          alert('Possivelmente ainda não há dados de transações ou posições abertas. Adicione suas transações no menu à esquerda!');
           showNoData()
         } else {
           throw new Error(`Erro: ${errorData.Erro}`);

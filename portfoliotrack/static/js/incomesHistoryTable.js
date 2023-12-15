@@ -5,7 +5,7 @@ const getIncomesData = async (url) => {
         if (!response.ok) {
             const errorData = await response.json();
             if (errorData.Erro === 'No data') {
-                alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esqurda!');
+                alert('Possivelmente ainda não há dados de transações ou posições abertas. Adicione suas transações no menu à esqurda!');
             } else {
                 throw new Error(`Erro: ${errorData.Erro}`);
             }

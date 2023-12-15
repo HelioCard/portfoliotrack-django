@@ -23,7 +23,7 @@ const getIncomesData = async (url) => {
         if (!response.ok) {
             const errorData = await response.json();
             if (errorData.Erro === 'No data') {
-                alert('Possivelmente ainda não há dados de transações. Adicion suas transações no menu à esquerda!');
+                alert('Possivelmente ainda não há dados de transações ou posições abertas. Adicion suas transações no menu à esquerda!');
                 showNoData()
             } else {
                 throw new Error(`Erro: ${errorData.Erro}`);
@@ -58,7 +58,7 @@ async function updateIncomesEvolutionChart(URL) {
             document.querySelector('#dividendsText').innerHTML = `R$ ${incomes_cards.total_dividends}`;
             document.querySelector('#yieldOnCostText').innerHTML = `${incomes_cards.total_yield_on_cost} %`;
             document.querySelector('#averageDividendsText').innerHTML = `R$ ${incomes_cards.average_dividend}`;
-            document.querySelector('#calculatedPeriodText').innerHTML = `(${incomes_cards.calculated_period})`;
+            document.querySelector('#calculatedPeriodText').innerHTML = `(Últimos ${incomes_cards.calculated_period})`;
         }
     } catch (error) {
         console.error('Erro:', error);

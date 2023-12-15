@@ -22,14 +22,18 @@ class DashboardChartsProcessing(TransactionsFromFile):
         self.portfolio_items, self.asset_history = self.calculate_portfolio_balance_and_asset_history(self.transactions_list, self.tickers_list)
         self.first_transaction_date = self._get_first_transaction_date()
         self.interval = self._get_interval()
-        self.history_data = None # Dados históricos de fechamento, dividendos e splits/agrupamentos
-
-        self.individual_performance_data = None # Dados de performance de cada ativo individualmente
-        self.performance_data = None # Dados de performance consolidados (todos os ativos do portfolio)
-        self.average_dividend = None
+        
         self.active_tickers_list = None
         self.sum_of_weights = None
         self.weights = None
+        self._get_active_tickers_list_weights_and_sum_of_weights()
+        if not self.active_tickers_list:
+            raise ValueError('No data')
+
+        self.history_data = None # Dados históricos de fechamento, dividendos e splits/agrupamentos
+        self.individual_performance_data = None # Dados de performance de cada ativo individualmente
+        self.performance_data = None # Dados de performance consolidados (todos os ativos do portfolio)
+        self.average_dividend = None
     
     def _get_interval(self):
         try:
@@ -534,8 +538,6 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
     def _get_average_dividend(self, years):
         try:
-            if self.active_tickers_list is None:
-                self._get_active_tickers_list_weights_and_sum_of_weights()
             days = years * 365
             initial_date = dt.today() - timedelta(days=days)
             self.average_dividend = self.calculate_average_dividend_of_tickers_list(list_of_tickers=self.active_tickers_list, initial_date=initial_date, interval='1mo', period='yearly')
@@ -588,8 +590,6 @@ class DashboardChartsProcessing(TransactionsFromFile):
             
             total_average_dividend = 0.0
             target_data = []
-            if self.sum_of_weights is None:
-                self._get_active_tickers_list_weights_and_sum_of_weights()
             
             sum_of_yield = 0.0
             for ticker in self.active_tickers_list:
@@ -715,7 +715,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
             # quantidade de perídos a serem analisadas(0m, 0wk, 0d: último período. Os demais são os seis anteriores que serão usados no cálculo da média)
             time_periods = {
                 '1d': ['0d', '1d', '2d', '3d', '4d', '5d', '6d'],
-                '1wk': ['0sem', '1sem', '2sem', '3sem', '4sem', '5sem', '6sem'],
+                '1wk': ['0semana', '1semana', '2semanas', '3semanas', '4semanas', '5semanas', '6semanas'],
                 '1mo': ['0m', '1m', '2m', '3m', '4m', '5m', '6m'],
             }
             # Obtem o período (diário, semanal ou mensal):

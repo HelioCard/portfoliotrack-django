@@ -42,10 +42,10 @@
                           data-bs-toggle="tooltip"
                           data-bs-placement="right"
                           data-bs-title="Média dos dividendos anuais que teriam sido pagos nos últimos 4 anos pelos ativos do portfolio na presente data."
-                          >?</span>
+                        >?</span>
                       </h5>
                   </div>
-                  <a href="#" class="btn btn-outline-primary w-100">Ver Dividendos</a>
+                  <a href="{% url 'evolution' %}" class="btn btn-outline-primary w-100">Ver Dividendos</a>
                 </div>
               </div>
             </div>
@@ -56,13 +56,21 @@
                 <div class="card-body p-5">
                   <div class="row p-0">
                       <h5 id="averageYieldText" class="fs-3">0.00 %</h5>
-                      <h5 class="fs-6">DY Médio Anual</h5>
+                      <h5 class="fs-6">
+                        DY Médio Anual
+                        <span 
+                          class="badge text-bg-info rounded-circle"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="right"
+                          data-bs-title="Dividend Yeld médio anual dos ativos do portfolio considerando os últimos 4 anos."
+                        >?</span>
+                      </h5>
                       <p class="card-text">DY médio anual de todos os ativos do portfólio.</p>
                   </div>
                   <div class="row mt-5 p-0">
                       <h5 id="missingContributionText" class="fs-3">R$ 0,00</h5>
                       <h5 class="fs-6">Aporte Necessário</h5>
-                      <p class="card-text">Valor aproximado do aporte para atingir a meta.</p>
+                      <p class="card-text">Valor aproximado do aporte para atingir a meta de dividendos.</p>
                   </div>
                 </div>
               </div>
@@ -131,13 +139,6 @@
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
   </script>
-
-  <!-- <script>
-    function updateUpdateURL() {
-      var updateBalanceURL = "{% url 'update_balance' new_weights='PLACEHOLDER' %}".replace('PLACEHOLDER', JSON.stringify(objJson));
-      document.getElementById('editWeightForm').action = updateBalanceURL
-    }
-  </script> -->
 
 {% endblock %}
 

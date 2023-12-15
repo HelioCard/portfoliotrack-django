@@ -30,7 +30,15 @@
                 <div class="card-body p-5">
                   <div class="row p-0">
                       <h5 id="dividendsText" class="fs-3">R$ 0,00</h5>
-                      <h5 class="fs-6"> Total de Dividendos recebidos</h5>
+                      <h5 class="fs-6">
+                        Total de Dividendos recebidos
+                        <span 
+                          class="badge text-bg-info rounded-circle"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="right"
+                          data-bs-title="Total de dividendos de fato recebidos pelos ativos do portfolio desde o primeiro aporte."
+                        >?</span>
+                      </h5>
                   </div>
                   <a href="{% url 'history' %}" class="btn btn-primary w-100">Ver Histórico</a>
                 </div>
@@ -43,7 +51,15 @@
                 <div class="card-body p-5">
                   <div class="row p-0">
                       <h5 id="yieldOnCostText" class="fs-3">0.00 %</h5>
-                      <h5 class="fs-6">Yield on Cost Total</h5>
+                      <h5 class="fs-6">
+                        Yield on Cost Total
+                        <span 
+                          class="badge text-bg-info rounded-circle"
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="right"
+                          data-bs-title="Total de dividendos de fato recebidos pelos ativos do portfolio divididos pelo Total Investido."
+                        >?</span>
+                      </h5>
                       <p class="card-text">Total de Dividendos/Total do Valor Investido.</p>
                   </div>
                 </div>
@@ -58,8 +74,16 @@
               <div class="card-body p-5">
                 <div class="row p-0">
                   <h5 id="averageDividendsText" class="fs-3">R$ 0,00</h5>
-                  <h5 class="fs-6">Média de Dividendos</h5>
-                  <p class="card-text">Valor médio dos dividendos recebidos <span id="calculatedPeriodText">(6m)</span>.</p>
+                  <h5 class="fs-6">
+                    Média de Dividendos
+                    <span 
+                      class="badge text-bg-info rounded-circle"
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="right"
+                      data-bs-title="Valor médio dos dividendos recebidos nos períodos anteriores ao atual."
+                    >?</span>
+                  </h5>
+                  <p class="card-text">Valor médio dos dividendos. <span id="calculatedPeriodText" class="fw-semibold">(Últimos 6m)</span>.</p>
               </div>
               </div>
             </div>
@@ -116,7 +140,11 @@
   <script src="{% static 'themes/westeros.js' %}"></script>
   <script src="{% static 'js/incomesOptions.js' %}"></script>
   <script src="{% static 'js/incomesChart.js' %}"></script>
-  
+  <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+  </script>
+
 {% endblock %}
 
 
