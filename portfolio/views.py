@@ -54,7 +54,7 @@ def update_balance(request, new_weights):
     if request.method == 'POST':
         try:
             weights = json.loads(new_weights)
-            objects = PortfolioItems.objects.filter(ticker__in=weights.keys())
+            objects = PortfolioItems.objects.filter(portfolio__user=request.user, ticker__in=weights.keys())
             for obj in objects:
                 obj.portfolio_weight = weights[obj.ticker]            
             PortfolioItems.objects.bulk_update(objects, ['portfolio_weight'])
