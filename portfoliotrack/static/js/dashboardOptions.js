@@ -41,22 +41,16 @@ var performance_options = {
     series: [    
         {
             name: 'Aportes',
-            type: 'line',
+            type: 'bar',
             data: [0,0,0],
-            smooth: false,
-            step: 'end',
-            areaStyle: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  {
-                    offset: 0,
-                    color: 'rgba(0, 102, 150, 0.5)'
-                  },
-                  {
-                    offset: 1,
-                    color: 'rgba(255,255,255,0.1)'
-                  }
-                ])
-              },
+            itemStyle: {
+                opacity: 1,
+                },
+            emphasis: {
+                itemStyle: {
+                    opacity: 0.6,
+                },
+            },
         },
     
         {
@@ -220,12 +214,12 @@ var contribution_options = {
         type: 'bar',
         colorBy: 'series',
         itemStyle: {
-          opacity: 0.7,
+          opacity: 1,
           
         },
         emphasis: {
             itemStyle: {
-                opacity: 1,
+                opacity: 0.6,
             },
         },
         markLine: {
@@ -264,11 +258,11 @@ var asset_variation_options = {
             type: 'bar',
             colorBy: 'data',
             itemStyle: {
-                opacity: 0.7,
+                opacity: 1,
             },
             emphasis: {
                 itemStyle: {
-                    opacity: 1,
+                    opacity: 0.6,
                 },
             },
         },
