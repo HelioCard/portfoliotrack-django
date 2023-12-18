@@ -9,4 +9,5 @@ urlpatterns = [
     path('update_balance/<str:new_weights>/', views.update_balance, name='update_balance'),
     path('target/', views.target, name='target'),
     path('get_target_data/', views.get_target_data, name='get_target_data'),
+    path('asset/<str:ticker>/', views.asset, name='asset'),
 ]

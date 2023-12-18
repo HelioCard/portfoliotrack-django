@@ -105,3 +105,10 @@ def get_target_data(request):
     except Exception as e:
         print(e)
         return JsonResponse({'Erro': str(e)}, status=500)
+
+@login_required(login_url='login')
+def asset(request, ticker):
+    context = {
+        'ticker': ticker
+    }
+    return render(request, 'portfolio/asset.html', context)

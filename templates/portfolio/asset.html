@@ -21,12 +21,37 @@
       <!-- Performance e Dividendos - Início -->
       <div class="row d-flex my-5">
         
-        <div class="col-lg-4">
+        <div class="col-lg-8 ">
+          <div class="card h-100 border-primary">
+            <h5 class="card-header ps-5 text-primary border-primary">Ativo</h5>
+            <div class="card-body table-responsive p-5">
+              
+              <!-- TradingView Widget BEGIN -->
+              <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
+                {
+                  "symbol": "BMFBOVESPA:{{ ticker }}",
+                  "width": "600",
+                  "locale": "br",
+                  "colorTheme": "light",
+                  "isTransparent": true
+                }
+                </script>
+              </div>
+              <!-- TradingView Widget END -->
+
+            </div>
+          </div>
+        </div>
+
+
+        <div class="col-lg-4 mt-lg-0 mt-3">
           <div class="card h-100 border-primary">
             <h5 class="card-header ps-5 text-primary border-primary">Performance</h5>
             <div class="card-body p-5">
               
-              <h5 id="yield" class="fs-3">R$0,00</h5>
+              <h5 id="yield" class="fs-4">R$0,00</h5>
               <h5 class="fs-6">Resultado</h5>
               
               <div class="d-flex align-items-center text-primary mt-3">
@@ -38,16 +63,10 @@
                   <span class="visually-hidden">Loading...</span>
                 </div> 
               </div>
-            </div>
-          </div>
-        </div>
 
-        <div class="col-lg-4 mt-lg-0 mt-3">
-          <div class="card h-100 border-primary">
-            <h5 class="card-header ps-5 text-primary border-primary">Proventos</h5>
-            <div class="card-body p-5">
-              
-              <h5 id="dividendsCard" class="fs-3">R$ 0,00</h5>
+              <br>
+
+              <h5 id="dividendsCard" class="fs-4">R$ 0,00</h5>
               <h5 class="fs-6">Recebidos</h5>
               <span class="card-text">Soma de todos os proventos recebidos.</span>
               <div class="d-flex mt-1">
@@ -58,21 +77,7 @@
           </div>
         </div>
 
-        <div class="col-lg-4 mt-lg-0 mt-3">
-          <div class="card h-100 border-primary">
-            <h5 class="card-header ps-5 text-primary border-primary">Recordista</h5>
-            <div class="card-body p-5">
-              
-              <h5 id="highestDividend" class="fs-3">R$ 0,00</h5>
-              <h5 class="fs-6">Recebidos</h5>
-              <span class="card-text">Ativo com maior volume de dividendos.</span>
-              <div class="d-flex mt-1">
-                <span id="tickerOfHighestDividend" class="badge text-bg-primary fs-5">----</span>
-              </div>
-
-            </div>
-          </div>
-        </div>
+        
 
       </div>
       <!-- Performance e Dividendos - Fim -->
