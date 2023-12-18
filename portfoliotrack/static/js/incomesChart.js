@@ -16,30 +16,9 @@ function showNoData() {
     elements.yieldEvolutionChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
 }
 
-// Obter dados do endpoint
-const getIncomesData = async (url) => {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (errorData.Erro === 'No data') {
-                alert('Possivelmente ainda não há dados de transações ou posições abertas. Adicion suas transações no menu à esquerda!');
-                showNoData()
-            } else {
-                throw new Error(`Erro: ${errorData.Erro}`);
-            };
-        } else {
-            return await response.json();
-        }
-    } catch (ex) {
-        console.error(ex)
-        alert('Ocorreu um erro ao buscar os dados!');
-    }
-}
-
 async function updateIncomesEvolutionChart(URL) {
     try {
-        const data = await getIncomesData(URL)
+        const data = await getDataFromAPI(URL)
         if (data) {
             const { incomes_evolution, incomes_cards } = data
 

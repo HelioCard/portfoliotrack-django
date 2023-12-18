@@ -74,6 +74,7 @@
 
   <script> var getPortfolioSummaryURL = "{% url 'get_portfolio_summary' subtract_dividends='N' %}" </script>
 
+  <script src="{% static 'js/dataFromAPI.js' %}"></script>
   <script src="{% static 'js/portfolioSummaryTable.js' %}"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {

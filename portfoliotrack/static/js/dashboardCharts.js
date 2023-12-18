@@ -35,27 +35,6 @@ function showNoData() {
   elements.contributionChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
 }
 
-// Obter dados da API
-const getDashboardData = async (url) => {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {
-      const errorData = await response.json();
-      if (errorData.Erro === 'No data') {
-        alert('Possivelmente ainda não há dados de transações ou posições abertas. Adicione suas transações no menu à esquerda!');
-        showNoData()
-      } else {
-        throw new Error(`Erro: ${errorData.Erro}`);
-      }
-    } else {
-      return await response.json();
-    }
-  } catch (ex) {
-    console.error(ex)
-    alert('Erro ao buscar os dados!');
-  }
-}
-
 // Alternar a cor do elemento com base no valor
 function alternateColor(element, value) {
   if (value > 0) {
@@ -71,7 +50,7 @@ function alternateColor(element, value) {
 // Atualizar os gráficos e cards
 async function updateDashboardData(dashboardDataURL) {
   try {
-    const data = await getDashboardData(dashboardDataURL);
+    const data = await getDataFromAPI(dashboardDataURL);
     if (data) {
       const { asset_data, category_data, performance_data, cards_data, contribution_data, asset_variation_data } = data;
 
