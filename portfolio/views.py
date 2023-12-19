@@ -112,3 +112,19 @@ def asset(request, ticker):
         'ticker': ticker
     }
     return render(request, 'portfolio/asset.html', context)
+
+@login_required(login_url='login')
+def get_asset_data(request, ticker, subtract_dividends):
+    try:        
+        processor = DashboardChartsProcessing(user=request.user, ticker=ticker, subtract_dividends_from_contribution=subtract_dividends)
+        context = {
+            'performance_data': processor.get_performance_chart_data(),
+            'cards_data': processor.get_cards_data(),
+            'contribution_data': processor.get_contributions_over_time(show_months_without_contribution=True),
+        }
+        return JsonResponse(context)
+    except ValueError as e:
+        return JsonResponse({'Erro': str(e)}, status=404)
+    except Exception as e:
+        print(e)
+        return JsonResponse({'Erro': str(e)}, status=500)

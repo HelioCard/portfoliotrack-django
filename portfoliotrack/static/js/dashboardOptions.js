@@ -198,7 +198,7 @@ var contribution_options = {
         },
     },
     title: {
-        subtext: 'Valor dos aportes mensais ao longo do tempo (mensal)',
+        subtext: 'Valor dos aportes mensais ao longo do tempo',
         left: 'center',
     },
     xAxis: {

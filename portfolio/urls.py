@@ -10,4 +10,5 @@ urlpatterns = [
     path('target/', views.target, name='target'),
     path('get_target_data/', views.get_target_data, name='get_target_data'),
     path('asset/<str:ticker>/', views.asset, name='asset'),
+    path('get_asset_data/<str:ticker>/<str:subtract_dividends>/', views.get_asset_data, name='get_asset_data'),
 ]
