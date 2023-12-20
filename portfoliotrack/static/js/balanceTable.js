@@ -6,8 +6,9 @@ function buildDomTable(tableData) {
     var idealPercentage = parseFloat(tableData[i].ideal_percentage);
     var toBalanceColor = currentPercentage <= idealPercentage ? 'text-success' : 'text-warning';
     var textID = `text${tableData[i].asset}`
+    var assetURL = baseURL.replace('PLACEHOLDER', tableData[i].asset)
     var row = `<tr class="align-middle" style="height: 60px;">
-      <th><a href="#"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].asset}</span> </a></th>
+      <th><a href="${assetURL}"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].asset}</span> </a></th>
       <td class="text-end">${tableData[i].quantity}</td>
       <td class="text-end">${tableData[i].last_price}</td>
       <td class="text-end">${tableData[i].equity}</td>

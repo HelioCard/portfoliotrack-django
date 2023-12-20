@@ -2,8 +2,9 @@
 function buildDomTable(tableData) {
     var table = document.querySelector('#tableBody');
     for (var i = 0; i < tableData.length; i++) {
+        var assetURL = baseURL.replace('PLACEHOLDER', tableData[i].ticker)
         var row = `<tr class="align-middle" style="height: 60px;">
-            <th class="text-center"><a href="#"> <span class="badge text-bg-primary w-75" style="font-size: 1.0rem;">${tableData[i].ticker}</span> </a></th>
+            <th class="text-center"><a href="${assetURL}"> <span class="badge text-bg-primary w-75" style="font-size: 1.0rem;">${tableData[i].ticker}</span> </a></th>
             <td class="text-center">${tableData[i].date}</td>
             <td class="text-center">${tableData[i].value}</td>
             <td class="text-center">${tableData[i].dividend_yield.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} %</td>

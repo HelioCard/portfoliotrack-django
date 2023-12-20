@@ -63,6 +63,7 @@
   
   <script>
     var getBalanceURL = "{% url 'get_balance_data' %}"
+    var baseURL = "{% url 'asset' ticker='PLACEHOLDER' %}"
   </script>
   <script src="{% static 'js/dataFromAPI.js' %}"></script>
   <script src="{% static 'js/balanceTable.js' %}"></script>

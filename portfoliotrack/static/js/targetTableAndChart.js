@@ -18,8 +18,9 @@ function showNoData() {
 function buildDomTable(tableData) {
   var table = document.getElementById('tableBody');
   for (var i = 0; i < tableData.length; i++){
+    var assetURL = baseURL.replace('PLACEHOLDER', tableData[i].ticker)
     var row = `<tr class="align-middle" style="height: 60px;">
-      <th><a href="#"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].ticker}</span> </a></th>
+      <th><a href="${assetURL}"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].ticker}</span> </a></th>
       <td class="text-center">${tableData[i].quantity.toLocaleString('pt-BR', {useGrouping: true})}</td>
       <td class="text-center">${tableData[i].average_dividend}</td>
       <td class="text-center">${tableData[i].yearly_dividend}</td>

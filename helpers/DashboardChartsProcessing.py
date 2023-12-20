@@ -395,6 +395,11 @@ class DashboardChartsProcessing(TransactionsFromFile):
     def get_contributions_over_time(self, show_months_without_contribution=False):
         try: 
             contribution_over_time:dict = {}
+
+            final_contribution_over_time = {
+                'date': [],
+                'contribution': [],
+            }
             
             # Percorre a lista de transações. 
             for transaction in self.transactions_list:
@@ -412,7 +417,10 @@ class DashboardChartsProcessing(TransactionsFromFile):
             # Se verdadeiro, prossegue para adicionar os meses com zero contribuição.
             # Se falso, retorna o resultado
             if not show_months_without_contribution:
-                return contribution_over_time
+                for month_year, contribution in contribution_over_time.items():
+                    final_contribution_over_time['date'].append(month_year)
+                    final_contribution_over_time['contribution'].append(contribution)
+                return final_contribution_over_time
 
             # Caso ainda não tenha sido calculada a performance, calcula
             if self.performance_data is None:
@@ -433,11 +441,6 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 return datetime.strptime(key, '%m/%Y')
             list_of_months_years = sorted(contribution_over_time.keys(), key=extract_month_year)
             
-            final_contribution_over_time = {
-                'date': [],
-                'contribution': [],
-            }
-
             # Percorre a lista de mes/ano e adiciona um por um, na chave 'date' e na chave 'contribution'
             for month_year in list_of_months_years:
                 final_contribution_over_time['date'].append(month_year)
