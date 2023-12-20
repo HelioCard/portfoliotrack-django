@@ -672,9 +672,13 @@ class DashboardChartsProcessing(TransactionsFromFile):
     def get_incomes_evolution(self, hide_zero_dividends_months=False):
         try:
             PERCENT = 100
-            if self.performance_data is None:
-                self._calculate_performance_data()
             
+            # Evolução dos dividendos não precisa de acumulação dos dividendos
+            # Recalcula os dados sem acumulação dos dividendos:
+            self.accumulate_dividends_throughout_history = False
+            self._calculate_individual_performance_data()
+            self._calculate_performance_data()
+
             incomes_evolution: dict = {
                 'date': [],
                 'dividends': [],

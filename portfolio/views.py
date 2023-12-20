@@ -116,11 +116,17 @@ def asset(request, ticker):
 @login_required(login_url='login')
 def get_asset_data(request, ticker, subtract_dividends):
     try:        
-        processor = DashboardChartsProcessing(user=request.user, ticker=ticker, subtract_dividends_from_contribution=subtract_dividends)
+        processor = DashboardChartsProcessing(
+            user=request.user,
+            ticker=ticker,
+            subtract_dividends_from_contribution=subtract_dividends,
+            accumulate_dividends_throughout_history=True,
+        )
         context = {
             'performance_data': processor.get_performance_chart_data(),
             'cards_data': processor.get_cards_data(),
             'contribution_data': processor.get_contributions_over_time(show_months_without_contribution=True),
+            'dividend_evolution_data': processor.get_incomes_evolution(hide_zero_dividends_months=False),
         }
         return JsonResponse(context)
     except ValueError as e:

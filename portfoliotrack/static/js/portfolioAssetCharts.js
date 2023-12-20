@@ -1,5 +1,5 @@
 const THEME = 'westeros'
-let performanceChart, contributionChart, assetVariationChart
+let performanceChart, contributionChart, incomesEvolutionChart, yieldEvolutionChart
 
 // Elementos do DOM
 const elements = {
@@ -16,21 +16,22 @@ const elements = {
   yieldOnCostChange: document.querySelector('#yieldOnCostChange'),
   yieldOnCostPeriod: document.querySelector('#yieldOnCostPeriod'),
   performanceChartStatus: document.querySelector('#performanceChartStatus'),
-  categoryChartStatus: document.querySelector('#categoryChartStatus'),
-  assetChartStatus: document.querySelector('#assetChartStatus'),
   yield: document.querySelector('#yield'),
   contributionChartStatus: document.querySelector('#contributionChartStatus'),
-  assetVariationChartStatus: document.querySelector('#assetVariationChartStatus'),
+  dividendEvolutionChartStatus: document.querySelector('#dividendEvolutionChartStatus'),
+  yieldEvolutionChartStatus: document.querySelector('#yieldEvolutionChartStatus'),
   dividends: document.querySelector('#dividendsCard'),
 }
 
-// Exibir mensagem quando não houver dados
+// Exibe mensagem quando não houver dados
 function showNoData() {
   elements.performanceChartStatus.innerHTML = '<h6 class="display-5">Não há dados</h6>'
   elements.contributionChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
+  elements.dividendEvolutionChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
+  elements.yieldEvolutionChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
 }
 
-// Alternar a cor do elemento com base no valor
+// Alterna a cor do elemento com base no valor
 function alternateColor(element, value) {
   if (value > 0) {
     element.style.color = 'green';
@@ -42,12 +43,12 @@ function alternateColor(element, value) {
   }
 }
 
-// Atualizar os gráficos e cards
+// Atualiza os gráficos e cards
 async function updateDashboardData(dataURL) {
   try {
     const data = await getDataFromAPI(dataURL);
     if (data) {
-      const { performance_data, cards_data, contribution_data } = data;
+      const { performance_data, cards_data, contribution_data, dividend_evolution_data } = data;
 
       performance_options.xAxis.data = performance_data.date;
       performance_options.series[0].data = performance_data.contribution;
@@ -56,13 +57,23 @@ async function updateDashboardData(dataURL) {
 
       contribution_options.xAxis.data = contribution_data.date;
       contribution_options.series[0].data = contribution_data.contribution;
+
+      incomesOptions.xAxis[0].data = dividend_evolution_data.date;
+      incomesOptions.series[0].data = dividend_evolution_data.dividends;
+      
+      yieldOptions.xAxis[0].data = dividend_evolution_data.date;
+      yieldOptions.series[0].data = dividend_evolution_data.yield_on_cost;
       
 
       performanceChart = echarts.init(document.getElementById('performanceChart'), THEME);
       contributionChart = echarts.init(document.querySelector('#contributionChart'), THEME);
+      incomesEvolutionChart = echarts.init(document.querySelector('#dividendEvolutionChart'), THEME);
+      yieldEvolutionChart = echarts.init(document.querySelector('#yieldEvolutionChart'), THEME);
 
       performanceChart.setOption(performance_options);
       contributionChart.setOption(contribution_options);
+      incomesEvolutionChart.setOption(incomesOptions);
+      yieldEvolutionChart.setOption(yieldOptions);
 
       elements.dividends.innerHTML = cards_data.dividends.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
 
@@ -95,11 +106,13 @@ async function updateDashboardData(dataURL) {
   }
 };
 
-// Redimensionar os gráficos
+// Redimensiona os gráficos
 function resizeDashboardCharts() {
-  if (performanceChart && contributionChart) {
+  if (performanceChart && contributionChart && incomesEvolutionChart && yieldEvolutionChart) {
     performanceChart.resize();
     contributionChart.resize();
+    incomesEvolutionChart.resize();
+    yieldEvolutionChart.resize();
   }
 }
 
