@@ -33,6 +33,20 @@ function buildDomTable(tableData) {
   };
 }
 
+function showNoData() {
+  document.getElementById('tableBody').innerHTML = `<tr class="align-middle" style="height: 60px;">
+      <th class="text-center"><a href="#"> <span class="badge text-bg-primary w-75" style="font-size: 1.0rem;">---</span> </a></th>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+  </tr>`
+  
+}
+
 async function updateBalanceTable(URL) {
     try {
         document.querySelector('#spinner').hidden = false;
