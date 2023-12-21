@@ -222,7 +222,7 @@ class DataFromYFinance:
 
     def _get_history_data(self, list_of_tickers, initial_date, ending_date, interval):
         try:
-            raw_data = yf.download(list_of_tickers, start=initial_date, end=ending_date, group_by='ticker', interval=interval, repair=True, actions=True, session=session)
+            raw_data = yf.download(list_of_tickers, start=initial_date, end=ending_date, group_by='ticker', interval=interval, repair=False, actions=True, session=session)
             
             final_dict: dict = {}
             for ticker in list_of_tickers: # Percorre a lista de tickers

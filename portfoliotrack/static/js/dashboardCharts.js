@@ -85,24 +85,24 @@ async function updateDashboardData(dashboardDataURL) {
 
       elements.equity.innerHTML = cards_data.equity.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
       elements.equityChange.innerHTML = (cards_data.equity.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
-      elements.equityPeriod.innerHTML = '(' + cards_data.equity.period + ')';
+      elements.equityPeriod.innerHTML = '(Últimos ' + cards_data.equity.period + ')';
       alternateColor(elements.equityChange, cards_data.equity.change)
       
       elements.contribution.innerHTML = cards_data.contribution.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
       elements.contributionChange.innerHTML = (cards_data.contribution.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
-      elements.contributionPeriod.innerHTML = '(' + cards_data.contribution.period + ')';
+      elements.contributionPeriod.innerHTML = '(Últimos ' + cards_data.contribution.period + ')';
       alternateColor(elements.contributionChange, cards_data.contribution.change)
 
       elements.result.innerHTML = (cards_data.result.value * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
-      elements.resultChange.innerHTML = (cards_data.result.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
-      elements.resultPeriod.innerHTML = '(' + cards_data.result.period + ')';
+      elements.resultChange.innerHTML = (cards_data.result.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      elements.resultPeriod.innerHTML = '(Últimos ' + cards_data.result.period + ')';
       elements.yield.innerHTML = cards_data.yield.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
       alternateColor(elements.resultChange, cards_data.result.change)
       alternateColor(elements.yield, cards_data.yield)
 
       elements.yieldOnCost.innerHTML = (cards_data.yield_on_cost.value * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
-      elements.yieldOnCostChange.innerHTML = (cards_data.yield_on_cost.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
-      elements.yieldOnCostPeriod.innerHTML = '(' + cards_data.yield_on_cost.period + ')';
+      elements.yieldOnCostChange.innerHTML = (cards_data.yield_on_cost.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      elements.yieldOnCostPeriod.innerHTML = '(Últimos ' + cards_data.yield_on_cost.period + ')';
       alternateColor(elements.yieldOnCostChange, cards_data.yield_on_cost.change)
 
     }

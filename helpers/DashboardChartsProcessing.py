@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 import numpy as np
 import inspect
 import locale
+from collections import defaultdict
+from datetime import datetime
 
 class DashboardChartsProcessing(TransactionsFromFile):
     def __init__(self, user, ticker=None, subtract_dividends_from_contribution: str='N', accumulate_dividends_throughout_history: bool=True):
@@ -38,10 +40,8 @@ class DashboardChartsProcessing(TransactionsFromFile):
     def _get_interval(self):
         try:
             time_elapsed = dt.today() - self.first_transaction_date
-            if time_elapsed.days < 60:
+            if time_elapsed.days < 90:
                 return '1d'
-            elif time_elapsed.days < 180:
-                return '1wk'
             else:
                 return '1mo'
         except Exception as e:
@@ -90,7 +90,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
     def _load_history_data(self):
-        self.history_data = self.load_history_data_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=self.first_transaction_date, interval=self.interval)
+        self.history_data = self.load_history_data_of_tickers_list(list_of_tickers=self.tickers_list, initial_date=self.first_transaction_date, interval='1d')
 
     def _get_values_in_a_date(self, date, asset_history):
         try:
@@ -125,9 +125,66 @@ class DashboardChartsProcessing(TransactionsFromFile):
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
+    def _older_and_newer_indexes_by_month(self, list_of_dates: list):
+        # Dicionário para armazenar os índices da data mais velha e mais nova para cada mês
+        indexes_by_months = defaultdict(lambda: {'older': None, 'newer': None})
+        
+        for i, date_ in enumerate(list_of_dates):
+            _, month, year = date_.split('/')
+            year_month = f'{year}/{month}'
+            
+            # Se não houver data mais velha registrada ou a data atual for mais antiga
+            if indexes_by_months[year_month]['older'] is None or list_of_dates[indexes_by_months[year_month]['older']] > date_:
+                indexes_by_months[year_month]['older'] = i
+            
+            # Se não houver data mais nova registrada ou a data atual for mais recente
+            if indexes_by_months[year_month]['newer'] is None or list_of_dates[indexes_by_months[year_month]['newer']] < date_:
+                indexes_by_months[year_month]['newer'] = i
+        
+        return indexes_by_months
+
+    def _join_by_months(self, fulldata):
+        try:
+            joined_data:dict = {}
+            for ticker, data in fulldata.items():
+                # Inicia um dicionário de dicionário com o conteúdo vazio:
+                joined_data[ticker] = {
+                    'date': [],
+                    'contribution': [],
+                    'equity': [],
+                    'dividends': [],
+                }
+                
+                # Extrai da lista de datas o índice da data mais velha e o índice da data mais nova de cada mês:
+                older_and_newer_indexes_by_month = self._older_and_newer_indexes_by_month(data['date'])
+
+                # Percorre o dicionário de indices (da data mais velha e mais nova de cada mês)
+                # No dados da data, adiciona o ano/mês
+                # Nos dados de aportes, adiciona o dado do último dia de negociação - índice da data mais nova
+                # Nos dados de patrimônio, adiciona o dado do último dia de negociação - índice da data mais nova
+                # Nos dados de dividendos: se a classe estiver configurada para acumular os dividendos, adiciona o dado do
+                # último dia de negociação. Se a configuração for para não acumular os dividendos, adiciona a soma do seguinte intervalo
+                # de dividendos: da data mais velha até a data mais nova (índice older até índice newer):
+                for year_month, indexes in older_and_newer_indexes_by_month.items():
+                    joined_data[ticker]['date'].append(year_month)
+                    joined_data[ticker]['contribution'].append(data['contribution'][indexes['newer']])
+                    joined_data[ticker]['equity'].append(data['equity'][indexes['newer']])
+                    if self.accumulate_dividends_throughout_history:
+                        joined_data[ticker]['dividends'].append(data['dividends'][indexes['newer']])
+                    else:
+                        sum_of_dividends = sum(data['dividends'][indexes['older']:indexes['newer']+1])
+                        joined_data[ticker]['dividends'].append(sum_of_dividends)
+
+            return joined_data
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
     def _calculate_individual_performance_data(self):
         if not self.history_data:
             self._load_history_data()
+        
         try:
             # Cria um dicionário que conterá o histórico de data, aportes acumulados, patrimônio e dividendos acumulados ao longo do tempo. Tudo isso de cada ativo:
             individual_performance_data = {
@@ -145,6 +202,12 @@ class DashboardChartsProcessing(TransactionsFromFile):
                 # Percorre os dados históricos de cada ticker:
                 for data in self.history_data[ticker]:
 
+                    '''Se houver splits ou grupamentos, atualiza o valor da lista de patrimonios obtidos até o momento,
+                    porque o preço de fechamento (que vem do yfinance) está ajustado e não reflete o preço real da época:'''
+                    if data['split_groupment'] > 0.0:
+                        for i, equity_value in enumerate(individual_performance_data[ticker]['equity']):
+                            individual_performance_data[ticker]['equity'][i] *= data['split_groupment']
+
                     # Se não houver dados na data especificada, preencha os dados com a data específica e os valores = 0.0
                     '''Se houver dados:
                         primeiro extrai a quantidade e o preço médio do ticker na data do dado atual;
@@ -161,6 +224,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                         values = self._get_values_in_a_date(data['date'], self.asset_history[ticker])
                         acum_contribution = values['quantity'] * values['average_price']
                         equity = values['quantity'] * data['close']
+                        
                         # Condição para acumular dividendos ao longo do histórico ou não:
                         if self.accumulate_dividends_throughout_history:
                             dividends = dividends + values['quantity'] * data['dividends']
@@ -177,12 +241,11 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     individual_performance_data[ticker]['equity'].append(equity)
                     individual_performance_data[ticker]['dividends'].append(dividends)
 
-                    '''Se houver splits ou grupamentos, atualiza o valor da lista de patrimonios obtidos até o momento,
-                    porque o preço de fechamento (que vem do yfinance) está ajustado e não reflete o preço real da época:'''
-                    if data['split_groupment'] > 0.0:
-                        for i, equity_value in enumerate(individual_performance_data[ticker]['equity']):
-                            individual_performance_data[ticker]['equity'][i] *= data['split_groupment']
+                    
             self.individual_performance_data = dict(sorted(individual_performance_data.items()))
+            if self.interval == '1mo':
+                joined_by_months = self._join_by_months(self.individual_performance_data)
+                self.individual_performance_data = joined_by_months
             return self.individual_performance_data
         except Exception as e:
             class_ = self.__class__.__name__
@@ -309,7 +372,6 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
             time_periods = {
                 '1d': ['0d', '1d', '2d', '3d', '4d', '5d', '6d'],
-                '1wk': ['0sem', '1sem', '2sem', '3sem', '4sem', '5sem', '6sem'],
                 '1mo': ['0m', '1m', '2m', '3m', '4m', '5m', '6m'],
             }
             periods = time_periods[self.interval]
@@ -408,7 +470,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                     continue
                 # Obtêm o mes/ano da operação. Se o mes/ano já se encontrar na variável 'contribution_over_time' adiciona o valor total da transação
                 # Se o mes/ano não for encontrado na referida variável, cria um novo par key/value
-                month_year = f"{transaction['date'].month}/{transaction['date'].year}"
+                month_year = f"{transaction['date'].year}/{transaction['date'].month}"
                 if contribution_over_time.get(month_year):
                     contribution_over_time[month_year] += transaction['quantity'] * transaction['unit_price']
                 else:
@@ -429,8 +491,11 @@ class DashboardChartsProcessing(TransactionsFromFile):
             # Percorre as datas dos dados de performance
             for date_ in self.performance_data['date']:
                 # Obtêm o mes/ano destas datas
-                formatted_date = self._format_date(date_)
-                month_year = f"{formatted_date.month}/{formatted_date.year}"
+                if self.interval == '1d':
+                    formatted_date = self._format_date(date_)
+                    month_year = f"{formatted_date.year}/{formatted_date.month}"
+                else:
+                    month_year = date_
                 # Se o mes/ano obtido não for encontrado nos dados de aportes calculados acima, significa que não houve aportes no referido mes/ano
                 # Então adiciona a data com o valor de aporte = 0.0 à variável 'contribution_over_time'
                 if not contribution_over_time.get(month_year):
@@ -438,7 +503,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
 
             # Extrai a lista de mes/ano ordenada do mais velho para a mais novo
             def extract_month_year(key):
-                return datetime.strptime(key, '%m/%Y')
+                return datetime.strptime(key, '%Y/%m')
             list_of_months_years = sorted(contribution_over_time.keys(), key=extract_month_year)
             
             # Percorre a lista de mes/ano e adiciona um por um, na chave 'date' e na chave 'contribution'
@@ -722,7 +787,6 @@ class DashboardChartsProcessing(TransactionsFromFile):
             # quantidade de perídos a serem analisadas(0m, 0wk, 0d: último período. Os demais são os seis anteriores que serão usados no cálculo da média)
             time_periods = {
                 '1d': ['0d', '1d', '2d', '3d', '4d', '5d', '6d'],
-                '1wk': ['0semana', '1semana', '2semanas', '3semanas', '4semanas', '5semanas', '6semanas'],
                 '1mo': ['0m', '1m', '2m', '3m', '4m', '5m', '6m'],
             }
             # Obtem o período (diário, semanal ou mensal):
