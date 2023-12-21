@@ -109,7 +109,7 @@ var contribution_options = {
             },
         },
         markLine: {
-            data: [{ type: 'average', name: 'Avg' }]
+            data: [{ type: 'average', name: 'Média' }]
         },
       },
     ],

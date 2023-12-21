@@ -227,7 +227,7 @@ class DashboardChartsProcessing(TransactionsFromFile):
                         
                         # Condição para acumular dividendos ao longo do histórico ou não:
                         if self.accumulate_dividends_throughout_history:
-                            dividends = dividends + values['quantity'] * data['dividends']
+                            dividends = dividends + (values['quantity'] * data['dividends'])
                         else:
                             dividends = values['quantity'] * data['dividends']
                         

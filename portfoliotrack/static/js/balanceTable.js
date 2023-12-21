@@ -2,9 +2,6 @@
 function buildDomTable(tableData) {
   var table = document.getElementById('tableBody');
   for (var i = 0; i < tableData.length; i++){
-    var currentPercentage = parseFloat(tableData[i].current_percentage.replace(',', '.'));
-    var idealPercentage = parseFloat(tableData[i].ideal_percentage);
-    var toBalanceColor = currentPercentage <= idealPercentage ? 'text-success' : 'text-warning';
     var textID = `text${tableData[i].asset}`
     var assetURL = baseURL.replace('PLACEHOLDER', tableData[i].asset)
     var row = `<tr class="align-middle" style="height: 60px;">
@@ -27,7 +24,7 @@ function buildDomTable(tableData) {
       </td>
       <td class="text-end">${tableData[i].ideal_percentage} %</td>
       <td class="text-end">${tableData[i].current_percentage} %</td>
-      <td class="text-center ${toBalanceColor}">${tableData[i].to_balance}</td>
+      <td class="text-center">${tableData[i].to_balance}</td>
     </tr>`
     table.innerHTML += row;
   };
