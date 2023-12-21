@@ -39,8 +39,14 @@ def update_transaction(edited_transaction, user_id, pk):
         processed_transactions = process_transactions(transactions_list=edited_transaction, user_id=user_id)
         if isinstance(processed_transactions, list):
             processed_transactions = register_split_group_events(processed_transactions=processed_transactions, user_id=user_id)
+            
             # Atualiza os dados da transação:
             transaction = Transactions.objects.get(id=pk)
+
+            # Obtem o ticker que foi editado antes que ele seja atualizado.
+            # Em caso de troca de ticker e não haver outras transações do mesmo ticker, seus eventos de split/agrupamento precisam ser atualizados/excluídos:
+            list_of_ticker = [transaction.ticker] 
+
             transaction.date = processed_transactions[0]['date']
             transaction.ticker = processed_transactions[0]['ticker']
             transaction.operation = processed_transactions[0]['operation']
@@ -50,7 +56,7 @@ def update_transaction(edited_transaction, user_id, pk):
             transaction.save()
             # Obtem a lista de ticker, para atualização dos eventos. Exemplo: se a data de uma transação for alterada e for necessária
             # a exclusão de um evento de split/agrupamento:
-            list_of_ticker = [transaction.ticker]
+            print(list_of_ticker)
             update_events_of_transactions(list_of_tickers=list_of_ticker, user_id=user_id)
             update_portfolio_items(user_id=user_id)
             return 'SUCCESS'
