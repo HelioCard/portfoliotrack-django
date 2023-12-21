@@ -582,6 +582,21 @@ class DashboardChartsProcessing(TransactionsFromFile):
             method_ = inspect.currentframe().f_code.co_name
             raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
 
+    def _adjust_asset_percent(self, total_equity, ideal_percentage, current_equity, tolerance=50.00):
+        try:
+            adjust = 0
+            final_adjust = 0
+            while abs( current_equity - (ideal_percentage * total_equity) ) > tolerance:
+                adjust = ideal_percentage * total_equity - current_equity
+                current_equity += adjust
+                total_equity += adjust
+                final_adjust += adjust
+            return final_adjust
+        except Exception as e:
+            class_ = self.__class__.__name__
+            method_ = inspect.currentframe().f_code.co_name
+            raise ValueError(f'Classe: {class_} => Método: {method_} => {e}')
+
     def _calculate_balance(self, temp_balance_data, total_equity, total_weight):
         try:
             PERCENT = 100
@@ -589,15 +604,16 @@ class DashboardChartsProcessing(TransactionsFromFile):
             for data in balance_data:
                 current_percentage = self._calculate_percent(value=data['equity'], total=total_equity) * PERCENT
                 ideal_percentage = self._calculate_percent(value=data['weight'], total=total_weight)
-                variation_value =  (ideal_percentage * total_equity) - data['equity']
-                variation_of_quotas = variation_value / data['last_price'] if data['last_price'] != 0 else 0.0
-                signal = '+' if variation_value > 0 else ''
-
+                # adjust_value =  (ideal_percentage * total_equity) - data['equity']
+                adjust_value = self._adjust_asset_percent(total_equity=total_equity, ideal_percentage=ideal_percentage, current_equity=data['equity'])
+                adjust_of_quotas = adjust_value / data['last_price'] if data['last_price'] != 0 else 0.0
+                signal = '+' if adjust_value > 0 else ''
+                
                 data['last_price'] = self._format_float(data['last_price'])
                 data['equity'] = self._format_float(data['equity'])
                 data['current_percentage'] = self._format_float(current_percentage)
                 data['ideal_percentage'] = self._format_float(ideal_percentage * PERCENT)
-                data['to_balance'] = f'{signal}{int(variation_of_quotas)} cotas: {signal}{self._format_float(variation_value)}'
+                data['to_balance'] = f'{signal}{int(adjust_of_quotas)} cotas: {signal}{self._format_float(adjust_value)}'
             return balance_data
         except Exception as e:
             class_ = self.__class__.__name__
