@@ -25,7 +25,7 @@ var performance_options = {
         bottom: '3%',
         containLabel: true
     },
-
+    
     xAxis: {
         type: 'category',
         data: ['-','-','-'],
@@ -41,15 +41,20 @@ var performance_options = {
     series: [    
         {
             name: 'Aportes',
-            type: 'bar',
+            type: 'line',
+            step: 'end',
             data: [0,0,0],
-            itemStyle: {
-                opacity: 1,
-                },
-            emphasis: {
-                itemStyle: {
-                    opacity: 0.6,
-                },
+            areaStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {
+                    offset: 0,
+                    color: 'rgba(0, 102, 150, 0.2)'
+                    },
+                    {
+                    offset: 1,
+                    color: 'rgba(0, 102, 150, 0.05)'
+                    }
+                ])
             },
         },
     
@@ -206,8 +211,21 @@ var contribution_options = {
       data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     },
     yAxis: {
-      type: 'value'
-    },
+        type: 'value',
+        name: 'Aportes (R$)',
+        position: 'left',
+        axisLabel: {
+          formatter: function (value) {
+            return value.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+          }
+        },
+        axisTick: {
+          show: true,
+          lineStyle: {
+            color: "#cccccc",
+          }
+        },
+      },
     series: [
       {
         data: [120, 200, 150, -100, 70, 110, 130],
@@ -223,7 +241,7 @@ var contribution_options = {
             },
         },
         markLine: {
-            data: [{ type: 'average', name: 'Avg' }]
+            data: [{ type: 'average', name: 'Média' }]
         },
       },
     ],

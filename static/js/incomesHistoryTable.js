@@ -1,27 +1,10 @@
-// Obter os dados do endpoint
-const getIncomesData = async (url) => {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (errorData.Erro === 'No data') {
-                alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esqurda!');
-            } else {
-                throw new Error(`Erro: ${errorData.Erro}`);
-            }
-        } else {
-            return await response.json();
-        }
-    } catch (ex) {
-        alert(ex.message);
-    };
-};
 
 function buildDomTable(tableData) {
     var table = document.querySelector('#tableBody');
     for (var i = 0; i < tableData.length; i++) {
+        var assetURL = baseURL.replace('PLACEHOLDER', tableData[i].ticker)
         var row = `<tr class="align-middle" style="height: 60px;">
-            <th class="text-center"><a href="#"> <span class="badge text-bg-primary w-75" style="font-size: 1.0rem;">${tableData[i].ticker}</span> </a></th>
+            <th class="text-center"><a href="${assetURL}"> <span class="badge text-bg-primary w-75" style="font-size: 1.0rem;">${tableData[i].ticker}</span> </a></th>
             <td class="text-center">${tableData[i].date}</td>
             <td class="text-center">${tableData[i].value}</td>
             <td class="text-center">${tableData[i].dividend_yield.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} %</td>
@@ -30,10 +13,20 @@ function buildDomTable(tableData) {
     };
 }
 
+function showNoData() {
+    document.getElementById('tableBody').innerHTML = `<tr class="align-middle" style="height: 60px;">
+        <th class="text-center"><a href="#"> <span class="badge text-bg-primary w-75" style="font-size: 1.0rem;">-----</span> </a></th>
+        <td class="text-center">Não há dados</td>
+        <td class="text-center">Não há dados</td>
+        <td class="text-center">Não há dados</td>
+    </tr>`
+    
+}
+
 async function updateIncomesTable(URL) {
     try {
         document.querySelector('#spinner').hidden = false;
-        const data = await getIncomesData(URL);
+        const data = await getDataFromAPI(URL);
         if (data) {
             buildDomTable(data.incomes_history);
             let table = new DataTable('#incomesTable', {
@@ -61,7 +54,8 @@ async function updateIncomesTable(URL) {
         };
         document.querySelector('#spinner').hidden = true;
     } catch (error) {
-        alert('Erro: ', error);
+        console.error(error)
+        alert('Erro ao atualizar os dados!');
     };
 };
 

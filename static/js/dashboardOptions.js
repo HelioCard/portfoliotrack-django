@@ -25,7 +25,7 @@ var performance_options = {
         bottom: '3%',
         containLabel: true
     },
-
+    
     xAxis: {
         type: 'category',
         data: ['-','-','-'],
@@ -42,21 +42,20 @@ var performance_options = {
         {
             name: 'Aportes',
             type: 'line',
-            data: [0,0,0],
-            smooth: false,
             step: 'end',
+            data: [0,0,0],
             areaStyle: {
                 color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                  {
+                    {
                     offset: 0,
-                    color: 'rgba(0, 102, 150, 0.5)'
-                  },
-                  {
+                    color: 'rgba(0, 102, 150, 0.2)'
+                    },
+                    {
                     offset: 1,
-                    color: 'rgba(255,255,255,0.1)'
-                  }
+                    color: 'rgba(0, 102, 150, 0.05)'
+                    }
                 ])
-              },
+            },
         },
     
         {
@@ -204,7 +203,7 @@ var contribution_options = {
         },
     },
     title: {
-        subtext: 'Valor dos aportes mensais ao longo do tempo (mensal)',
+        subtext: 'Valor dos aportes mensais ao longo do tempo',
         left: 'center',
     },
     xAxis: {
@@ -212,24 +211,37 @@ var contribution_options = {
       data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     },
     yAxis: {
-      type: 'value'
-    },
+        type: 'value',
+        name: 'Aportes (R$)',
+        position: 'left',
+        axisLabel: {
+          formatter: function (value) {
+            return value.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+          }
+        },
+        axisTick: {
+          show: true,
+          lineStyle: {
+            color: "#cccccc",
+          }
+        },
+      },
     series: [
       {
         data: [120, 200, 150, -100, 70, 110, 130],
         type: 'bar',
         colorBy: 'series',
         itemStyle: {
-          opacity: 0.7,
+          opacity: 1,
           
         },
         emphasis: {
             itemStyle: {
-                opacity: 1,
+                opacity: 0.6,
             },
         },
         markLine: {
-            data: [{ type: 'average', name: 'Avg' }]
+            data: [{ type: 'average', name: 'Média' }]
         },
       },
     ],
@@ -264,11 +276,11 @@ var asset_variation_options = {
             type: 'bar',
             colorBy: 'data',
             itemStyle: {
-                opacity: 0.7,
+                opacity: 1,
             },
             emphasis: {
                 itemStyle: {
-                    opacity: 1,
+                    opacity: 0.6,
                 },
             },
         },

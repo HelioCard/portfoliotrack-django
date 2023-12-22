@@ -112,13 +112,25 @@ var yieldOptions = {
     {
       name: 'Yield on Cost',
       type: 'line',
+      step: 'end',
+      areaStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            {
+            offset: 0,
+            color: 'rgba(0, 102, 150, 0.2)'
+            },
+            {
+            offset: 1,
+            color: 'rgba(0, 102, 150, 0.05)'
+            }
+        ])
+      },
       yAxisIndex: 0,
       smooth: false,
       data: [0.6, 0.9, 0.5, 0.4, 0.7, 0.6, 0.35],
       markLine: {
         data: [{type: 'average', name: 'Média' }],
       },
-      smooth: true,
     },
   ]
 };

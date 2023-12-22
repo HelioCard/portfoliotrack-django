@@ -1,31 +1,11 @@
-// Obter dados da API
-const getBalanceData = async (url) => {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        const errorData = await response.json();
-        if (errorData.Erro === 'No data') {
-          alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
-        } else {
-          throw new Error(`Erro: ${errorData.Erro}`);
-        }
-      } else {
-        return await response.json();
-      }
-    } catch (ex) {
-      alert(ex.message);
-    }
-  }
 
 function buildDomTable(tableData) {
   var table = document.getElementById('tableBody');
   for (var i = 0; i < tableData.length; i++){
-    var currentPercentage = parseFloat(tableData[i].current_percentage.replace(',', '.'));
-    var idealPercentage = parseFloat(tableData[i].ideal_percentage);
-    var toBalanceColor = currentPercentage <= idealPercentage ? 'text-success' : 'text-warning';
     var textID = `text${tableData[i].asset}`
+    var assetURL = baseURL.replace('PLACEHOLDER', tableData[i].asset)
     var row = `<tr class="align-middle" style="height: 60px;">
-      <th><a href="#"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].asset}</span> </a></th>
+      <th><a href="${assetURL}"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].asset}</span> </a></th>
       <td class="text-end">${tableData[i].quantity}</td>
       <td class="text-end">${tableData[i].last_price}</td>
       <td class="text-end">${tableData[i].equity}</td>
@@ -44,22 +24,37 @@ function buildDomTable(tableData) {
       </td>
       <td class="text-end">${tableData[i].ideal_percentage} %</td>
       <td class="text-end">${tableData[i].current_percentage} %</td>
-      <td class="text-center ${toBalanceColor}">${tableData[i].to_balance}</td>
+      <td class="text-center">${tableData[i].to_balance}</td>
     </tr>`
     table.innerHTML += row;
   };
 }
 
+function showNoData() {
+  document.getElementById('tableBody').innerHTML = `<tr class="align-middle" style="height: 60px;">
+      <th class="text-center"><a href="#"> <span class="badge text-bg-primary w-75" style="font-size: 1.0rem;">---</span> </a></th>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+  </tr>`
+  
+}
+
 async function updateBalanceTable(URL) {
     try {
         document.querySelector('#spinner').hidden = false;
-        const data = await getBalanceData(URL)
+        const data = await getDataFromAPI(URL)
         if (data) {
           buildDomTable(data.balance_data) 
         };
         document.querySelector('#spinner').hidden = true;
     } catch (error) {
-        alert('Erro: ', error)
+      console.error(error)
+      alert('Erro ao atualizar os dados!');
     }
 };
 

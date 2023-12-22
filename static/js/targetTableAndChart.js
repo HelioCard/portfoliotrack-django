@@ -14,31 +14,13 @@ function showNoData() {
   elements.fractionChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
 }
 
-// Obter dados da API
-const getTargetData = async (url) => {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        const errorData = await response.json();
-        if (errorData.Erro === 'No data') {
-          alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
-          showNoData()
-        } else {
-          throw new Error(`Erro: ${errorData.Erro}`);
-        }
-      } else {
-        return await response.json();
-      }
-    } catch (ex) {
-      alert(ex.message);
-    }
-  }
 
 function buildDomTable(tableData) {
   var table = document.getElementById('tableBody');
   for (var i = 0; i < tableData.length; i++){
+    var assetURL = baseURL.replace('PLACEHOLDER', tableData[i].ticker)
     var row = `<tr class="align-middle" style="height: 60px;">
-      <th><a href="#"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].ticker}</span> </a></th>
+      <th><a href="${assetURL}"> <span class="badge text-bg-primary w-100" style="font-size: 1.0rem;">${tableData[i].ticker}</span> </a></th>
       <td class="text-center">${tableData[i].quantity.toLocaleString('pt-BR', {useGrouping: true})}</td>
       <td class="text-center">${tableData[i].average_dividend}</td>
       <td class="text-center">${tableData[i].yearly_dividend}</td>
@@ -60,7 +42,7 @@ function buildDomTable(tableData) {
 async function updateTargetTable(URL) {
     try {
         // document.querySelector('#spinner').hidden = false;
-        const data = await getTargetData(URL)
+        const data = await getDataFromAPI(URL)
         if (data) {
           const {target_data, cards_data} = data
           buildDomTable(target_data) 
@@ -76,7 +58,8 @@ async function updateTargetTable(URL) {
         };
         // document.querySelector('#spinner').hidden = true;
     } catch (error) {
-        alert('Erro: ', error)
+      console.error(error)
+      alert('Erro ao atualizar os dados!');
     }
 };
 

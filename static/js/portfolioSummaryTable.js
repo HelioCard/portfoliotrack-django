@@ -1,21 +1,3 @@
-// Obter dados da API
-const getPortfolioSummaryData = async (url) => {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        const errorData = await response.json();
-        if (errorData.Erro === 'No data') {
-          alert('Possivelmente ainda não há dados de transações. Adicione suas transações no menu à esquerda!');
-        } else {
-          throw new Error(`Erro: ${errorData.Erro}`);
-        }
-      } else {
-        return await response.json();
-      }
-    } catch (ex) {
-      alert(ex.message);
-    }
-  }
 
 function buildDomTable(tableData) {
   var table = document.getElementById('tableBody');
@@ -23,8 +5,9 @@ function buildDomTable(tableData) {
     var yieldColor = parseFloat(tableData[i].yield) >= 0 ? 'text-success' : 'text-danger';
     var resultColor = parseFloat(tableData[i].result) >= 0 ? 'text-success' : 'text-danger';
     var assetColor = parseFloat(tableData[i].result) >= 0 ? 'text-bg-primary' : 'text-bg-danger';
+    var assetURL = baseURL.replace('PLACEHOLDER', tableData[i].asset);
     var row = `<tr class="align-middle" style="height: 60px">
-      <td><a href="#"> <span class="badge ${assetColor} w-100" style="font-size: 1.0rem;">${tableData[i].asset}</span> </a></td>
+      <td><a href="${assetURL}"> <span class="badge ${assetColor} w-100" style="font-size: 1.0rem;">${tableData[i].asset}</span> </a></td>
       <td class="text-center">${tableData[i].sort_of}</td>
       <td class="text-end">${tableData[i].quantity}</td>
       <td class="text-end">${tableData[i].average_price}</td>
@@ -40,44 +23,34 @@ function buildDomTable(tableData) {
   };
 }
 
-
-let portfolioSummaryTable
+function showNoData() {
+  document.getElementById('tableBody').innerHTML = `<tr class="align-middle" style="height: 60px;">
+      <th class="text-center"><a href="#"> <span class="badge text-bg-primary w-75" style="font-size: 1.0rem;">---</span> </a></th>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+      <td class="text-center">Não há dados</td>
+  </tr>`
+  
+}
 
 async function updatePortfolioSummary(URL) {
     try {
         document.querySelector('#spinner').hidden = false;
-        const data = await getPortfolioSummaryData(URL)
+        const data = await getDataFromAPI(URL)
         if (data) {
-          buildDomTable(data.summary_data)
-          // const portfolioSummaryTableElement = document.getElementById('portfolioTable')
-          // // Confere se a tabela já foi inicializada:
-          // if (!portfolioSummaryTableElement.hasAttribute('data-datatable-initialized')) {
-          //   portfolioSummaryTable = new DataTable('#portfolioTable', {
-          //     responsive: true,
-          //     language: {
-          //       decimal: ',',
-          //       thousands: '.',
-          //       zeroRecords: 'Não há dados',
-          //       info: 'Mostrando página _PAGE_ de _PAGES_',
-          //       infoEmpty: 'Não há dados',
-          //       infoFiltered: '(dados filtrados de _MAX_ registros totais)',
-          //       lengthMenu: 'Mostrar _MENU_ registros por página',
-          //       paginate: {
-          //           "first": "Primeiro",
-          //           "last": "Último",
-          //           "next": "Próximo",
-          //           "previous": "Anterior"
-          //       },
-          //       search: "Pesquisar:",
-          //     },
-          //     order: [[0, 'asc']],
-          //   });
-          //   portfolioSummaryTableElement.setAttribute('data-datatable-initialized', 'true'); //Adiciona atributo para indicar que a tabela não foi inicializada
-          // } 
+          buildDomTable(data.summary_data);
         };
         document.querySelector('#spinner').hidden = true;
     } catch (error) {
-        alert('Erro: ', error)
+      console.error(error)
+      alert('Erro ao atualizar os dados!');
     }
 };
 

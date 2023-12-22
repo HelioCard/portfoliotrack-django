@@ -1,5 +1,6 @@
 const THEME = 'westeros';
 let incomesEvolutionChart
+let yieldEvolutionChart
 
 // Elementos do DOM
 const elements = {
@@ -7,53 +8,49 @@ const elements = {
     yieldOnCostText: document.querySelector('#yieldOnCostText'),
     averageDividendsText: document.querySelector('#averageDividendsText'),
     dividendEvolutionChartStatus: document.querySelector('#dividendEvolutionChartStatus'),
+    yieldEvolutionChartStatus:document.querySelector('#yieldEvolutionChartStatus'),
 }
 
 function showNoData() {
     elements.dividendEvolutionChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
-}
-
-// Obter dados do endpoint
-const getIncomesData = async (url) => {
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            const errorData = await response.json();
-            if (erroData.Erro === 'No data') {
-                alert('Possivelmente ainda não há dados de transações. Adicion suas transações no menu à esquerda!');
-                showNoData()
-            } else {
-                throw new Error(`Erro: ${errorData.Erro}`);
-            };
-        } else {
-            return await response.json();
-        }
-    } catch (ex) {
-        alert(ex);
-    }
+    elements.yieldEvolutionChartStatus.innerHTML = '<h6 class="display-6">Não há dados</h6>'
 }
 
 async function updateIncomesEvolutionChart(URL) {
     try {
-        const data = await getIncomesData(URL)
+        const data = await getDataFromAPI(URL)
         if (data) {
-            const { incomes_evolution_chart_data, incomes_cards_data } = data
-            console.log(incomes_evolution_chart_data)
-            console.log(incomes_cards_data)
+            const { incomes_evolution, incomes_cards } = data
+
+            incomesOptions.xAxis[0].data = incomes_evolution.date
+            incomesOptions.series[0].data = incomes_evolution.dividends
+
+            yieldOptions.xAxis[0].data = incomes_evolution.date
+            yieldOptions.series[0].data = incomes_evolution.yield_on_cost
 
             incomesEvolutionChart = echarts.init(document.querySelector('#dividendEvolutionChart'), THEME);
             incomesEvolutionChart.setOption(incomesOptions);
+
+            yieldEvolutionChart = echarts.init(document.querySelector('#yieldEvolutionChart'), THEME);
+            yieldEvolutionChart.setOption(yieldOptions);
+
+            document.querySelector('#dividendsText').innerHTML = `R$ ${incomes_cards.total_dividends}`;
+            document.querySelector('#yieldOnCostText').innerHTML = `${incomes_cards.total_yield_on_cost} %`;
+            document.querySelector('#averageDividendsText').innerHTML = `R$ ${incomes_cards.average_dividend}`;
+            document.querySelector('#calculatedPeriodText').innerHTML = `(Últimos ${incomes_cards.calculated_period})`;
         }
     } catch (error) {
-        alert('Erro: ', error);
+        console.error('Erro:', error);
+        alert('Ocorreu um erro ao atualizar os gráficos e mostrar os dados.');
     }
 };
 
 updateIncomesEvolutionChart(getIncomesEvolutiontURL)
 
 function resizeIncomesChart() {
-    if (incomesEvolutionChart) {
+    if (incomesEvolutionChart && yieldEvolutionChart) {
         incomesEvolutionChart.resize();
+        yieldEvolutionChart.resize();
     }
 };
 
