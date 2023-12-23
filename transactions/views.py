@@ -109,6 +109,7 @@ def delete_transaction(request):
 @login_required(login_url='login')
 def edit_transaction(request, pk):
     transaction = Transactions.objects.get(id=pk)
+    url = '/transactions/edit_transaction/'
     if request.method == 'POST':
         form = RegisterTransactionForm(request.POST, instance=transaction)
         if form.is_valid():
@@ -135,5 +136,6 @@ def edit_transaction(request, pk):
         context = {
             'edit_transaction_form': form,
             'transaction_id': transaction.id,
+            'url': url,
         }
         return render(request, 'transactions/editTransaction.html', context)
