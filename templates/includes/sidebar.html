@@ -15,7 +15,7 @@
           
           <!--adicionar a classe da li para li-active para deixar selecionado -->
           <li class="pt-2 mx-0" >
-            <a href="{% url 'dashboard' %}" class="d-flex side-btn gap-2 align-items-center" data-bs-toggle="no-collapse" data-bs-target="" aria-expanded="false">
+            <a href="{% url 'dashboard' %}" class="d-flex side-btn gap-2 align-items-center {% if url == '/' %} side-btn-active {% endif %}" data-bs-toggle="no-collapse" data-bs-target="" aria-expanded="false">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
                 <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2zm1 12h2V2h-2v12zm-3 0V7H7v7h2zm-5 0v-3H2v3h2z"/>
               </svg>
@@ -34,7 +34,7 @@
             </a>
             <div class="collapse show" id="portfolio-collapse">
               <ul class="list-unstyled">
-                <li class=""><a href="{% url 'summary' %}" class="d-flex side-btn-list">Meus Ativos</a></li> <!--adicionar a classe da li para li-active para deixar selecionado -->
+                <li class=""><a href="{% url 'summary' %}" class="d-flex side-btn-list {% if url|contains('/portfolio/summary/') %} side-btn-active {% endif %}">Meus Ativos</a></li> <!--adicionar a classe da li para li-active para deixar selecionado -->
                 <li class=""><a href="{% url 'balance' %}" class="d-flex side-btn-list">Balanceamento</a></li>
                 <li class=""><a href="{% url 'target' %}" class="d-flex side-btn-list">Metas</a></li>
               </ul>

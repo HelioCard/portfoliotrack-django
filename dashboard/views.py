@@ -7,7 +7,11 @@ from helpers.DashboardChartsProcessing import DashboardChartsProcessing
 # Create your views here.
 @login_required(login_url='login')
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    url = request.path
+    context = {
+        'url': url,
+    }
+    return render(request, 'dashboard.html', context)
 
 @login_required(login_url='login')
 def get_dashboard_data(request, subtract_dividends):

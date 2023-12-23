@@ -18,18 +18,25 @@
       </div>
 
       <div class="card mt-5 mb-4 border-primary">
-        <div class="card-header ps-5 border-primary">
+        <div class="card-header ps-5 border-primary text-bg-primary">
           <div class="d-flex align-items-center flex-wrap">
-            <div class="d-flex col-12 col-md-8 fs-5 text-primary">
+            <div class="d-flex col-12 col-md-8 fs-5">
               <span>
                 Balanceamento - Defina o peso que cada ativo terá no portfolio:
+                <span 
+                  class="badge rounded-circle border"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  data-bs-title="Balanceamento: defina um peso para cada ativo. O percentual de ideal de cada ativo será calculado da seguinte maneira: peso do ativo / soma de todos os pesos. 
+                  A coluna 'Equilíbrio' indica qual valor deverá ser investido/desinvestido para que o ativo atinja o equilíbrio."
+                >?</span>
                 <div id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" hidden>
                 <span class="visually-hidden">Loading...</span>
                 </div>
               </span>
             </div>
             <div class="d-flex col-12 col-md-4 justify-content-md-end">
-              <a href="#" id="btnUpdateURL" data-bs-toggle="modal" data-bs-target="#editWeightsModal" class="btn btn-primary disabled">Confirmar Alterações</a>
+              <a href="#" id="btnUpdateURL" data-bs-toggle="modal" data-bs-target="#editWeightsModal" class="btn btn-outline-light disabled">Confirmar Alterações</a>
             </div>
           </div>
         </div>
@@ -72,6 +79,10 @@
       var updateBalanceURL = "{% url 'update_balance' new_weights='PLACEHOLDER' %}".replace('PLACEHOLDER', JSON.stringify(objJson));
       document.getElementById('editWeightForm').action = updateBalanceURL
     }
+  </script>
+  <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
   </script>
 
 {% endblock %}

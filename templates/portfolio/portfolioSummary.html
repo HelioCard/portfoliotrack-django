@@ -18,10 +18,18 @@
       </div>
       
       <div class="card my-5 border-primary">
-        <h5 class="card-header ps-md-5 text-primary py-0 border-primary">
+        <h5 class="card-header ps-md-5 text-bg-primary py-0 border-primary">
           <div class="row ms-0 d-flex align-items-center justify-content-start">
             <div class="col-auto pt-3 ms-0 ps-0 fs-5">
-              <p><span>Ativos: </span></p>
+              <p>
+                <span>Ativos: </span>
+                <span 
+                  class="badge rounded-circle border"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  data-bs-title="Resumo dos ativos do portfolio. A opção 'Considerar reinvestimento dos dividendos' subtrai dos aportes os proventos recebidos."
+                >?</span>
+              </p>
             </div>
             <div class="d-flex align-items-center col-lg-6 gap-2 p-0">
               <div class="form-check form-switch fs-6">
@@ -98,6 +106,10 @@
 
     var baseURL = "{% url 'asset' ticker='PLACEHOLDER' %}"
 
+  </script>
+  <script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
   </script>
   
 {% endblock %}
