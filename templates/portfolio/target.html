@@ -26,24 +26,24 @@
 
             <div class="col-md-6">
               <div class="card border-primary" style="min-height: 100%; background-color: white;">
-                <h5 class="card-header ps-5 text-primary border-primary">Metas e Dividendos</h5>
+                <h5 class="card-header ps-5 text-bg-primary border-primary">
+                  Metas e Dividendos
+                  <span 
+                    class="badge rounded-circle border"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="right"
+                    data-bs-title="Defina uma meta de dividendos anuais para sua carteira. Média dos dividendos: valores anuais que teriam sido pagos nos últimos 4 anos pelos ativos do portfolio."
+                  >?</span>
+                </h5>
                 <div class="card-body p-5">
                   <div class="row p-0">
                       <h5 id="targetText" class="fs-3">R$ 0,00</h5>
-                      <h5 class="fs-6"> Meta Anual definida</h5>    
+                      <h5 class="fs-6">Meta Anual definida</h5>    
                   </div>
                   <a href="#" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#editTargetModal">Alterar Meta</a>
                   <div class="row mt-5 p-0">
                       <h5 id="averageDividendsText" class="fs-3">R$ 0,00</h5>
-                      <h5 class="fs-6">
-                        Dividendo Médio Anual
-                        <span 
-                          class="badge text-bg-info rounded-circle"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="right"
-                          data-bs-title="Média dos dividendos anuais que teriam sido pagos nos últimos 4 anos pelos ativos do portfolio na presente data."
-                        >?</span>
-                      </h5>
+                      <h5 class="fs-6">Dividendo Médio Anual</h5>
                   </div>
                   <a href="{% url 'evolution' %}" class="btn btn-outline-primary w-100">Ver Dividendos</a>
                 </div>
@@ -52,19 +52,19 @@
 
             <div class="col-md-6 mt-md-0 mt-5">
               <div class="card border-primary" style="min-height: 100%; background-color: white;">
-                <h5 class="card-header ps-5 text-primary border-primary">DY Médio e Aportes</h5>
+                <h5 class="card-header ps-5 text-bg-primary border-primary">
+                  DY Médio e Aportes
+                  <span 
+                    class="badge rounded-circle border"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="right"
+                    data-bs-title="Dividend Yeld médio anual dos ativos do portfolio considerando os últimos 4 anos. Aporte necessário: valor do aporte que seria necessário para atingir sua meta de dividendos."
+                  >?</span>
+                </h5>
                 <div class="card-body p-5">
                   <div class="row p-0">
                       <h5 id="averageYieldText" class="fs-3">0.00 %</h5>
-                      <h5 class="fs-6">
-                        DY Médio Anual
-                        <span 
-                          class="badge text-bg-info rounded-circle"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="right"
-                          data-bs-title="Dividend Yeld médio anual dos ativos do portfolio considerando os últimos 4 anos."
-                        >?</span>
-                      </h5>
+                      <h5 class="fs-6">DY Médio Anual</h5>
                       <p class="card-text">DY médio anual de todos os ativos do portfólio.</p>
                   </div>
                   <div class="row mt-5 p-0">
@@ -80,7 +80,15 @@
 
           <div class="col-lg-4 mt-lg-0 mt-5">
             <div class="card border-primary" style="min-height: 100%; background-color: white;">
-              <h5 class="card-header ps-5 text-primary border-primary">Andamento</h5>
+              <h5 class="card-header ps-5 text-bg-primary border-primary">
+                Andamento
+                <span 
+                  class="badge rounded-circle border"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  data-bs-title="Porcentagem concluída/faltante para atingir a meta."
+                >?</span>
+              </h5>
               <div class="card-body">
                 <div id="fractionChart" class="chart-container d-flex justify-content-center align-items-center px-2 pt-4" style="width: 100%; min-height: 20rem; background-color: white;">
                   <div id="fractionChartStatus" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
@@ -100,19 +108,27 @@
 
       <div class="container-fluid my-5 p-0 table-responsive" style="background-color: white;">
         <div class="card border-primary">
-          <h5 class="card-header ps-5 text-primary border-primary">Meta de cada ativo</h5>
+          <h5 class="card-header ps-5 text-bg-primary border-primary">
+            Meta de cada ativo
+            <span 
+              class="badge rounded-circle border"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              data-bs-title="Um resumo do andamento de cada ativo. Posicione o cursor no título das colunas da tabela abaixo para mais informações."
+            >?</span>
+          </h5>
           <div class="card-body table-responsive mx-4">
             <table id="targetTable" class="table table-hover table-responsive m-0 p-0">
               <thead>
                 <tr>
                   <th scope="col" class="text-center">Ativos</th>
-                  <th scope="col" class="text-center">Qtde</th>
-                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Dividendos por Ação - Valores médios anuais considerando os últimos quatro anos">Por_Ação</th>
-                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Dividendo anual gerado pelo ativo">Div_Anual</th>
-                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Meta de Dividendo para o ativo, considerando o peso definido">Div_Meta</th>
-                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Quantidade de cotas para atingir a meta de dividendos">Qtde_Meta</th>
-                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Quantidade de cotas faltantes para atingir a meta">Faltam</th>
-                  <th scope="col" class="text-center">Concluído</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Quantidade de cotas do ativo no portfolio.">Qtde</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Dividendos por Ação - Valores médios anuais considerando os últimos quatro anos.">Por_Ação</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Dividendo médio anual gerado pelo ativo (considerando os últimos 4 anos).">Div_Anual</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Meta de Dividendo para o ativo, considerando o peso definido.">Div_Meta</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Quantidade de cotas necessárias para atingir a meta de dividendos.">Qtde_Meta</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Quantidade de cotas faltantes para atingir a meta.">Faltam</th>
+                  <th scope="col" class="text-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Porcentagem concluída/faltante para atingir a meta.">Concluído</th>
                 </tr>
               </thead>
               <tbody id="tableBody"></tbody>

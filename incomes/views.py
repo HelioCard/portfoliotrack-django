@@ -6,7 +6,11 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 @login_required(login_url='login')
 def history(request):
-    return render(request, 'incomes/history.html')
+    url = request.path
+    context = {
+        'url': url,
+    }
+    return render(request, 'incomes/history.html', context)
 
 @login_required(login_url='login')
 def get_incomes_history(request):
@@ -24,7 +28,11 @@ def get_incomes_history(request):
 
 @login_required(login_url='login')
 def evolution(request):
-    return render(request, 'incomes/evolution.html')
+    url = request.path
+    context = {
+        'url': url,
+    }
+    return render(request, 'incomes/evolution.html', context)
 
 @login_required(login_url='login')
 def get_incomes_evolution(request):

@@ -52,16 +52,20 @@
             <div class="card-body p-5">
               
               <h5 id="yield" class="fs-4">R$0,00</h5>
-              <h5 class="fs-6">Resultado</h5>
-              
-              <div class="d-flex align-items-center text-primary mt-3">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" role="switch" id="dividendsSwitch">
-                  <label class="form-check-label" for="dividendsSwitch">Considerar reinvestimento dos dividendos</label>
-                </div>
+              <h5 class="fs-6">
+                Resultado
                 <div id="spinner" class="spinner-border spinner-border-sm text-primary" role="status" hidden>
                   <span class="visually-hidden">Loading...</span>
                 </div> 
+              </h5>
+              
+              <div class="d-flex align-items-center text-primary mt-3">
+                <div class="text-primary mt-3">
+                  <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">
+                    <input type="checkbox" class="btn-check" id="dividendsSwitch" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="dividendsSwitch">Considerar reinvestimento dos dividendos</label>
+                  </div>
+                </div>
               </div>
 
               <br>

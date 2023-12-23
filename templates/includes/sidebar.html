@@ -34,9 +34,9 @@
             </a>
             <div class="collapse show" id="portfolio-collapse">
               <ul class="list-unstyled">
-                <li class=""><a href="{% url 'summary' %}" class="d-flex side-btn-list {% if url|contains('/portfolio/summary/') %} side-btn-active {% endif %}">Meus Ativos</a></li> <!--adicionar a classe da li para li-active para deixar selecionado -->
-                <li class=""><a href="{% url 'balance' %}" class="d-flex side-btn-list">Balanceamento</a></li>
-                <li class=""><a href="{% url 'target' %}" class="d-flex side-btn-list">Metas</a></li>
+                <li class=""><a href="{% url 'summary' %}" class="d-flex side-btn-list {% if url == '/portfolio/summary/' or url == '/portfolio/asset/' %} side-btn-active {% endif %}">Meus Ativos</a></li> <!--adicionar a classe da li para li-active para deixar selecionado -->
+                <li class=""><a href="{% url 'balance' %}" class="d-flex side-btn-list {% if url == '/portfolio/balance/' %} side-btn-active {% endif %}">Balanceamento</a></li>
+                <li class=""><a href="{% url 'target' %}" class="d-flex side-btn-list {% if url == '/portfolio/target/' %} side-btn-active {% endif %}">Metas</a></li>
               </ul>
             </div>
           </li>
@@ -52,8 +52,8 @@
             </a>
             <div class="collapse show" id="proventos-collapse">
               <ul class="list-unstyled">
-                <li class=""><a href="{% url 'evolution' %}" class="d-flex side-btn-list">Evolução</a></li>
-                <li class=""><a href="{% url 'history' %}" class="d-flex side-btn-list">Histórico</a></li>
+                <li class=""><a href="{% url 'evolution' %}" class="d-flex side-btn-list {% if url == '/incomes/evolution/' %} side-btn-active {% endif %}">Evolução</a></li>
+                <li class=""><a href="{% url 'history' %}" class="d-flex side-btn-list {% if url == '/incomes/history/' %} side-btn-active {% endif %}">Histórico</a></li>
               </ul>
             </div>
           </li>
@@ -67,7 +67,7 @@
             </a>
             <div class="collapse show" id="transactions-collapse">
               <ul class="list-unstyled">
-                <li class=""><a href="{% url 'transactions' %}" class="d-flex side-btn-list">Visualizar</a></li>
+                <li class=""><a href="{% url 'transactions' %}" class="d-flex side-btn-list {% if url == '/transactions/' %} side-btn-active {% endif %}">Visualizar</a></li>
                 <li class=""><a href="#" data-bs-toggle="modal" data-bs-target="#register_transaction_modal" class="d-flex side-btn-list">Adicionar</a></li>
                 <li class=""><a href="#" data-bs-toggle="modal" data-bs-target="#load_file_modal" class="d-flex side-btn-list">Carregar de Arquivo</a></li>
               </ul>

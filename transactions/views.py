@@ -16,8 +16,10 @@ import datetime
 @login_required(login_url='login')
 def transactions(request):
     transactions = Transactions.objects.filter(portfolio__user=request.user).order_by('-date')
+    url = request.path
     context = {
         'transactions': transactions,
+        'url': url,
     }
     return render(request, 'transactions/transactions.html', context)
 

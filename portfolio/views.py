@@ -36,7 +36,11 @@ def get_portfolio_summary(request, subtract_dividends):
     
 @login_required(login_url='login')
 def balance(request):
-    return render(request, 'portfolio/balance.html')
+    url = request.path
+    context = {
+        'url': url,
+    }
+    return render(request, 'portfolio/balance.html', context)
 
 @login_required(login_url='login')
 def get_balance_data(request):
@@ -70,6 +74,7 @@ def update_balance(request, new_weights):
 
 @login_required(login_url='login')
 def target(request):
+    url = request.path
     if request.method == 'POST':
         form = UpdatePortfolioDividendsTarget(request.POST)
         if form.is_valid():
@@ -91,6 +96,7 @@ def target(request):
     update_dividends_target_form = UpdatePortfolioDividendsTarget()
     context = {
         'update_dividends_target_form': update_dividends_target_form,
+        'url': url,
     }
     return render(request, 'portfolio/target.html', context)
 
@@ -112,8 +118,10 @@ def get_target_data(request):
 
 @login_required(login_url='login')
 def asset(request, ticker):
+    url = '/portfolio/asset/'
     context = {
-        'ticker': ticker
+        'ticker': ticker,
+        'url': url,
     }
     return render(request, 'portfolio/asset.html', context)
 
