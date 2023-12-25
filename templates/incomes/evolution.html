@@ -26,19 +26,19 @@
 
             <div class="col-md-6">
               <div class="card border-primary" style="min-height: 100%; background-color: white;">
-                <h5 class="card-header ps-5 text-primary border-primary">Dividendos Recebidos</h5>
+                <h5 class="card-header ps-5 text-bg-primary border-primary">
+                  Dividendos Recebidos
+                  <span 
+                    class="badge rounded-circle border"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="right"
+                    data-bs-title="Total de dividendos de fato recebidos pelos ativos do portfolio desde o primeiro aporte."
+                  >?</span>
+                </h5>
                 <div class="card-body p-5">
                   <div class="row p-0">
                       <h5 id="dividendsText" class="fs-3">R$ 0,00</h5>
-                      <h5 class="fs-6">
-                        Total de Dividendos recebidos
-                        <span 
-                          class="badge text-bg-info rounded-circle"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="right"
-                          data-bs-title="Total de dividendos de fato recebidos pelos ativos do portfolio desde o primeiro aporte."
-                        >?</span>
-                      </h5>
+                      <h5 class="fs-6">Total de Dividendos recebidos</h5>
                   </div>
                   <a href="{% url 'history' %}" class="btn btn-primary w-100">Ver Histórico</a>
                 </div>
@@ -47,19 +47,19 @@
 
             <div class="col-md-6 mt-md-0 mt-5">
               <div class="card border-primary" style="min-height: 100%; background-color: white;">
-                <h5 class="card-header ps-5 text-primary border-primary">Yield on Cost</h5>
+                <h5 class="card-header ps-5 text-bg-primary border-primary">
+                  Yield on Cost
+                  <span 
+                    class="badge rounded-circle border"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="right"
+                    data-bs-title="Total de dividendos de fato recebidos pelos ativos do portfolio divididos pelo Total Investido."
+                  >?</span>
+                </h5>
                 <div class="card-body p-5">
                   <div class="row p-0">
                       <h5 id="yieldOnCostText" class="fs-3">0.00 %</h5>
-                      <h5 class="fs-6">
-                        Yield on Cost Total
-                        <span 
-                          class="badge text-bg-info rounded-circle"
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="right"
-                          data-bs-title="Total de dividendos de fato recebidos pelos ativos do portfolio divididos pelo Total Investido."
-                        >?</span>
-                      </h5>
+                      <h5 class="fs-6">Yield on Cost Total</h5>
                       <p class="card-text">Total de Dividendos/Total do Valor Investido.</p>
                   </div>
                 </div>
@@ -70,19 +70,19 @@
 
           <div class="col-lg-4 mt-lg-0 mt-5">
             <div class="card border-primary" style="min-height: 100%; background-color: white;">
-              <h5 class="card-header ps-5 text-primary border-primary">Média de Dividendos</h5>
+              <h5 class="card-header ps-5 text-bg-primary border-primary">
+                Média de Dividendos
+                <span
+                  class="badge rounded-circle border"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="right"
+                  data-bs-title="Média dos dividendos de fato pagos pelos ativos do portfolio."
+                >?</span>
+              </h5>
               <div class="card-body p-5">
                 <div class="row p-0">
                   <h5 id="averageDividendsText" class="fs-3">R$ 0,00</h5>
-                  <h5 class="fs-6">
-                    Média de Dividendos
-                    <span 
-                      class="badge text-bg-info rounded-circle"
-                      data-bs-toggle="tooltip"
-                      data-bs-placement="right"
-                      data-bs-title="Valor médio dos dividendos recebidos nos períodos anteriores ao atual."
-                    >?</span>
-                  </h5>
+                  <h5 class="fs-6">Média de Dividendos</h5>
                   <p class="card-text">Valor médio dos dividendos. <span id="calculatedPeriodText" class="fw-semibold">(Últimos 6m)</span>.</p>
               </div>
               </div>
@@ -96,7 +96,15 @@
       <!-- Evolution of Dividends - Chart - begin -->
       <div class="container-fluid my-5 p-0 table-responsive" style="background-color: white;">
         <div class="card border-primary">
-          <h5 class="card-header ps-5 text-primary border-primary">Evolução dos Proventos</h5>
+          <h5 class="card-header ps-5 text-bg-primary border-primary">
+            Evolução dos Proventos
+            <span 
+              class="badge rounded-circle border"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              data-bs-title="Evolução dos proventos de fato pagos pelos ativos do portfolio."
+            >?</span>
+          </h5>
           <div class="card-body mx-1">
             <div id="dividendEvolutionChart" class="chart-container d-flex justify-content-center align-items-center pt-2" style="width: 100%; min-height: 22rem; background-color: white;">
               <div id="dividendEvolutionChartStatus" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
@@ -113,7 +121,15 @@
       <!-- Evolution of Yield - Chart - begin -->
       <div class="container-fluid my-5 p-0 table-responsive" style="background-color: white;">
         <div class="card border-primary">
-          <h5 class="card-header ps-5 text-primary border-primary">Histórico de Dividend Yield</h5>
+          <h5 class="card-header ps-5 text-bg-primary border-primary">
+            Histórico de Dividend Yield
+            <span 
+              class="badge rounded-circle border"
+              data-bs-toggle="tooltip"
+              data-bs-placement="right"
+              data-bs-title="Evolução do dividend yield ao longo do tempo."
+            >?</span>
+          </h5>
           <div class="card-body mx-1">
             <div id="yieldEvolutionChart" class="chart-container d-flex justify-content-center align-items-center pt-2" style="width: 100%; min-height: 22rem; background-color: white;">
               <div id="yieldEvolutionChartStatus" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
