@@ -170,3 +170,11 @@ def reset_password(request):
             messages.error(request, 'As senhas não conferem!')
             return redirect('reset_password')
     return render(request, 'accounts/reset_password.html')
+
+@login_required(login_url='login')
+def profile(request):
+    url = request.path
+    context = {
+        'url': url,
+    }
+    return render(request, 'accounts/profile.html', context)

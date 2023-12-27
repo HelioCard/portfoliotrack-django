@@ -86,8 +86,8 @@
             </a>
             <div class="collapse show" id="account-collapse">
               <ul class="list-unstyled">
-                <li class=""><a href="#" class="d-flex side-btn-list">Perfil</a></li>
-                <li class=""><a href="{% url 'logout' %}" class="d-flex side-btn-list">Sair</a></li>
+                <li><a href="{% url 'profile' %}" class="d-flex side-btn-list {% if url == '/accounts/profile/' %} side-btn-active {% endif %}">Perfil</a></li>
+                <li><a href="{% url 'logout' %}" class="d-flex side-btn-list">Sair</a></li>
               </ul>
             </div>
           </li>

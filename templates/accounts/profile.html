@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+  
+  <!-- Main Body begins ----------------------------------------------->
+  <main role="main" class="col-12 col-xl-10">
+    <div class="container-fluid my-2">
+
+      <div class="row justify-content-center align-items-center my-2">
+        <div class="col-12 col-md-6 my-2">
+          <h4>Bem vindo, <span class="h4">{{ user.first_name }}!</span> </h4>
+          <p class="m-0">Acompanhe de perto sua carteira!</p>
+        </div>
+        <div class="col-12 col-md-6 my-2 d-flex align-items-center justify-content-md-end">
+          <h6>{{weekday}}, {{today}}</h6>
+        </div>
+      </div>
+
+      <!-- Performance e Dividendos - Início -->
+      <div class="row d-flex my-5">
+        
+        <div class="col-lg-4">
+          <div class="card h-100 border-primary">
+            <h5 class="card-header ps-5 text-bg-primary border-primary">Alterar Perfil</h5>
+            <div class="card-body p-5">
+              
+              <form action="{% url 'profile' %}" method="POST">
+                {% csrf_token %}
+               
+                  <div class="form-floating">
+                      <input type="text" class="form-control" id="floatingFirstName" placeholder="Nome" name="firstName" value="{{ user.first_name }}" required>
+                      <label for="floatingFirstName">Nome</label>
+                  </div>
+                  <div class="form-floating my-4">
+                      <input type="text" class="form-control" id="floatingLastName" placeholder="Sobrenome" name="lastName" value="{{ user.last_name }}" required>
+                      <label for="floatingLastName">Sobrenome</label>
+                  </div>
+                  <div class="form-floating mb-4">
+                    <input type="text" class="form-control" id="floatingUserName" placeholder="Nome de Usuário" name="userName" value="{{ user.username }}" required>
+                    <label for="floatingUserName">Nome de Usuário</label>
+                  </div>
+                  
+                  <div class="form-floating d-flex justify-content-center">
+                    <button class="btn btn-primary w-50" type="submit">Alterar</button>
+                  </div>
+                  
+              </form>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 mt-lg-0 mt-3">
+          <div class="card h-100 border-primary">
+            <h5 class="card-header ps-5 text-bg-primary border-primary">Alterar Senha</h5>
+            <div class="card-body p-5">
+              
+              <form action="" method="POST">
+                {% csrf_token %}
+               
+                  <div class="form-floating">
+                      <input type="password" class="form-control" id="floatingcurrentPassword" placeholder="Senha Atual" name="currentPassword" required>
+                      <label for="floatingcurrentPassword">Senha Atual</label>
+                  </div>
+                  <div class="form-floating my-4">
+                    <input type="password" class="form-control" id="floatingNewPassword" placeholder="Nova Senha" name="newPassword" required>
+                    <label for="floatingNewPassword">Nova Senha</label>
+                  </div>
+                  <div class="form-floating mb-4">
+                    <input type="password" class="form-control" id="floatingRepeatPassword" placeholder="Repita a Senha" name="repeatPassword" required>
+                    <label for="floatingRepeatPassword">Repita a Senha</label>
+                  </div>
+                  
+                  <div class="form-floating d-flex justify-content-center">
+                    <button class="btn btn-primary w-50" type="submit">Alterar</button>
+                  </div>
+                  
+              </form>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4 mt-lg-0 mt-3">
+          <div class="card h-100 border-primary">
+            <h5 class="card-header ps-5 text-bg-primary border-primary">Dados da Conta</h5>
+            <div class="card-body p-5">
+              
+              <div>
+                <h5 class="fs-5">{{ user.email }}</h5>
+                <span class="text-card">Email</span>
+              </div>
+
+              <div class="my-4">
+                <h5 class="fs-4">{{ user.date_joined|date:"d/m/Y" }} - {{ user.date_joined|time}}</h5>
+                <span class="text-card">Data de Criação</span>
+              </div>
+
+              <div class="mb-4">
+                <h5 class="fs-4">{{ user.last_login|date:"d/m/Y" }} - {{ user.last_login|time}}</h5>
+                <span class="text-card">Último Login</span>
+              </div>
+              
+              <div class="d-flex justify-content-center">
+                <a href="#" class="btn btn-danger w-50">Excluir Conta</a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- Performance e Dividendos - Fim -->
+
+    </div>
+  </main>
+  <!-- Main Body ends --------------------------------------------->
+  
+
+  {% include 'includes/message.html' %}
+
+{% endblock %}
+
+
+
+
+
