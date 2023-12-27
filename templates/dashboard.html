@@ -92,7 +92,10 @@
               <h5 class="fs-6">Recebidos</h5>
               <span class="card-text">Ativo com maior volume de proventos.</span>
               <div class="d-flex mt-1">
-                <span id="tickerOfHighestDividend" class="badge text-bg-primary fs-5">----</span>
+                <script>
+                  var baseURL = "{% url 'asset' ticker='PLACEHOLDER' %}";
+                </script>
+                <a href="#" id="hightestDividendLink"><span class="badge fs-5 text-bg-primary" id="tickerOfHighestDividend">----</span></a>
               </div>
 
             </div>
