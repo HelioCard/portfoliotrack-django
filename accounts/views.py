@@ -195,3 +195,23 @@ def profile(request):
         'url': url,
     }
     return render(request, 'accounts/profile.html', context)
+
+@login_required(login_url='login')
+def edit_password(request):
+    if request.method == 'POST':
+        password = request.POST['currentPassword']
+        user = auth.authenticate(email=request.user.email, password=password)
+        if user is not None:
+            new_password = request.POST['newPassword']
+            repeat_password = request.POST['repeatPassword']
+            if new_password != repeat_password:
+                messages.error(request, 'Senhas não conferem!')
+            else:
+                user.set_password(new_password)
+                user.save()
+                auth.login(request, user)
+                messages.success(request, 'Senha alterada com sucesso!')
+        else:
+            messages.error(request, 'Senha incorreta!')
+    
+    return redirect('profile')

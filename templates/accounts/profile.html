@@ -57,7 +57,7 @@
             <h5 class="card-header ps-5 text-bg-primary border-primary">Alterar Senha</h5>
             <div class="card-body p-5">
               
-              <form action="" method="POST">
+              <form action="{% url 'edit_password' %}" method="POST">
                 {% csrf_token %}
                
                   <div class="form-floating">
