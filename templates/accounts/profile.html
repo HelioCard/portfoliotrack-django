@@ -30,15 +30,15 @@
                 {% csrf_token %}
                
                   <div class="form-floating">
-                      <input type="text" class="form-control" id="floatingFirstName" placeholder="Nome" name="firstName" value="{{ user.first_name }}" required>
+                      {{ form.first_name }}
                       <label for="floatingFirstName">Nome</label>
                   </div>
                   <div class="form-floating my-4">
-                      <input type="text" class="form-control" id="floatingLastName" placeholder="Sobrenome" name="lastName" value="{{ user.last_name }}" required>
+                      {{ form.last_name }}
                       <label for="floatingLastName">Sobrenome</label>
                   </div>
                   <div class="form-floating mb-4">
-                    <input type="text" class="form-control" id="floatingUserName" placeholder="Nome de Usuário" name="userName" value="{{ user.username }}" required>
+                    {{ form.username }}
                     <label for="floatingUserName">Nome de Usuário</label>
                   </div>
                   

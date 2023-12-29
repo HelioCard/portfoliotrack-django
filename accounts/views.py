@@ -7,7 +7,7 @@ from django.core.mail import EmailMessage
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 
-from .forms import RegistrationForm
+from .forms import RegistrationForm, EditUserForm
 from .models import Account
 from portfolio.models import Portfolio
 from django.contrib import messages
@@ -172,9 +172,26 @@ def reset_password(request):
     return render(request, 'accounts/reset_password.html')
 
 @login_required(login_url='login')
-def profile(request):
+def profile(request):  
+    user = Account.objects.get(id=request.user.id)
+    if request.method == 'POST':
+        form = EditUserForm(request.POST, instance=user)
+        if form.is_valid():
+            user.first_name = request.POST['first_name']
+            user.last_name = request.POST['last_name']
+            user.username = request.POST['username']
+            user.save()
+            messages.success(request, 'Perfil editado com sucesso!')
+        else:
+            if Account.objects.filter(username=request.POST['username']).exists():
+                messages.error(request, f"O Nome de Usuário '{request.POST['username']}' já existe!")
+                return redirect('profile')
+            messages.error(request, form.errors)
+        return redirect('profile')
+    form = EditUserForm(instance=user)
     url = request.path
     context = {
+        'form': form,
         'url': url,
     }
     return render(request, 'accounts/profile.html', context)

@@ -1,4 +1,9 @@
+from collections.abc import Mapping
+from typing import Any
 from django import forms
+from django.core.files.base import File
+from django.db.models.base import Model
+from django.forms.utils import ErrorList
 from .models import Account
 from django.utils.translation import gettext as _
 
@@ -38,3 +43,27 @@ class RegistrationForm(forms.ModelForm):
         
         if Account.objects.filter(email=email).exists():
             raise forms.ValidationError(_(f'Uma conta com o email {email} já existe!'))
+
+class EditUserForm(forms.ModelForm):
+    first_name = forms.CharField(widget=forms.TextInput(attrs={
+        'placeholder': 'Nome',
+        'id': 'floatingFirstName',
+        'class': 'form-control',
+    }))
+    last_name = forms.CharField(widget=forms.TextInput(attrs={
+        'placeholder': 'Sobrenome',
+        'id': 'floatingLastName',
+        'class': 'form-control',
+    }))
+    username = forms.CharField(widget=forms.TextInput(attrs={
+        'placeholder': 'Nome de Usuário',
+        'id': 'floatingUserName',
+        'class': 'form-control',
+    }))
+    class Meta:
+        model = Account
+        fields = ['first_name', 'last_name', 'username']
+
+    def __init__(self, *args, **kwargs):
+        super(EditUserForm, self).__init__(*args, **kwargs)
+    
