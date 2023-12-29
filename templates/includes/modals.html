@@ -208,3 +208,36 @@
     </div>
 </div>
 <!-- Modal (edit target) ends--------------------------------------------------- -->
+
+<!-- Modal (edit weights) begins--------------------------------------------------- -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="ModalDeleteAccount" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="ModalLabel">Apagar Conta</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body my-2">
+            <form method="POST" id="deleteAccountForm" action="{% url 'delete_account' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+
+                <div class="form-row mb-3">
+                    <p class="fs-5">TEM CERTEZA QUE DESEJA APAGAR A CONTA?</p>
+                    <p>Todas as transações serão perdidas e você será redirecionado para a página de login.</p>
+                </div>
+
+                <input type="hidden" name="" id="" value="">
+
+                <div class="d-flex justify-content-end mt-3 mx-2 gap-3">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger" >Apagar Conta</button>
+                </div>
+
+            </form>  
+        </div>
+
+        </div>
+    </div>
+</div>
+<!-- Modal (edit weights) ends--------------------------------------------------- -->

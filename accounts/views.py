@@ -215,3 +215,12 @@ def edit_password(request):
             messages.error(request, 'Senha incorreta!')
     
     return redirect('profile')
+
+@login_required(login_url='login')
+def delete_account(request):
+    if request.method == 'POST':
+        user = request.user
+        user.delete()
+        logout(request)
+        return redirect('login')
+    return redirect('profile')
