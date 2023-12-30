@@ -23,7 +23,8 @@ const elements = {
   assetVariationChartStatus: document.querySelector('#assetVariationChartStatus'),
   dividends: document.querySelector('#dividendsCard'),
   highestDividend: document.querySelector('#highestDividend'),
-  tickerOfHighestDividend: document.querySelector('#tickerOfHighestDividend')
+  tickerOfHighestDividend: document.querySelector('#tickerOfHighestDividend'),
+  hightestDividendLink: document.querySelector('#hightestDividendLink'),
 }
 
 // Exibir mensagem quando não houver dados
@@ -82,6 +83,7 @@ async function updateDashboardData(dashboardDataURL) {
       elements.highestDividend.innerHTML = cards_data.highest_dividend.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
 
       elements.tickerOfHighestDividend.innerHTML = cards_data.ticker_of_highest_dividend
+      elements.hightestDividendLink.href = baseURL.replace('PLACEHOLDER', cards_data.ticker_of_highest_dividend)
 
       elements.equity.innerHTML = cards_data.equity.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
       elements.equityChange.innerHTML = (cards_data.equity.change * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
