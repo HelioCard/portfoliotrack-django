@@ -54,3 +54,26 @@ Para sugestões, dúvidas ou problemas, entre em contato pelo helio.card@yahoo.c
 ## Licença
 
 Este projeto está licenciado sob a MIT - consulte o arquivo LICENSE.md para mais detalhes.
+
+## Telas
+
+### Login
+![Login](screenshots/tela1.PNG)
+*Login.*
+<!-- Space -->
+
+### Dashboard
+![Dashboard](screenshots/tela2.PNG)
+*Dashboard.*
+
+<!-- Space -->
+
+### Meus Ativos
+![Meus Ativos](screenshots/tela3.PNG)
+*Meus Ativos.*
+
+<!-- Space -->
+
+### Metas
+![Metas](screenshots/tela4.PNG)
+*Metas.*
