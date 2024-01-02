@@ -9,7 +9,7 @@ from portfolio.models import Portfolio, PortfolioItems
 from transactions.models import Transactions
 MINUTES_TO_EXPIRE = 30
 
-@shared_task
+@shared_task(expires=1800)
 def clean_expired_tasks():
     time_to_expire = timezone.datetime.now() - timezone.timedelta(minutes=MINUTES_TO_EXPIRE)
     expired_tasks = TaskResult.objects.filter(date_done__lt=time_to_expire)
@@ -18,7 +18,7 @@ def clean_expired_tasks():
     session.cache.delete(expired=True)
     return f'SUCCESS: {count} tasks deleted!'
 
-@shared_task
+@shared_task(expires=1800)
 def register_transactions(raw_transactions_list, user_id):
     clean_expired_tasks.delay() # ==>TODO: Criar uma tarefa agendada para executar uma vez por hora.
     try:        
@@ -32,7 +32,7 @@ def register_transactions(raw_transactions_list, user_id):
     except Exception as e:
         raise Exception(f'ERROR: {e}')
 
-@shared_task
+@shared_task(expires=1800)
 def update_transaction(edited_transaction, user_id, pk):
     try:
         # Valida os dados de entrada e insere eventos de split/agrup se houver:        
@@ -65,7 +65,7 @@ def update_transaction(edited_transaction, user_id, pk):
     except Exception as e:
         raise Exception(f'ERROR: {e}')
 
-@shared_task
+@shared_task(expires=1800)
 def update_events_of_transactions(list_of_tickers, user_id):
     # Percorre a lista de tickers verificando se há eventos de Split/Agrup salvos com datas anterior à operação mais velha do ticker
     # Se houver, apaga o evento. Se não houver mais operações do ticker, apaga todos os eventos
@@ -85,13 +85,13 @@ def update_events_of_transactions(list_of_tickers, user_id):
             if event.date <= first_transaction['date']:
                 event.delete()
 
-@shared_task
+@shared_task(expires=1800)
 def process_transactions(transactions_list, user_id):
     existing_events = Transactions.objects.filter(portfolio__user_id=user_id, operation="A")
     existing_events_list = list(existing_events.values())
     return TransactionsFromFile().process_raw_transactions(transactions_list, existing_events_list)
 
-@shared_task
+@shared_task(expires=1800)
 def bulk_create_of_transactions(transactions, user_id):
     portfolio = Portfolio.objects.get(user_id=user_id)
     fulldataset = []
@@ -108,7 +108,7 @@ def bulk_create_of_transactions(transactions, user_id):
         fulldataset.append(tempdata)
     Transactions.objects.bulk_create(fulldataset)
 
-@shared_task
+@shared_task(expires=1800)
 def register_split_group_events(processed_transactions, user_id):
     # Se houver mais de um item na lista é porque há eventos de split/agrupamento a ser processado
     # devido a mudança de data na transação:
@@ -125,7 +125,7 @@ def register_split_group_events(processed_transactions, user_id):
         return edited_transaction
     return processed_transactions
 
-@shared_task
+@shared_task(expires=1800)
 def update_portfolio_items(user_id):
     # Busca as transações e calcula o balanço do portfolio:
     portfolio = Portfolio.objects.get(user_id=user_id)
