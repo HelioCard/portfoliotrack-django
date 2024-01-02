@@ -1,6 +1,6 @@
 # Portfolio Track
 
-O Portfolio Track é uma aplicação web desenvolvida em Django, projetada para fornecer uma plataforma eficiente para o acompanhamento detalhado de portfólios de investimentos financeiros.
+O Portfolio Track é uma aplicação web desenvolvida em Django, projetada para fornecer uma plataforma eficiente para acompanhamento de portfólios de investimentos financeiros.
 
 ## Funcionalidades Principais
 
