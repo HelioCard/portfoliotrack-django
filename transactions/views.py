@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import FileResponse
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from tasks.tasks import register_transactions, update_transaction, update_events_of_transactions, update_portfolio_items
 from helpers.TransactionsFromFile import TransactionsFromFile
@@ -108,7 +109,12 @@ def delete_transaction(request):
 
 @login_required(login_url='login')
 def edit_transaction(request, pk):
-    transaction = Transactions.objects.get(id=pk)
+    try:
+        transaction = Transactions.objects.get(id=pk, portfolio__user=request.user)
+    except ObjectDoesNotExist:
+        messages.error(request, 'Transação inexistente!')
+        return redirect('transactions')
+    
     url = '/transactions/edit_transaction/'
     if request.method == 'POST':
         form = RegisterTransactionForm(request.POST, instance=transaction)
