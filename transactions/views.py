@@ -115,7 +115,6 @@ def edit_transaction(request, pk):
         messages.error(request, 'Transação inexistente!')
         return redirect('transactions')
     
-    url = '/transactions/edit_transaction/'
     if request.method == 'POST':
         form = RegisterTransactionForm(request.POST, instance=transaction)
         if form.is_valid():
@@ -139,6 +138,7 @@ def edit_transaction(request, pk):
             return render(request, 'transactions/processTransactions.html', context)
     else:
         form = RegisterTransactionForm(instance=transaction)
+        url = '/transactions/edit_transaction/'
         context = {
             'edit_transaction_form': form,
             'transaction_id': transaction.id,
